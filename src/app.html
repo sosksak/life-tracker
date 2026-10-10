@@ -3242,7 +3242,7 @@ body { padding-bottom: calc(var(--nav-h) + 72px + env(safe-area-inset-bottom, 0p
   background: var(--accent-soft); color: var(--accent); border-radius: 9px; vertical-align: middle;
 }
 .modal h3 { display: flex; align-items: center; gap: 10px; text-align: left; font-size: 16px; }
-.quest-item, .life-quest-item { border-radius: 12px; background: #FAFBFC; border: 1px solid var(--border); border-left-width: 3px; }
+.quest-item, .life-quest-item { border-radius: 12px; background: var(--bg-card-alt, #FAFBFC); border: 1px solid var(--border); border-left-width: 3px; }
 .quest-item.completed { opacity: .55; }
 .life-stats-panel, .lq-hero { border-radius: var(--radius-md); }
 
@@ -3570,7 +3570,7 @@ body.v7-nav-hidden .sync-status { transform: translateY(calc(var(--nav-h) + 8px)
 .ui-hint .h-t { font-weight:700; margin-bottom:3px; }
 .ui-hint .h-row { display:flex; justify-content:space-between; align-items:center; margin-top:8px; gap:8px; }
 .ui-hint .h-step { font-size:10.5px; opacity:.7; }
-.ui-hint button { background:var(--bg-card); color:#1B3A5C; border:none; border-radius:8px; padding:6px 12px; font-weight:700; font-size:12px; cursor:pointer; font-family:inherit; }
+.ui-hint button { background:var(--bg-card); color:var(--primary-ink); border:none; border-radius:8px; padding:6px 12px; font-weight:700; font-size:12px; cursor:pointer; font-family:inherit; }
 .ui-hint-target { position:relative; z-index:10049 !important; box-shadow:0 0 0 3px #FFD166, 0 0 0 6px rgba(255,209,102,.35) !important; border-radius:12px; }
 @keyframes hintIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
 
@@ -3766,6 +3766,36 @@ html[data-theme="dark"] .v8-assist-rate { color: var(--accent); }
 .v8-seg button { border: none; background: transparent; color: var(--text-dim); font: inherit; font-size: 11.5px; font-weight: 700; padding: 5px 9px; border-radius: 6px; cursor: pointer; }
 .v8-seg button.on { background: var(--bg-card); color: var(--primary-ink); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
 html[data-theme="dark"] .v8-seg button.on { color: var(--accent); }
+
+/* — v8.0.1: читаемость тёмной темы — захардкоженные светлые фоны/тёмные чернила — */
+html[data-theme="dark"] { --bg-card-alt: #1C2330; --gold-border: #4E4218; }
+html[data-theme="dark"] .dash-alert--warn { background: var(--orange-bg); border-color: var(--orange-border); color: var(--orange); }
+html[data-theme="dark"] .dash-alert--error { border-color: var(--red-border); color: var(--red); }
+html[data-theme="dark"] .dash-alert-icon { background: rgba(255,255,255,.08); }
+html[data-theme="dark"] .fin-action--expense { color: var(--red); }
+html[data-theme="dark"] .fin-action--expense:hover { background: #3A1C1F; }
+html[data-theme="dark"] .fin-action--income { color: var(--green); }
+html[data-theme="dark"] .fin-action--income:hover { background: #163826; }
+html[data-theme="dark"] .lw-weak { color: var(--orange); }
+html[data-theme="dark"] .jr-done { color: var(--green); }
+html[data-theme="dark"] .jr-cta { background: linear-gradient(135deg, #1E2140, #23284F); border-color: #363C6E; }
+html[data-theme="dark"] .jr-cta .t { color: #C7D2FE; }
+html[data-theme="dark"] .jr-cta .s { color: #A5B4FC; }
+html[data-theme="dark"] .v7-reward-strip .t { color: var(--gold-ink); }
+html[data-theme="dark"] .v7-reward-strip .s { color: var(--orange); }
+html[data-theme="dark"] .v7-reward-strip.claimed .t { color: var(--green); }
+html[data-theme="dark"] .v7-reward-strip.claimed .s { color: #9AE6B4; }
+html[data-theme="dark"] .cat-hub-btn.bonus, html[data-theme="dark"] .cp-state.bonus { background: #10302E; color: #4FD1C5; border-color: rgba(79,209,197,.35); }
+html[data-theme="dark"] .cat-hub-btn.done { color: var(--green); }
+html[data-theme="dark"] .cat-hub-btn.free, html[data-theme="dark"] .cp-state.free { color: var(--gold-ink); }
+/* чипы категорий и метки заданий красятся инлайном тёмными тонами — осветляем */
+html[data-theme="dark"] .cat-chip, html[data-theme="dark"] .lq-cat-tag, html[data-theme="dark"] .cat-hub-card .val { filter: brightness(1.55) saturate(.85); }
+html[data-theme="dark"] .ico-fire, html[data-theme="dark"] .ico-target, html[data-theme="dark"] .ico-pin, html[data-theme="dark"] .ico-flag { color: var(--orange); }
+html[data-theme="dark"] .ico-star, html[data-theme="dark"] .ico-crown, html[data-theme="dark"] .ico-trophy, html[data-theme="dark"] .ico-medal, html[data-theme="dark"] .ico-coin, html[data-theme="dark"] .ico-cash, html[data-theme="dark"] .ico-money, html[data-theme="dark"] .ico-sun, html[data-theme="dark"] .ico-bolt, html[data-theme="dark"] .ico-badge { color: var(--gold); }
+html[data-theme="dark"] .ico-diamond, html[data-theme="dark"] .ico-moon, html[data-theme="dark"] .ico-sparkles, html[data-theme="dark"] .ico-palette, html[data-theme="dark"] .ico-zzz { color: var(--purple); }
+html[data-theme="dark"] .ico-party, html[data-theme="dark"] .ico-gift, html[data-theme="dark"] .ico-flower { color: #F687B3; }
+html[data-theme="dark"] .ico-coffee, html[data-theme="dark"] .ico-pizza, html[data-theme="dark"] .ico-cup { color: #D69E2E; }
+html[data-theme="dark"] .pomo-mode.on { color: var(--accent); }
 
 </style>
 </head>
@@ -8706,7 +8736,7 @@ function renderChart() {
 
 // ====== PWA: SERVICE WORKER ======
 // Регистрируем только по http/https — с file:// браузер ругается.
-const APP_VERSION = 'v8.0.0';
+const APP_VERSION = 'v8.0.1';
 
 // v7.2.0 — политика обновлений «страница никогда не стартует старой»:
 //   Воркер (sw.js) перед отдачей index.html сверяет ETag с сервером и при
