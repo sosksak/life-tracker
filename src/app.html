@@ -9042,7 +9042,7 @@ function renderChart() {
 
 // ====== PWA: SERVICE WORKER ======
 // Регистрируем только по http/https — с file:// браузер ругается.
-const APP_VERSION = 'v9.5.0';
+const APP_VERSION = 'v9.5.1';
 
 // v7.2.0 — политика обновлений «страница никогда не стартует старой»:
 //   Воркер (sw.js) перед отдачей index.html сверяет ETag с сервером и при
@@ -14874,7 +14874,15 @@ const V93 = (() => {
       applyDefaults();
       for (const t of Object.keys(TABS)) {
         const el = document.getElementById(t); if (!el) continue;
-        new MutationObserver(recs => { if (_applying) return; if (recs.every(r => [...r.addedNodes].every(n => n.dataset && n.dataset.ltUi))) return; schedule(t); }).observe(el, { childList: true, subtree: true });
+        // v9.5.1: правки внутри собственных элементов раскладки (подвал .lt-foot, кнопки .lt-ctl) не считаются —
+        // раньше apply() переписывал innerHTML подвала → observer → apply() → … бесконечный цикл на 60 fps
+        // по всем пяти вкладкам. На iPhone это съедало главный поток, и тапы по вкладкам не обрабатывались.
+        const ownUi = n => !!(n && (n.nodeType === 1 ? n : n.parentElement) && (n.nodeType === 1 ? n : n.parentElement).closest('[data-lt-ui]'));
+        new MutationObserver(recs => {
+          if (_applying) return;
+          if (recs.every(r => ownUi(r.target) || [...r.addedNodes].every(n => n.dataset && n.dataset.ltUi))) return;
+          schedule(t);
+        }).observe(el, { childList: true, subtree: true });
         apply(t);
       }
       // прокрутка к модулю: обёртка стала display:contents — скроллим к первому ребёнку
