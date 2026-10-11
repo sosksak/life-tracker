@@ -6426,6 +6426,8 @@ function _cachedGet(key, fallback) {
   try { const val = JSON.parse(raw); _lsCache[key] = { raw, val }; return JSON.parse(JSON.stringify(val)); } catch(e) { return fallback; }
 }
 function _invalidateCache(key) { delete _lsCache[key]; }
+// v9.4: карточка скрыта пользователем (V93) — тяжёлые рендеры её пропускают
+const _hid = (t, k) => { try { return window.V93 && V93.isHidden(t, k); } catch (e) { return false; } };
 
 function getLifeXP() {
   return _cachedGet('lt_life_xp', {"total":0,"cats":{},"history":[],"questsDone":0,"daysDone":0,"lastDay":""});
@@ -8701,8 +8703,8 @@ function render() {
   renderChart();
   // Month goal / forecast / dow / records
   renderMonthGoal();
-  renderDowStats();
-  renderRecords();
+  if (!_hid('contentStats', 'chart-section:3')) renderDowStats();
+  if (!_hid('contentStats', 'chart-section:4')) renderRecords();
   // Calendar
   renderCalendar();
 }
@@ -9023,7 +9025,7 @@ function renderChart() {
 
 // ====== PWA: SERVICE WORKER ======
 // Регистрируем только по http/https — с file:// браузер ругается.
-const APP_VERSION = 'v9.3.0';
+const APP_VERSION = 'v9.4.0';
 
 // v7.2.0 — политика обновлений «страница никогда не стартует старой»:
 //   Воркер (sw.js) перед отдачей index.html сверяет ETag с сервером и при
@@ -9958,7 +9960,7 @@ const EFF = (() => {
   function setMetric(m) { metric = m; try { localStorage.setItem('v7_wa_metric', m); } catch (e) {} renderWA(); }
 
   let render;
-  render = function () { renderEff(); try { renderWA(); } catch (e) { console.warn('WA', e); } };
+  render = function () { if (!_hid('contentLive', '#effCard')) renderEff(); if (!_hid('contentLive', '#waCard')) { try { renderWA(); } catch (e) { console.warn('WA', e); } } };
 
   // Во время смены ₽/ч и заказы тикают — обновляем раз в 30с, только когда вкладка активна.
   setInterval(() => { if (activeShift && document.getElementById('contentLive')?.classList.contains('active')) render(); }, 30000);
@@ -9990,14 +9992,18 @@ render = function() {
   countUp(document.getElementById('totalEarned'), totalEarned);
   // Only render heavy stats widgets when stats tab is active
   const statsActive = document.getElementById('contentStats')?.classList.contains('active');
+  const liveActive = document.getElementById('contentLive')?.classList.contains('active');
+  // v9.4: скрытые пользователем карточки не считаем вовсе
+  if (liveActive || statsActive) {
+    if (!_hid('contentLive', '#millionPath')) renderMillionPath();
+    if (!_hid('contentLive', '#kopilkaCard')) renderKopilka();
+    if (!_hid('contentLive', '#weeklyChallenge')) renderWeeklyChallenge();
+    if (!_hid('contentLive', '#insightCard')) renderInsight();
+  }
   if (statsActive) {
-    renderMillionPath();
-    renderKopilka();
-    renderWeeklyChallenge();
-    renderInsight();
-    renderWeekCompare();
-    renderHeatmap();
-    renderDiary();
+    if (!_hid('contentStats', '#weekCompare')) renderWeekCompare();
+    if (!_hid('contentStats', '#heatmapSection')) renderHeatmap();
+    if (!_hid('contentStats', '#diarySection')) renderDiary();
   }
   checkNewAchievements();
 };
@@ -10561,8 +10567,8 @@ const HABITS = (() => {
       </div>
     `;
 
-    // Аналитика
-    if (active.length > 0) {
+    // Аналитика (пропускаем, если карточка скрыта)
+    if (active.length > 0 && !_hid('lifeContent', 'hab-analytics')) {
       const bestHabit = active.reduce((best, h) => {
         const r = getCompletionRate(h.id);
         return r > (best.rate || 0) ? { habit: h, rate: r } : best;
@@ -11976,7 +11982,7 @@ const MARKET = (() => {
     }
     renderFull(root, st, coin, ticker || {}, pts, err);
     _rendering = false;
-    fxLoad().then(() => { if (el()) fxRepaint(); });
+    if (!_hid('moneyContent', '#mkFx')) fxLoad().then(() => { if (el()) fxRepaint(); });
     ensureTimer();
   }
 
@@ -12061,8 +12067,8 @@ const MARKET = (() => {
         '<div class="mk-chart-wrap">' + buildChartSVG(pts, st.cur, st.range, width) + '<div class="mk-tip" id="mkTip" style="display:none"></div></div>' +
         statsHTML(pts, st) +
       '</div>' +
-      lookupHTML(st, coin) +
-      fxHTML() +
+      (_hid('moneyContent', 'mk-section') ? '' : lookupHTML(st, coin)) +
+      (_hid('moneyContent', '#mkFx') ? '' : fxHTML()) +
       '<div class="mk-foot">' +
         (err ? '<span class="mk-err">' + (err.message === 'rate' ? '⏳ Лимит запросов — показываю кэш, повтор через минуту' : '⚠️ Нет связи с биржей — показываю кэш') + '</span>' : '<span>Крипта: CoinGecko, раз в минуту · Валюты: ЦБ РФ, раз в день</span>') +
         '<button class="mk-link" onclick="MARKET.refresh()">Обновить</button>' +
@@ -14642,9 +14648,42 @@ const V93 = (() => {
   };
   const TITLE_SEL = 'h1,h2,h3,h4,.eff-title,.section-title,.chart-title,.v7-sec-title,.health-title,.hab-section-title,.fin-section-title,.mk-sec-title,.w92-head .t,[class*="-title"]';
 
-  function getCfg() { const c = uGet(KEY, null); return (c && typeof c === 'object') ? c : {}; }
+  // v9.4: второстепенные карточки спрятаны по умолчанию (один раз, флаг в cfg._d).
+  // Всё возвращается через «＋ Добавить» в режиме редактирования — данные не теряются.
+  const DEFAULT_HIDDEN = {
+    dashboardContent: ['dash-alerts', 'dash-cards'],
+    contentLive: ['#millionPath', '#kopilkaCard', '#weeklyChallenge', '#insightCard'],
+    lifeContent: ['hab-inactive-section', 'hab-analytics', 'health-section:6', '#motivationTip', 'v7-sec:2'],
+    moneyContent: ['mk-section', '#mkFx'],
+    contentStats: ['chart-section:3', '#weekCompare', '#heatmapSection', '#diarySection']
+  };
+  const DEFAULTS_FLAG = 'd94';
+  // Конфиг читается на каждый apply/isHidden — парсим JSON только когда строка изменилась
+  function getCfg() { const c = _cachedGet(KEY, null); return (c && typeof c === 'object') ? c : {}; }
   function tabCfg(tabId) { const c = getCfg()[tabId] || {}; return { hidden: Array.isArray(c.hidden) ? c.hidden : [], order: Array.isArray(c.order) ? c.order : [] }; }
   function saveTab(tabId, tc) { const c = getCfg(); c[tabId] = tc; uSet(KEY, c); try { markLocalChange(); schedulePushProgress(); } catch (e) {} }
+  function applyDefaults() {
+    const c = getCfg(); if (c._d === DEFAULTS_FLAG) return;
+    for (const [tab, keys] of Object.entries(DEFAULT_HIDDEN)) {
+      const tc = tabCfg(tab);
+      for (const k of keys) if (!tc.hidden.includes(k)) tc.hidden.push(k);
+      c[tab] = tc;
+    }
+    c._d = DEFAULTS_FLAG; uSet(KEY, c);
+    try { markLocalChange(); schedulePushProgress(); } catch (e) {}
+  }
+  // Для модулей: скрытую карточку можно не рендерить вовсе
+  function isHidden(tabId, key) { try { return tabCfg(tabId).hidden.includes(key); } catch (e) { return false; } }
+  // После «показать» карточку нужно дорисовать — модули её пропускали
+  function rerender(tabId) {
+    try {
+      if (tabId === 'dashboardContent') DASHBOARD.render();
+      else if (tabId === 'contentLive') render();
+      else if (tabId === 'lifeContent') { HABITS.render(); HEALTH.render(); try { V7.renderLifeExtras(); } catch (e) {} try { renderMotivationTip(); } catch (e) {} }
+      else if (tabId === 'moneyContent') { MARKET.render({ silent: true }); }
+      else if (tabId === 'contentStats') { invalidateShiftCache(); render(); try { V7.renderStatsExtras(); } catch (e) {} }
+    } catch (e) { console.warn('[v93] rerender', e); }
+  }
 
   // Карточки верхнего уровня (сквозь обёртки модулей)
   function cards(tabEl) {
@@ -14736,7 +14775,7 @@ const V93 = (() => {
     try { haptic('light'); } catch (e) {}
   }
   function hide(tabId, k) { const tc = tabCfg(tabId); if (!tc.hidden.includes(k)) tc.hidden.push(k); saveTab(tabId, tc); apply(tabId); try { haptic('light'); } catch (e) {} }
-  function show(tabId, k) { const tc = tabCfg(tabId); tc.hidden = tc.hidden.filter(x => x !== k); saveTab(tabId, tc); apply(tabId); sheet(); try { haptic('light'); } catch (e) {} }
+  function show(tabId, k) { const tc = tabCfg(tabId); tc.hidden = tc.hidden.filter(x => x !== k); saveTab(tabId, tc); rerender(tabId); apply(tabId); sheet(); try { haptic('light'); } catch (e) {} }
   function currentOrder(tabId) {
     const tabEl = document.getElementById(tabId); const tc = tabCfg(tabId);
     const list = cards(tabEl); const pos = k => { const i = tc.order.indexOf(k); return i < 0 ? 500 + list.findIndex(e => e.dataset.ltCard === k) : i; };
@@ -14749,7 +14788,8 @@ const V93 = (() => {
     tc.order = ord.concat(tc.hidden.filter(x => !ord.includes(x)));
     saveTab(tabId, tc); apply(tabId); try { haptic('light'); } catch (e) {}
   }
-  function resetTab(tabId) { saveTab(tabId, { hidden: [], order: [] }); apply(tabId); sheet(); showToast('Экран по умолчанию', 'success'); }
+  function resetTab(tabId) { saveTab(tabId, { hidden: (DEFAULT_HIDDEN[tabId] || []).slice(), order: [] }); rerender(tabId); apply(tabId); sheet(); showToast('Экран по умолчанию', 'success'); }
+  function showAll(tabId) { saveTab(tabId, { hidden: [], order: [] }); rerender(tabId); apply(tabId); sheet(); showToast('Показаны все карточки', 'success'); }
 
   // Лист «Добавить»: скрытые карточки + полный список с переключателями
   function sheet() {
@@ -14761,13 +14801,14 @@ const V93 = (() => {
     let m = document.getElementById('v93Sheet');
     if (!m) {
       m = document.createElement('div'); m.id = 'v93Sheet'; m.className = 'modal-overlay';
-      m.innerHTML = `<div class="modal-content" style="max-width:420px"><div class="modal-title" id="v93SheetTitle"></div><div class="w92-set lt-sheet" id="v93SheetBody"></div><div style="margin-top:14px;display:flex;gap:8px"><button class="modal-close-btn" style="margin-top:0;flex:1" id="v93Reset">Сбросить</button><button class="modal-save-btn" style="flex:1" onclick="V93.closeSheet()">Готово</button></div></div>`;
+      m.innerHTML = `<div class="modal-content" style="max-width:420px"><div class="modal-title" id="v93SheetTitle"></div><div class="w92-set lt-sheet" id="v93SheetBody"></div><div style="margin-top:14px;display:flex;gap:8px"><button class="modal-close-btn" style="margin-top:0;flex:1" id="v93Reset">По умолчанию</button><button class="modal-close-btn" style="margin-top:0;flex:1" id="v93All">Показать все</button><button class="modal-save-btn" style="flex:1" onclick="V93.closeSheet()">Готово</button></div></div>`;
       m.addEventListener('click', e => { if (e.target === m) closeSheet(); });
       document.body.appendChild(m);
     }
     document.getElementById('v93SheetTitle').textContent = '🧩 Карточки · ' + TABS[tabId];
-    document.getElementById('v93SheetBody').innerHTML = `<div class="hint">Выключенные карточки исчезают с экрана, данные не теряются. Порядок — стрелками в режиме редактирования.</div>` + rows;
+    document.getElementById('v93SheetBody').innerHTML = `<div class="hint">Выключенные карточки исчезают с экрана и не считаются — данные не теряются. Порядок — стрелками в режиме редактирования.</div>` + rows;
     document.getElementById('v93Reset').onclick = () => resetTab(tabId);
+    document.getElementById('v93All').onclick = () => showAll(tabId);
     m.classList.add('show'); document.body.classList.add('modal-open');
   }
   function closeSheet() { const m = document.getElementById('v93Sheet'); if (m) m.classList.remove('show'); if (!document.querySelector('.modal-overlay.show')) document.body.classList.remove('modal-open'); }
@@ -14800,6 +14841,7 @@ const V93 = (() => {
     if (_booted) return; _booted = true;
     try {
       try { if (!PROGRESS_KEYS.includes(KEY)) PROGRESS_KEYS.push(KEY); } catch (e) {}
+      applyDefaults();
       for (const t of Object.keys(TABS)) {
         const el = document.getElementById(t); if (!el) continue;
         new MutationObserver(recs => { if (_applying) return; if (recs.every(r => [...r.addedNodes].every(n => n.dataset && n.dataset.ltUi))) return; schedule(t); }).observe(el, { childList: true, subtree: true });
@@ -14820,7 +14862,7 @@ const V93 = (() => {
     document.addEventListener('v7:login', () => setTimeout(boot, 600));
     setTimeout(() => { if (!_booted && typeof currentUser !== 'undefined' && currentUser) boot(); }, 7500);
   })();
-  return { boot, apply, applyAll, edit, done, hide, show, move, sheet, closeSheet, resetTab };
+  return { boot, apply, applyAll, edit, done, hide, show, move, sheet, closeSheet, resetTab, showAll, isHidden, DEFAULT_HIDDEN };
 })();
 window.V93 = V93;
 
