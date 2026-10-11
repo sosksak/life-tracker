@@ -8795,11 +8795,13 @@ function renderMonthGoal() {
   const hours = monthShifts.reduce((a, s) => a + s.hours, 0);
   const monthExp = monthShifts.reduce((a, s) => a + (s.expenses || 0), 0);
   const monthUnits = monthShifts.reduce((a, s) => a + (s.units || 0), 0);
+  const mn = getMonthNet(prefix);
+  const net = Math.round(mn.net);
 
-  // Средний заработок за смену: по этому месяцу, иначе по всей истории.
+  // Средняя чистая смена: по этому месяцу, иначе по всей истории.
   const avgPerShift = monthShifts.length
-    ? earned / monthShifts.length
-    : (shifts.length ? getShiftTotals().totalEarned / shifts.length : 0);
+    ? mn.avgNetPerShift
+    : (shifts.length ? (getShiftTotals().totalEarned - shifts.reduce((a, s) => a + (s.expenses || 0), 0)) / shifts.length : 0);
 
   // Прогноз: уже заработано + запланированные в календаре будущие смены.
   const plan = getCalendarPlan();
@@ -8816,19 +8818,19 @@ function renderMonthGoal() {
   // Если план не отмечен — прогноз по текущему темпу (смен/день), иначе — по плану
   const daysLeftF = daysInMonth - now.getDate();
   const paceShifts = plannedAhead > 0 ? plannedAhead : Math.round((monthShifts.length / Math.max(1, now.getDate())) * daysLeftF);
-  const forecast = Math.round(earned + paceShifts * avgPerShift);
+  const forecast = Math.round(net + paceShifts * avgPerShift);
   const forecastHow = paceShifts > 0
-    ? `${earned.toLocaleString('ru-RU')} ₽ факт + ${paceShifts} ${pluralShifts(paceShifts)} × ~${Math.round(avgPerShift).toLocaleString('ru-RU')} ₽ ${plannedAhead > 0 ? '(по календарю)' : '(по текущему темпу)'}`
+    ? `${net.toLocaleString('ru-RU')} ₽ чистыми + ${paceShifts} ${pluralShifts(paceShifts)} × ~${Math.round(avgPerShift).toLocaleString('ru-RU')} ₽ ${plannedAhead > 0 ? '(по календарю)' : '(по текущему темпу)'}`
     : 'только факт — отметь смены в календаре 📋 ниже, и прогноз их учтёт';
 
   const goal = getMonthGoal();
-  const pct = goal ? Math.min(100, (earned / goal) * 100) : 0;
-  const left = goal ? Math.max(0, goal - earned) : 0;
+  const pct = goal ? Math.max(0, Math.min(100, (net / goal) * 100)) : 0;
+  const left = goal ? Math.max(0, goal - net) : 0;
   const shiftsLeft = (goal && avgPerShift > 0) ? Math.ceil(left / avgPerShift) : 0;
 
   const goalBlock = goal ? `
     <div class="chart-sub">
-      <div><div class="big">${earned.toLocaleString('ru-RU')} ₽</div><div class="lbl">из ${goal.toLocaleString('ru-RU')} ₽</div></div>
+      <div><div class="big">${net.toLocaleString('ru-RU')} ₽</div><div class="lbl">чистыми из ${goal.toLocaleString('ru-RU')} ₽</div></div>
       <div style="text-align:right;"><div class="big">${Math.round(pct)}%</div><div class="lbl">${left > 0 ? 'осталось ' + left.toLocaleString('ru-RU') + ' ₽' : 'цель взята! 🎉'}</div></div>
     </div>
     <div class="xp-bar" style="margin:4px 0 10px;"><div class="xp-fill" style="width:${pct}%"></div></div>
@@ -8841,7 +8843,9 @@ function renderMonthGoal() {
       <div class="mg-row"><span>📊 Прогноз к концу месяца</span><b>${forecast.toLocaleString('ru-RU')} ₽</b></div>
       <div class="mg-note" style="margin:-2px 0 6px;opacity:.8">${forecastHow}</div>
       <div class="mg-row"><span>📋 Отработано смен</span><b>${monthShifts.length} · ${hours.toFixed(1)} ч</b></div>
-      ${monthExp ? `<div class="mg-row"><span>💸 Расходы · чистыми</span><b>−${monthExp.toLocaleString('ru-RU')} ₽ · ${(earned - monthExp).toLocaleString('ru-RU')} ₽</b></div>` : ''}
+      <div class="mg-row"><span>💰 Доход за месяц</span><b>${Math.round(mn.gross).toLocaleString('ru-RU')} ₽${mn.txInc ? ` <span class="rec-date">смены ${earned.toLocaleString('ru-RU')} + прочее ${Math.round(mn.txInc).toLocaleString('ru-RU')}</span>` : ''}</b></div>
+      ${mn.spent ? `<div class="mg-row"><span>💸 Расходы</span><b>−${Math.round(mn.spent).toLocaleString('ru-RU')} ₽${monthExp ? ` <span class="rec-date">в сменах ${monthExp.toLocaleString('ru-RU')}</span>` : ''}</b></div>` : ''}
+      ${mn.adj ? `<div class="mg-row"><span>⚖️ Корректировка баланса</span><b>${mn.adj > 0 ? '+' : '−'}${Math.abs(Math.round(mn.adj)).toLocaleString('ru-RU')} ₽</b></div>` : ''}
       ${monthUnits ? `<div class="mg-row"><span>📦 Заказов за месяц</span><b>${monthUnits} · ${hours > 0 ? Math.round(monthUnits / hours * 10) / 10 : 0}/ч</b></div>` : ''}
       <div class="mg-row"><span>📅 Запланировано впереди</span><b>${plannedAhead ? plannedAhead + ' ' + pluralShifts(plannedAhead) : '<span style="color:var(--accent);cursor:pointer" onclick="document.getElementById(\'calGrid\')?.scrollIntoView({behavior:\'smooth\',block:\'center\'})">отметить в календаре ›</span>'}</b></div>
     </div>`;
@@ -9089,7 +9093,7 @@ function renderChart() {
 
 // ====== PWA: SERVICE WORKER ======
 // Регистрируем только по http/https — с file:// браузер ругается.
-const APP_VERSION = 'v9.6.2';
+const APP_VERSION = 'v9.6.3';
 
 // v7.2.0 — политика обновлений «страница никогда не стартует старой»:
 //   Воркер (sw.js) перед отдачей index.html сверяет ETag с сервером и при
@@ -9362,7 +9366,7 @@ function closeSummary() {
 
 // --- Million Path ---
 function renderMillionPath() {
-  const total = getShiftTotals().totalEarned;
+  const total = Math.max(0, Math.round(getWalletBalance().balance));
   const el = document.getElementById('millionPath');
   if (total < 1000) { el.style.display = 'none'; return; }
   el.style.display = 'block';
@@ -9384,13 +9388,13 @@ function renderKopilka() {
   const card = document.getElementById('kopilkaCard');
   if (!k || !k.goal) { card.style.display = 'none'; return; }
   card.style.display = 'block';
-  const total = getShiftTotals().totalEarned;
+  const total = Math.max(0, Math.round(getWalletBalance().balance));
   const pct = Math.min((total / k.goal) * 100, 100);
   document.getElementById('kopilkaName').textContent = `🎯 ${k.name || 'Цель'}`;
   document.getElementById('kopilkaAmount').textContent = `${total.toLocaleString('ru-RU')} / ${k.goal.toLocaleString('ru-RU')} ₽`;
   document.getElementById('kopilkaFill').style.width = pct + '%';
   const remaining = Math.max(k.goal - total, 0);
-  const avgPerShift = shifts.length > 0 ? getShiftTotals().totalEarned / shifts.length : 0;
+  const avgPerShift = shifts.length > 0 ? (getShiftTotals().totalEarned - shifts.reduce((a, s) => a + (s.expenses || 0), 0)) / shifts.length : 0;
   const shiftsLeft = avgPerShift > 0 ? Math.ceil(remaining / avgPerShift) : '∞';
   document.getElementById('kopilkaSub').textContent = remaining > 0 ? `Осталось ~${shiftsLeft} смен` : '🎉 Цель достигнута';
 }
@@ -10053,6 +10057,28 @@ function getWalletBalance() {
   } catch (e) {}
   return { balance: totalEarned + txInc + adj - shiftExp - txExp, totalEarned, shiftExp, txInc, txExp, adj };
 }
+// v9.6.3: единый расчёт месяца "чистыми": смены + прочие доходы − расходы смен − расходы/корректировки из «Деньги».
+// Этим пользуются цель месяца, прогноз, дашборд и FINANCE — чтобы все вкладки сходились в одну цифру.
+function getMonthNet(prefix) {
+  if (!prefix) { const n = new Date(); prefix = `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, '0')}`; }
+  const ms = (shifts || []).filter(x => x.date && x.date.startsWith(prefix));
+  const shiftEarned = ms.reduce((a, x) => a + (x.earned || 0), 0);
+  const shiftExp = ms.reduce((a, x) => a + (x.expenses || 0), 0);
+  let txInc = 0, txExp = 0, adj = 0;
+  try {
+    (FINANCE.getTransactions() || []).forEach(t => {
+      if (!t.date || !t.date.startsWith(prefix)) return;
+      const a = +t.amount || 0;
+      if (t.category === 'adjust') adj += t.type === 'income' ? a : -a;
+      else if (t.type === 'income') txInc += a;
+      else txExp += a;
+    });
+  } catch (e) {}
+  const gross = shiftEarned + txInc;
+  const spent = shiftExp + txExp;
+  return { n: ms.length, shiftEarned, shiftExp, txInc, txExp, adj, gross, spent, net: gross - spent + adj,
+           avgNetPerShift: ms.length ? (shiftEarned - shiftExp) / ms.length : 0 };
+}
 async function editWalletBalance() {
   const w = getWalletBalance();
   const res = await askForm([
@@ -10066,7 +10092,9 @@ async function editWalletBalance() {
   FINANCE.addAdjustment(diff);
   showToast(`⚖️ Баланс скорректирован: ${diff > 0 ? '+' : '−'}${Math.abs(diff).toLocaleString('ru-RU')} ₽`, 'success');
   haptic('light');
+  invalidateShiftCache();
   render();
+  try { if (typeof renderStats === 'function') renderStats(); } catch (e) {}
 }
 function invalidateShiftCache() { _shiftCache.len = -1; _streakCache.key = ''; _heatmapLastKey = ''; }
 
@@ -11096,7 +11124,7 @@ const FINANCE = (() => {
     haptic('light');
     render();
     if (typeof DASHBOARD !== 'undefined') DASHBOARD.render();
-    if (typeof scheduleRender === 'function') scheduleRender(); // кошелёк на Работе
+    if (typeof scheduleRender === 'function') scheduleRender(); // кошелёк, цели и прогнозы
   }
 
   // v9.6.2: ручная корректировка баланса кошелька (знак = направление)
@@ -11141,7 +11169,7 @@ const FINANCE = (() => {
   function getMonthSummary(monthOffset = 0) {
     const txs = getMonthTransactions(monthOffset);
     const income = txs.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
-    const expenses = txs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+    let expenses = txs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
 
     // Добавляем заработок со смен за этот месяц
     const now = new Date();
@@ -11149,16 +11177,17 @@ const FINANCE = (() => {
     const month = now.getMonth() + monthOffset;
     const d = new Date(year, month, 1);
     const prefix = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-    const shiftIncome = (typeof shifts !== 'undefined' ? shifts : [])
-      .filter(s => s.date.startsWith(prefix))
-      .reduce((s, x) => s + x.earned, 0);
+    const monthShifts = (typeof shifts !== 'undefined' ? shifts : []).filter(s => s.date.startsWith(prefix));
+    const shiftIncome = monthShifts.reduce((s, x) => s + x.earned, 0);
+    const shiftExpenses = monthShifts.reduce((s, x) => s + (x.expenses || 0), 0);
 
     const totalIncome = income + shiftIncome;
+    expenses += shiftExpenses; // расходы, записанные в сменах, тоже расходы
     const balance = totalIncome - expenses;
     const budget = getBudget();
     const budgetPct = budget.monthly > 0 ? Math.round(expenses / budget.monthly * 100) : 0;
 
-    return { income: totalIncome, shiftIncome, manualIncome: income, expenses, balance, budgetPct };
+    return { income: totalIncome, shiftIncome, manualIncome: income, expenses, shiftExpenses, balance, budgetPct };
   }
 
   function getCategoryBreakdown(monthOffset = 0) {
@@ -11266,6 +11295,7 @@ const FINANCE = (() => {
         <div class="fin-card fin-card--expense">
           <div class="fin-card-label">Расходы</div>
           <div class="fin-card-value">${summary.expenses.toLocaleString('ru-RU')} ₽</div>
+          ${summary.shiftExpenses ? `<div class="fin-card-sub">в сменах: ${summary.shiftExpenses.toLocaleString('ru-RU')}</div>` : ''}
           ${budget.monthly > 0 ? `<div class="fin-card-bar"><div class="fin-card-fill ${summary.budgetPct > 90 ? 'danger' : summary.budgetPct > 70 ? 'warn' : ''}" style="width:${Math.min(summary.budgetPct, 100)}%"></div></div>
           <div class="fin-card-sub">${summary.budgetPct}% бюджета</div>` : ''}
         </div>
@@ -14505,14 +14535,15 @@ const V92 = (() => {
   function monthData() {
     const now = new Date(), prefix = monthPrefix(now);
     const ms = (shifts || []).filter(s => s.date && s.date.startsWith(prefix));
-    const earned = ms.reduce((a, s) => a + (s.earned || 0), 0);
+    const mn = typeof getMonthNet === 'function' ? getMonthNet(prefix) : null;
+    const earned = mn ? Math.round(mn.net) : ms.reduce((a, s) => a + (s.earned || 0), 0); // чистыми
     const goal = typeof getMonthGoal === 'function' ? getMonthGoal() : 0;
     const daysIn = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
     const today = now.getDate(), daysLeft = daysIn - today;
     // средняя смена: этот месяц → последние 20 смен → 0
     let avg = 0;
-    if (ms.length) avg = earned / ms.length;
-    else { const r = (shifts || []).slice(0, 20); if (r.length) avg = r.reduce((a, s) => a + (s.earned || 0), 0) / r.length; }
+    if (ms.length) avg = mn ? mn.avgNetPerShift : earned / ms.length;
+    else { const r = (shifts || []).slice(0, 20); if (r.length) avg = r.reduce((a, s) => a + (s.earned || 0) - (s.expenses || 0), 0) / r.length; }
     // запланированные смены в календаре до конца месяца
     let planned = 0; const plan = typeof getCalendarPlan === 'function' ? getCalendarPlan() : {};
     const ts = todayStr();
@@ -14524,7 +14555,7 @@ const V92 = (() => {
     const liveEarn = live ? live.earned : 0;
     const remain = Math.max(0, goal - earned - liveEarn);
     const needShifts = avg > 0 ? Math.ceil(remain / avg) : 0;
-    return { earned, goal, daysIn, today, daysLeft, avg, planned, forecast, remain, needShifts, n: ms.length, liveEarn, pct: goal > 0 ? Math.min(100, earned / goal * 100) : 0, fpct: goal > 0 ? Math.min(100, forecast / goal * 100) : 0 };
+    return { earned, goal, daysIn, today, daysLeft, avg, planned, forecast, remain, needShifts, n: ms.length, liveEarn, pct: goal > 0 ? Math.max(0, Math.min(100, earned / goal * 100)) : 0, fpct: goal > 0 ? Math.max(0, Math.min(100, forecast / goal * 100)) : 0 };
   }
   function weekData() {
     const d = new Date(), dow = (d.getDay() + 6) % 7, out = [], plan = typeof getCalendarPlan === 'function' ? getCalendarPlan() : {};
@@ -14577,7 +14608,7 @@ const V92 = (() => {
     const now = new Date(), mname = now.toLocaleDateString('ru-RU', { month: 'long' });
     if (!m.goal) {
       return `<div class="w92-head"><span class="t">🎯 Путь к цели месяца</span><button class="a" onclick="openMonthGoalPrompt()">Задать цель</button></div>
-        <div class="w92-month-top"><div class="v">${fmt(m.earned)} <small>₽ за ${mname}</small></div><span class="w92-pill">${m.n} ${plural(m.n, 'смена', 'смены', 'смен')}</span></div>
+        <div class="w92-month-top"><div class="v">${fmt(m.earned)} <small>₽ чистыми за ${mname}</small></div><span class="w92-pill">${m.n} ${plural(m.n, 'смена', 'смены', 'смен')}</span></div>
         <div class="w92-hint">Задай цель месяца — покажу прогноз, сколько смен осталось и успеваешь ли по календарю.</div>`;
     }
     const ok = m.forecast >= m.goal, done = m.earned >= m.goal;
@@ -14597,7 +14628,7 @@ const V92 = (() => {
       hint += m.planned ? ` Прогноз <b>${fmt(m.forecast)} ₽</b> — по ${m.planned} ${plural(m.planned, 'запланированной', 'запланированным', 'запланированным')} в календаре.` : ` Прогноз <b>${fmt(m.forecast)} ₽</b> — по текущему темпу; отметь смены в календаре (Стата), будет точнее.`;
     }
     return `<div class="w92-head"><span class="t">🎯 Путь к цели месяца</span><button class="a" onclick="openMonthGoalPrompt()">Изменить</button></div>
-      <div class="w92-month-top"><div class="v">${fmt(m.earned)} <small>/ ${fmt(m.goal)} ₽</small></div>${pill}</div>
+      <div class="w92-month-top"><div class="v">${fmt(m.earned)} <small>/ ${fmt(m.goal)} ₽ чистыми</small></div>${pill}</div>
       <div class="w92-bar"><div class="p" style="width:${m.fpct.toFixed(1)}%"></div><div class="f" style="width:${m.pct.toFixed(1)}%;${done ? 'background:var(--green)' : ''}"></div><div class="m" style="left:${Math.min(99.5, m.today / m.daysIn * 100).toFixed(1)}%"></div></div>
       <div class="w92-row"><span>факт <b>${m.pct.toFixed(0)}%</b></span><span>день <b>${m.today}/${m.daysIn}</b></span><span>в среднем <b>${fmt(m.avg)} ₽</b>/смена</span></div>
       <div class="w92-hint">${hint}</div>`;
