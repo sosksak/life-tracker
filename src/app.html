@@ -8919,7 +8919,7 @@ function renderChart() {
 
 // ====== PWA: SERVICE WORKER ======
 // Регистрируем только по http/https — с file:// браузер ругается.
-const APP_VERSION = 'v9.1.3';
+const APP_VERSION = 'v9.1.4';
 
 // v7.2.0 — политика обновлений «страница никогда не стартует старой»:
 //   Воркер (sw.js) перед отдачей index.html сверяет ETag с сервером и при
@@ -12473,7 +12473,7 @@ function applyRules(t) {
   const o = (rec && t.nodeValue === rec.v) ? rec.o : t.nodeValue;
   let v = o;
   for (const [re, rep] of _localizeRules) v = v.replace(re, rep);
-  if (v !== o) { _locTouched.set(t, { o, v }); t.nodeValue = v; }
+  if (v !== o) { _locTouched.set(t, { o, v }); if (t.nodeValue !== v) t.nodeValue = v; }
   else if (rec) _locTouched.delete(t);
 }
 function restoreLocalized() {
