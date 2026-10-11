@@ -17,7 +17,7 @@
 // VERSION подставляется сборщиком (build.py) из src/app.html — одна версия
 // у страницы, воркера и имени кэша.
 
-const VERSION = 'v9.6.0';
+const VERSION = 'v9.6.1';
 const CACHE = 'life-tracker-' + VERSION;
 const INDEX_KEY = './index.html';
 const CFG_KEY = './config.js';
@@ -153,8 +153,10 @@ self.addEventListener('fetch', (e) => {
   // Сам воркер никогда не кэшируем — иначе обновления не находятся.
   if (url.pathname.endsWith('sw.js')) return;
 
-  const isNav = (req.mode === 'navigate' || url.pathname.endsWith('/') || url.pathname.endsWith('index.html'))
-    && !/\/plan\.html$/.test(url.pathname); // отдельные страницы (plan.html) — не подменяем на index
+  // Приложением считаем только корень scope ('/' или '/index.html').
+  // Всё остальное (plan.html, docs/…) — отдельные страницы, их не подменяем на index.
+  const scopePath = new URL(self.registration.scope).pathname;
+  const isNav = (url.pathname === scopePath || url.pathname === scopePath + 'index.html');
   const isCfg = url.pathname.endsWith('config.js');
 
   if (isNav || isCfg) {

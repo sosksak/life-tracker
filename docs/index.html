@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Life Tracker — сколько реально стоит твой час</title>
+<meta name="description" content="PWA-трекер смен, привычек и денег. Живой ₽/час, прогноз месяца, отчёты с налогом, XP и достижения.">
+<style>
+:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--t:#e6edf3;--dim:#8b949e;--acc:#58a6ff;--g:#3fb950}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:16px/1.5 -apple-system,Inter,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:48px 20px}
+h1{font-size:42px;line-height:1.1;margin:0 0 12px;letter-spacing:-.02em}h1 span{color:var(--acc)}
+.lead{color:var(--dim);font-size:19px;max-width:620px;margin:0 0 28px}
+.btn{display:inline-block;background:var(--acc);color:#0d1117;font-weight:700;padding:14px 26px;border-radius:12px;text-decoration:none;font-size:17px}
+.btn.o{background:transparent;color:var(--t);border:1px solid var(--line);margin-left:10px}
+.shots{display:flex;gap:14px;overflow-x:auto;padding:36px 0 16px;scroll-snap-type:x mandatory}
+.shots img{width:250px;border-radius:22px;border:1px solid var(--line);scroll-snap-align:start;flex:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:28px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.card h3{margin:0 0 8px;font-size:16px}.card p{margin:0;color:var(--dim);font-size:14px}
+.ios{margin-top:36px;padding:18px;border:1px dashed var(--line);border-radius:14px;color:var(--dim);font-size:14px}
+footer{margin-top:48px;color:var(--dim);font-size:13px}footer a{color:var(--acc)}
+@media(max-width:600px){h1{font-size:32px}.btn{display:block;text-align:center;margin:0 0 10px}.btn.o{margin-left:0}}
+</style></head><body><div class="wrap">
+<h1>Сколько реально стоит <span>твой час</span></h1>
+<p class="lead">Life Tracker — трекер для тех, кто работает сменами. Запусти смену, жми +1 на каждом заказе и смотри живой ₽/час, прогноз месяца и чистый доход после расходов и налога. Плюс привычки, задания и деньги — в одном приложении, без подписки.</p>
+<a class="btn" href="../index.html">Открыть приложение</a><a class="btn o" href="https://github.com/sosksak/life-tracker">Код на GitHub</a>
+<div class="shots">
+<img src="shots/home.png" alt="Главная"><img src="shots/work.png" alt="Смена"><img src="shots/work2.png" alt="Аналитика"><img src="shots/stats.png" alt="Статистика"><img src="shots/stats2.png" alt="План месяца">
+</div>
+<div class="grid">
+<div class="card"><h3>⏱ Смена одной кнопкой</h3><p>Таймер, перерывы, счётчик заказов, живой ₽/час и прогноз дохода. Ассистент сравнивает с твоим средним и напоминает про перерыв.</p></div>
+<div class="card"><h3>🎯 План месяца</h3><p>Цель → факт / прогноз / «ещё N смен». Отметь смены в календаре — прогноз пересчитается сразу.</p></div>
+<div class="card"><h3>📊 Аналитика</h3><p>Лучшие дни недели, эффективность по времени старта, рекорды, стабильность, дельта к прошлому периоду.</p></div>
+<div class="card"><h3>🧾 Отчёт и налог</h3><p>KPI месяца, НПД / УСН / НДФЛ, график 6 месяцев, экспорт PDF и CSV — для самозанятости и Excel.</p></div>
+<div class="card"><h3>🔥 XP и достижения</h3><p>Уровни за смены и часы, серия дней, награды за возврат, магазин бустов и тем.</p></div>
+<div class="card"><h3>☁️ Синхронизация и офлайн</h3><p>Данные в облаке между устройствами, офлайн-очередь, мгновенный старт из кэша, JSON-бэкап.</p></div>
+</div>
+<div class="ios">📱 iPhone: открой ссылку в Safari → «Поделиться» → «На экран “Домой”». Android: Chrome предложит установить сам.</div>
+<footer>Life Tracker · <a href="https://github.com/sosksak/life-tracker">github.com/sosksak/life-tracker</a></footer>
+</div></body></html>
