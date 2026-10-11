@@ -3823,6 +3823,134 @@ html[data-theme="dark"] .ico-party, html[data-theme="dark"] .ico-gift, html[data
 html[data-theme="dark"] .ico-coffee, html[data-theme="dark"] .ico-pizza, html[data-theme="dark"] .ico-cup { color: #D69E2E; }
 html[data-theme="dark"] .pomo-mode.on { color: var(--accent); }
 
+/* ===== v9 — ТРЕЙДЕР: цели, стратегии, журнал, риски, знания, слежение ===== */
+.v9 { margin: 0 var(--sp-3) var(--sp-3); }
+.v9-card { padding: 14px 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); margin-bottom: 12px; }
+.v9-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.v9-title { font-size: 13px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--text); }
+.v9-sub { font-size: 11px; color: var(--text-dim); font-weight: 600; }
+.v9-nav { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 8px; margin-bottom: 4px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.v9-nav::-webkit-scrollbar { display: none; }
+.v9-nav button { flex: 0 0 auto; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-secondary); font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.v9-nav button.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+.v9-nav button .n { display: inline-block; min-width: 16px; padding: 0 5px; margin-left: 4px; border-radius: 999px; background: var(--accent-soft-2); color: var(--text); font-size: 10px; }
+.v9-nav button.on .n { background: rgba(255,255,255,.22); color: #fff; }
+.v9-kpi { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.v9-kpi .c { padding: 10px 8px; background: var(--bg-card2); border-radius: var(--radius-sm); text-align: center; }
+.v9-kpi .v { font-size: 15px; font-weight: 800; white-space: nowrap; }
+.v9-kpi .l { font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; letter-spacing: .03em; margin-top: 2px; }
+.v9-kpi .v.g, .v9-g { color: var(--green); } .v9-kpi .v.r, .v9-r { color: var(--red); } .v9-o { color: var(--orange); }
+.v9-hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.v9-hero .big { font-size: 26px; font-weight: 800; line-height: 1; }
+.v9-hero .big small { font-size: 13px; color: var(--text-dim); font-weight: 700; margin-left: 4px; }
+.v9-hero .lbl { font-size: 11px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+.v9-bar { height: 7px; background: var(--bg-card2); border-radius: 999px; overflow: hidden; margin: 6px 0; }
+.v9-bar i { display: block; height: 100%; background: var(--accent); border-radius: 999px; transition: width .5s var(--ease-out, ease); }
+.v9-bar i.r { background: var(--red); } .v9-bar i.g { background: var(--green); } .v9-bar i.o { background: var(--orange); }
+.v9-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid var(--border); cursor: pointer; }
+.v9-row:first-child { border-top: 0; }
+.v9-row .ico { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; background: var(--bg-card2); flex: 0 0 34px; }
+.v9-row .t { flex: 1; min-width: 0; font-size: 13px; font-weight: 700; }
+.v9-row .t .s { display: block; font-size: 11px; color: var(--text-dim); font-weight: 600; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.v9-row .v { text-align: right; font-size: 13px; font-weight: 800; white-space: nowrap; }
+.v9-row .v .s { display: block; font-size: 10.5px; color: var(--text-dim); font-weight: 600; }
+.v9-chip { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: var(--bg-card2); color: var(--text-secondary); border: 1px solid var(--border); margin: 2px 4px 2px 0; }
+.v9-chip.g { background: var(--green-bg); color: var(--green); border-color: transparent; }
+.v9-chip.r { background: var(--red-bg); color: var(--red); border-color: transparent; }
+.v9-chip.o { background: var(--orange-bg); color: var(--orange); border-color: transparent; }
+.v9-chip.p { background: var(--accent-soft); color: var(--primary); border-color: transparent; }
+.v9-side { font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; color: #fff; }
+.v9-side.long { background: var(--green); } .v9-side.short { background: var(--red); }
+.v9-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.v9-btn { flex: 1; min-width: 0; padding: 10px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg-card); color: var(--text); font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.v9-btn.p { background: var(--primary); color: #fff; border-color: var(--primary); }
+.v9-btn.a { background: var(--accent); color: #fff; border-color: var(--accent); }
+.v9-btn.d { color: var(--red); }
+.v9-btn:active { transform: scale(.97); }
+.v9-alert { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: var(--radius-sm); margin-bottom: 8px; font-size: 12px; font-weight: 600; line-height: 1.35; border: 1px solid transparent; }
+.v9-alert b { font-weight: 800; }
+.v9-alert.r { background: var(--red-bg); color: var(--red); border-color: color-mix(in srgb, var(--red) 30%, transparent); }
+.v9-alert.o { background: var(--orange-bg); color: var(--orange); }
+.v9-alert.g { background: var(--green-bg); color: var(--green); }
+.v9-alert.i { background: var(--accent-soft); color: var(--text); }
+.v9-alert .x { font-size: 16px; line-height: 1; flex: 0 0 auto; }
+.v9-empty { padding: 14px; text-align: center; color: var(--text-dim); font-size: 12px; font-weight: 600; line-height: 1.45; background: var(--bg-card2); border-radius: var(--radius-sm); }
+.v9-empty b { color: var(--text); }
+.v9-svg { width: 100%; height: 96px; display: block; margin-top: 6px; }
+.v9-hbar { display: grid; grid-template-columns: 92px 1fr auto; gap: 6px 8px; align-items: center; font-size: 12px; font-weight: 700; padding: 4px 0; }
+.v9-hbar .l { color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.v9-hbar .b { height: 10px; background: var(--bg-card2); border-radius: 999px; position: relative; overflow: hidden; }
+.v9-hbar .b i { position: absolute; top: 0; bottom: 0; border-radius: 999px; background: var(--green); }
+.v9-hbar .b i.r { background: var(--red); }
+.v9-hbar .v { white-space: nowrap; font-size: 11.5px; }
+.v9-sec { font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: .04em; margin: 12px 0 6px; }
+.v9-tip { padding: 12px 14px; border-radius: var(--radius-sm); background: linear-gradient(135deg, var(--accent-soft), var(--accent-soft-2)); font-size: 12.5px; line-height: 1.45; font-weight: 600; }
+.v9-tip .h { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--primary); margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+.v9-tip .h button { border: 0; background: transparent; color: var(--primary); font: inherit; font-size: 11px; font-weight: 800; cursor: pointer; }
+.v9-art { border-top: 1px solid var(--border); }
+.v9-art summary { list-style: none; display: flex; align-items: center; gap: 10px; padding: 10px 0; cursor: pointer; font-size: 13px; font-weight: 700; }
+.v9-art summary::-webkit-details-marker { display: none; }
+.v9-art summary .s { display: block; font-size: 11px; color: var(--text-dim); font-weight: 600; margin-top: 2px; }
+.v9-art summary .ic { font-size: 18px; flex: 0 0 28px; text-align: center; }
+.v9-art summary .ar { margin-left: auto; color: var(--text-dim); transition: transform .2s; }
+.v9-art[open] summary .ar { transform: rotate(90deg); }
+.v9-art .body { font-size: 12.5px; line-height: 1.5; color: var(--text-secondary); padding: 0 0 12px 38px; font-weight: 500; }
+.v9-art .body p { margin: 0 0 6px; } .v9-art .body b { color: var(--text); }
+.v9-art .body ul { margin: 4px 0 6px; padding-left: 18px; }
+.v9-check { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid var(--border); font-size: 12.5px; font-weight: 600; cursor: pointer; }
+.v9-check input { width: 18px; height: 18px; accent-color: var(--accent); flex: 0 0 18px; }
+.v9-form { display: flex; flex-direction: column; gap: 10px; }
+.v9-form label { display: block; font-size: 11px; font-weight: 700; color: var(--text-dim); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .03em; }
+.v9-form input, .v9-form select, .v9-form textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; font: inherit; font-size: 14px; font-weight: 600; background: var(--bg-main); color: var(--text); box-sizing: border-box; }
+.v9-form textarea { resize: vertical; min-height: 56px; }
+.v9-form .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.v9-form .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.v9-seg { display: flex; gap: 6px; }
+.v9-seg button { flex: 1; padding: 9px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-main); color: var(--text-secondary); font: inherit; font-size: 12px; font-weight: 800; cursor: pointer; }
+.v9-seg button.on.long { background: var(--green); color: #fff; border-color: var(--green); }
+.v9-seg button.on.short { background: var(--red); color: #fff; border-color: var(--red); }
+.v9-seg button.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+.v9-calc { padding: 10px 12px; background: var(--bg-card2); border-radius: 10px; font-size: 12px; font-weight: 600; line-height: 1.5; }
+.v9-calc b { font-weight: 800; }
+.v9-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.v9-tags button { padding: 6px 10px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-main); color: var(--text-secondary); font: inherit; font-size: 11.5px; font-weight: 700; cursor: pointer; }
+.v9-tags button.on { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+.v9-tags button.on.ok { background: var(--green-bg); color: var(--green); border-color: var(--green); }
+.v9-modal .modal-content { max-width: 400px; max-height: 88vh; overflow-y: auto; }
+.v9-wl { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; padding: 10px 0; border-top: 1px solid var(--border); }
+.v9-wl:first-child { border-top: 0; }
+.v9-wl .n { font-size: 13px; font-weight: 800; }
+.v9-wl .n small { font-weight: 600; color: var(--text-dim); margin-left: 6px; font-size: 11px; }
+.v9-wl .p { text-align: right; font-size: 13px; font-weight: 800; white-space: nowrap; }
+.v9-wl .p small { display: block; font-size: 10.5px; color: var(--text-dim); font-weight: 600; }
+.v9-range { grid-column: 1 / 3; position: relative; height: 8px; background: linear-gradient(90deg, var(--red) 0, var(--bg-card2) 50%, var(--green) 100%); border-radius: 999px; margin: 4px 0 2px; opacity: .9; }
+.v9-range i { position: absolute; top: -4px; width: 16px; height: 16px; border-radius: 50%; background: var(--bg-card); border: 3px solid var(--primary); transform: translateX(-50%); box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+.v9-range-l { grid-column: 1 / 3; display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; color: var(--text-dim); }
+.v9-wl .acts { grid-column: 1 / 3; display: flex; gap: 6px; margin-top: 4px; }
+.v9-wl .acts button { flex: 1; padding: 7px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-card); font: inherit; font-size: 11.5px; font-weight: 700; cursor: pointer; color: var(--text); }
+.v9-pick { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.v9-pick .it { display: grid; grid-template-columns: 36px 1fr auto; gap: 8px 10px; align-items: center; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-main); cursor: pointer; }
+.v9-pick .it.top { border-color: var(--accent); background: var(--accent-soft); }
+.v9-pick .ic { width: 36px; height: 36px; border-radius: 10px; background: var(--bg-card2); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; }
+.v9-pick .nm { font-size: 13px; font-weight: 800; }
+.v9-pick .nm small { display: block; font-size: 11px; color: var(--text-dim); font-weight: 600; margin-top: 2px; }
+.v9-pick .pr { text-align: right; font-size: 12px; font-weight: 800; white-space: nowrap; }
+.v9-pick .pr small { display: block; font-size: 10.5px; font-weight: 700; }
+.v9-pick .why { grid-column: 1 / 4; font-size: 11px; color: var(--text-secondary); font-weight: 600; line-height: 1.4; }
+.v9-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.v9-mini { padding: 10px; border-radius: var(--radius-sm); background: var(--bg-card2); }
+.v9-mini .l { font-size: 10px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: .03em; }
+.v9-mini .v { font-size: 14px; font-weight: 800; margin-top: 2px; }
+.v9-mini .s { font-size: 11px; color: var(--text-dim); font-weight: 600; margin-top: 2px; }
+.v9-stars { display: flex; gap: 4px; }
+.v9-stars button { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-main); font: inherit; font-weight: 800; cursor: pointer; color: var(--text-dim); }
+.v9-stars button.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+.v9-dash { margin: 0 var(--sp-3) var(--sp-3); padding: 12px 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.v9-dash .t { flex: 1; font-size: 12.5px; font-weight: 700; } .v9-dash .t .s { display: block; font-size: 11px; color: var(--text-dim); font-weight: 600; margin-top: 2px; }
+.v9-dash .big { font-size: 16px; font-weight: 800; white-space: nowrap; }
+[data-theme="dark"] .v9-tip { background: linear-gradient(135deg, #17283B, #1D3652); }
+[data-theme="dark"] .v9-pick .it.top { background: #17283B; }
+
 </style>
 </head>
 <body class="splash">
@@ -8762,7 +8890,7 @@ function renderChart() {
 
 // ====== PWA: SERVICE WORKER ======
 // Регистрируем только по http/https — с file:// браузер ругается.
-const APP_VERSION = 'v8.1.0';
+const APP_VERSION = 'v9.0.0';
 
 // v7.2.0 — политика обновлений «страница никогда не стартует старой»:
 //   Воркер (sw.js) перед отдачей index.html сверяет ETag с сервером и при
@@ -12139,6 +12267,7 @@ window.bootV6 = bootV6;
 const UI_HINTS = [
   { id: 'wt', target: '#wtChip', title: '💼 Тип работы', text: 'Здесь меняется тип работы: цвета, термины и целевая ставка подстроятся. Это же есть в «Профиль → Режим приложения».', when: () => true },
   { id: 'cat', target: '#catHub', title: '🎯 Направление заданий', text: 'Тут выбираешь, из какого направления будут завтрашние личные задания. Цветная метка под каждым заданием — его направление.', when: () => document.getElementById('lifeContent')?.classList.contains('active') },
+  { id: 'trader', target: '#v9Trader .v9-nav', title: '📈 Режим трейдера', text: 'Обзор, журнал сделок с расчётом риска и R, стратегии со статистикой, цели, риск-контроль, слежение за активами и база знаний. Начни с «⚙ Настроить депозит».', when: () => { try { return V7.getWorkType().id === 'trader' && document.getElementById('contentLive')?.classList.contains('active'); } catch (e) { return false; } } },
   { id: 'shop', target: '#tabMoney', title: '💰 Деньги', text: 'Биржа с живым курсом крипты, финансы и портфель — здесь. Бусты (замены, двойной XP, направление заданий) покупаются за Life XP.', when: () => true }
 ];
 function getHintsSeen() { try { return uGet('v7_hints_seen', {}) || {}; } catch (e) { return {}; } }
@@ -12206,9 +12335,10 @@ const NOUNS = {
   session: { one: 'сессия',     acc: 'сессию',     plural: 'сессий',     active: 'СЕССИЯ АКТИВНА',     inactive: 'СЕССИЯ НЕ АКТИВНА',     tasks: 'ЗАДАЧИ СЕССИИ',      start: 'Начать сессию',      end: 'Завершить сессию',      add: 'Добавить сессию',      tab: 'РАБОТА' },
   day:     { one: 'день',       acc: 'день',       plural: 'дней',       active: 'РАБОЧИЙ ДЕНЬ ИДЁТ',  inactive: 'ДЕНЬ НЕ НАЧАТ',         tasks: 'ЗАДАЧИ ДНЯ',         start: 'Начать день',        end: 'Завершить день',        add: 'Добавить день',        tab: 'РАБОТА' },
   workout: { one: 'тренировка', acc: 'тренировку', plural: 'тренировок', active: 'ТРЕНИРОВКА ИДЁТ',    inactive: 'ТРЕНИРОВКА НЕ НАЧАТА',  tasks: 'ЗАДАЧИ ТРЕНИРОВКИ',  start: 'Начать тренировку',  end: 'Завершить тренировку',  add: 'Добавить тренировку',  tab: 'СПОРТ' },
+  trading: { one: 'торговая сессия', acc: 'торговую сессию', plural: 'сессий', active: 'ТОРГОВАЯ СЕССИЯ ИДЁТ', inactive: 'СЕССИЯ НЕ НАЧАТА', tasks: 'ЗАДАЧИ СЕССИИ', start: 'Начать торговлю', end: 'Завершить торговлю', add: 'Добавить сессию', tab: 'ТРЕЙДИНГ' },
   lesson:  { one: 'занятие',    acc: 'занятие',    plural: 'занятий',    active: 'ЗАНЯТИЕ ИДЁТ',       inactive: 'ЗАНЯТИЕ НЕ НАЧАТО',     tasks: 'ЗАДАЧИ ЗАНЯТИЯ',     start: 'Начать занятие',     end: 'Завершить занятие',     add: 'Добавить занятие',     tab: 'УЧЁБА' },
 };
-const NOUN_LABELS = { shift: 'Смена', session: 'Сессия', day: 'Рабочий день', workout: 'Тренировка', lesson: 'Занятие' };
+const NOUN_LABELS = { shift: 'Смена', session: 'Сессия', day: 'Рабочий день', workout: 'Тренировка', lesson: 'Занятие', trading: 'Торговая сессия' };
 
 const THEMES = {
   blue:    { primary: '#1B3A5C', light: '#2C5282', dark: '#0F2440', accent: '#3182CE', soft: '#EBF4FF', soft2: '#DBEAFE' },
@@ -12220,6 +12350,7 @@ const THEMES = {
   emerald: { primary: '#064E3B', light: '#047857', dark: '#022C22', accent: '#10B981', soft: '#ECFDF5', soft2: '#D1FAE5' },
   rose:    { primary: '#831843', light: '#BE185D', dark: '#500724', accent: '#EC4899', soft: '#FDF2F8', soft2: '#FCE7F3' },
   red:     { primary: '#7F1D1D', light: '#B91C1C', dark: '#450A0A', accent: '#EF4444', soft: '#FEF2F2', soft2: '#FEE2E2' },
+  gold:    { primary: '#1C1917', light: '#44403C', dark: '#0C0A09', accent: '#EAB308', soft: '#FEFCE8', soft2: '#FEF08A' },
   graphite:{ primary: '#1F2937', light: '#374151', dark: '#111827', accent: '#9CA3AF', soft: '#F9FAFB', soft2: '#F3F4F6' },
 };
 
@@ -12230,6 +12361,7 @@ const WORK_TYPES = [
   { id: 'office',    name: 'Офис',         sub: 'найм, график 5/2',       icon: '🏢', noun: 'day',     theme: 'indigo',  goal: 600 },
   { id: 'freelance', name: 'Фриланс',      sub: 'проекты, удалёнка',      icon: '💻', noun: 'session', theme: 'teal',    goal: 1200 },
   { id: 'business',  name: 'Бизнес',       sub: 'своё дело, продажи',     icon: '💼', noun: 'day',     theme: 'emerald', goal: 1500 },
+  { id: 'trader',    name: 'Трейдер',      sub: 'крипта, акции, сделки',  icon: '📈', noun: 'trading', theme: 'gold',    goal: 0 },
   { id: 'study',     name: 'Учёба',        sub: 'курсы, универ',          icon: '📚', noun: 'lesson',  theme: 'purple',  goal: 0 },
   { id: 'creative',  name: 'Творчество',   sub: 'музыка, дизайн, контент',icon: '🎨', noun: 'session', theme: 'rose',    goal: 800 },
   { id: 'fitness',   name: 'Спорт',        sub: 'тренер, тренировки',     icon: '🏋', noun: 'workout', theme: 'red',     goal: 0 },
@@ -13344,6 +13476,574 @@ const V8 = (() => {
   return { boot, setThemeMode, askNotify, editGoals, renderGoals, renderAssist, renderReports, setRepMonth, setTax, exportCsv, exportPdf, liveEst, getGoals };
 })();
 window.V8 = V8;
+
+
+// ====== V9 — ТРЕЙДЕР: цели, стратегии, журнал сделок, риски, база знаний, слежение ======
+const TRADER = (() => {
+  'use strict';
+  const K = { cfg: 'v9_tr_cfg', strats: 'v9_tr_strats', trades: 'v9_tr_trades', watch: 'v9_tr_watch', deps: 'v9_tr_deposits', misc: 'v9_tr_misc' };
+  const KEYS = Object.values(K);
+  const fmt = (n, d) => { n = Number(n) || 0; const a = Math.abs(n); const dd = d != null ? d : (a >= 1000 ? 0 : a >= 1 ? 2 : a >= 0.01 ? 4 : 6); return n.toLocaleString('ru-RU', { maximumFractionDigits: dd }); };
+  const fmt0 = n => Math.round(Number(n) || 0).toLocaleString('ru-RU');
+  const sgn = n => (n > 0 ? '+' : '') + fmt0(n);
+  const pc = (n, d) => (n > 0 ? '+' : '') + (Number(n) || 0).toFixed(d == null ? 1 : d) + '%';
+  const esc = s => escapeHtml(s == null ? '' : s);
+  const plural = (n, a, b, c) => { const m = n % 10, h = n % 100; return (m === 1 && h !== 11) ? a : (m >= 2 && m <= 4 && (h < 10 || h >= 20)) ? b : c; };
+  const dkey = ts => localDateStr(new Date(ts));
+  const now = () => Date.now();
+  const hm = ts => { const d = new Date(ts); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
+  const dlbl = ts => { const d = new Date(ts); return d.getDate() + ' ' + ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'][d.getMonth()]; };
+  const cls = n => n > 0 ? 'g' : n < 0 ? 'r' : '';
+  const isTrader = () => { try { const g = (window.V7 && V7.getWorkType) ? V7.getWorkType : (typeof getWorkType === 'function' ? getWorkType : null); return !!g && g().id === 'trader'; } catch (e) { return false; } };
+  const num = v => { const n = parseFloat(String(v == null ? '' : v).replace(',', '.').replace(/[^\d.\-]/g, '')); return isFinite(n) ? n : 0; };
+
+  // ---------- ХРАНИЛИЩЕ ----------
+  const DEF_CFG = { deposit: 0, profile: 'mod', risk: 1, maxDay: 3, maxTrades: 6, monthGoal: 0, rrMin: 2, winGoal: 50 };
+  const sync = () => { try { markLocalChange(); schedulePushProgress(); } catch (e) {} };
+  const cfg = () => Object.assign({}, DEF_CFG, uGet(K.cfg, {}) || {});
+  const saveCfg = c => { uSet(K.cfg, c); sync(); };
+  const trades = () => { const t = uGet(K.trades, []); return Array.isArray(t) ? t : []; };
+  const saveTrades = t => { uSet(K.trades, t); sync(); };
+  const watch = () => { const w = uGet(K.watch, []); return Array.isArray(w) ? w : []; };
+  const saveWatch = w => { uSet(K.watch, w); sync(); };
+  const deps = () => { const d = uGet(K.deps, []); return Array.isArray(d) ? d : []; };
+  const saveDeps = d => { uSet(K.deps, d); sync(); };
+  const misc = () => uGet(K.misc, {}) || {};
+  const saveMisc = m => uSet(K.misc, m);
+
+  const DEF_STRATS = [
+    { id: 'trend',    icon: '📈', name: 'Тренд',            tf: '4H–1D',   rules: 'Вход по направлению старшего тренда после отката к EMA или уровню. Стоп за локальный экстремум. Тейк не меньше 2R, часть позиции — в безубыток после 1R.' },
+    { id: 'breakout', icon: '🚀', name: 'Пробой уровня',    tf: '1H–4H',   rules: 'Вход на закреплении свечи за уровнем с ростом объёма. Стоп под/над уровнем. Возврат под уровень = ложный пробой, выход без раздумий.' },
+    { id: 'pullback', icon: '🔄', name: 'Откат к уровню',   tf: '15m–1H',  rules: 'Лимитный вход от поддержки/сопротивления по тренду. Стоп за уровень с запасом, тейк — следующий уровень. Без подтверждения не входить.' },
+    { id: 'scalp',    icon: '⚡', name: 'Скальпинг',        tf: '1m–5m',   rules: 'Быстрые входы по импульсу. Жёсткий стоп, R:R 1:1–1:1.5, строгий лимит сделок и времени торговли. После 2 стопов подряд — пауза.' },
+    { id: 'swing',    icon: '🌊', name: 'Свинг',            tf: '1D–1W',   rules: 'Удержание 3–20 дней по волне тренда. Широкий стоп, уменьшенный объём, частичные фиксации по уровням.' },
+    { id: 'dca',      icon: '🪙', name: 'DCA / накопление', tf: 'недели',  rules: 'Регулярные покупки фиксированной суммой без стопа. Горизонт — от года. Цель — средняя цена, а не угадывание дна.' },
+  ];
+  function strats() { let s = uGet(K.strats, null); if (!Array.isArray(s) || !s.length) { s = DEF_STRATS.map(x => Object.assign({}, x)); uSet(K.strats, s); } return s; }
+  const saveStrats = s => { uSet(K.strats, s); sync(); };
+  const stratById = id => strats().find(s => s.id === id) || { icon: '🎯', name: 'Без стратегии' };
+
+  const ERR_TAGS = [
+    { id: 'nostop', l: 'Без стопа' }, { id: 'movestop', l: 'Передвинул стоп' }, { id: 'fomo', l: 'FOMO' }, { id: 'revenge', l: 'Отыгрыш' },
+    { id: 'oversize', l: 'Большой объём' }, { id: 'early', l: 'Ранний выход' }, { id: 'late', l: 'Поздний вход' }, { id: 'noplan', l: 'Не по плану' },
+    { id: 'overtrade', l: 'Переторговля' }, { id: 'against', l: 'Против тренда' }, { id: 'news', l: 'На новостях' }, { id: 'greed', l: 'Жадность (не взял тейк)' },
+  ];
+  const EMO = { calm: '😌 Спокойно', confident: '😎 Уверенно', anxious: '😟 Тревожно', excited: '🤑 Азарт', tired: '😴 Устал', tilt: '😡 Тильт' };
+  const CHECKLIST = ['Тренд старшего ТФ определён', 'Сетап соответствует стратегии', 'Стоп поставлен ДО входа', 'Риск ≤ лимита на сделку', 'R:R не ниже минимума', 'Нет FOMO и желания отыграться', 'Дневной лимит сделок/убытка не превышен'];
+  const PROFILES = {
+    cons: { name: 'Консервативный', icon: '🛡', risk: 0.5, maxDay: 2, tp: 15, sl: 10, alloc: { bitcoin: 50, ethereum: 25, tether: 25 } },
+    mod:  { name: 'Умеренный',      icon: '⚖', risk: 1,   maxDay: 3, tp: 25, sl: 15, alloc: { bitcoin: 40, ethereum: 25, solana: 10, 'the-open-network': 5, tether: 20 } },
+    aggr: { name: 'Агрессивный',    icon: '🔥', risk: 2,   maxDay: 5, tp: 40, sl: 20, alloc: { bitcoin: 25, ethereum: 20, solana: 20, binancecoin: 10, ripple: 10, 'avalanche-2': 5, dogecoin: 5, tether: 5 } },
+  };
+  const SYM2ID = { LINK: 'chainlink', LTC: 'litecoin', MATIC: 'matic-network', POL: 'matic-network', ATOM: 'cosmos', NEAR: 'near', SUI: 'sui', APT: 'aptos', ARB: 'arbitrum', OP: 'optimism', PEPE: 'pepe', SHIB: 'shiba-inu', UNI: 'uniswap', XLM: 'stellar', BCH: 'bitcoin-cash', ETC: 'ethereum-classic', HBAR: 'hedera-hashgraph', FIL: 'filecoin', ICP: 'internet-computer', INJ: 'injective-protocol', TIA: 'celestia', NOT: 'notcoin', WIF: 'dogwifcoin', AAVE: 'aave', RENDER: 'render-token', FET: 'fetch-ai', TAO: 'bittensor', ONDO: 'ondo-finance' };
+  function coinIdFor(sym) {
+    const s = String(sym || '').toUpperCase().replace(/USDT|USD|\/|-|RUB/g, '').trim();
+    try { const p = CRYPTO.POPULAR_COINS.find(c => c.symbol === s); if (p) return p.id; } catch (e) {}
+    return SYM2ID[s] || null;
+  }
+  const cleanSym = s => String(s || '').toUpperCase().replace(/\s+/g, '').slice(0, 12);
+
+  // ---------- МАТЕМАТИКА ----------
+  function tradeRisk(t) { return t.stop > 0 ? Math.abs(t.entry - t.stop) * t.qty : 0; }
+  function tradeReward(t) { return t.take > 0 ? Math.abs(t.take - t.entry) * t.qty : 0; }
+  function tradeRR(t) { const r = tradeRisk(t), w = tradeReward(t); return r > 0 && w > 0 ? w / r : 0; }
+  function pnlAt(t, px) { if (!(px > 0)) return 0; return (px - t.entry) * t.qty * (t.side === 'short' ? -1 : 1) - (t.fee || 0); }
+  function closedPnl(t) { return typeof t.pnl === 'number' ? t.pnl : pnlAt(t, t.exit); }
+  function rMult(t) { const r = tradeRisk(t); return r > 0 ? closedPnl(t) / r : 0; }
+  const closed = () => trades().filter(t => t.status === 'closed').sort((a, b) => (a.closeTs || 0) - (b.closeTs || 0));
+  const open = () => trades().filter(t => t.status === 'open').sort((a, b) => (b.ts || 0) - (a.ts || 0));
+  function depositsTotal() { return deps().reduce((s, d) => s + (d.amount || 0), 0); }
+  function balance() { const c = cfg(); return (c.deposit || 0) + depositsTotal() + closed().reduce((s, t) => s + closedPnl(t), 0); }
+  function unrealized() { return open().reduce((s, t) => { const p = px(t.sym); return s + (p ? pnlAt(t, p) : 0); }, 0); }
+  function stats(list) {
+    const n = list.length; const s = { n, wins: 0, losses: 0, be: 0, pnl: 0, gw: 0, gl: 0, sumR: 0, best: null, worst: null, maxWinStreak: 0, maxLossStreak: 0, curStreak: 0, maxDD: 0, maxDDpct: 0, avgHold: 0 };
+    let ws = 0, ls = 0, eq = 0, peak = 0, hold = 0, holdN = 0;
+    const base = cfg().deposit + depositsTotal();
+    for (const t of list) {
+      const p = closedPnl(t); s.pnl += p; s.sumR += rMult(t);
+      if (p > 0) { s.wins++; s.gw += p; ws++; ls = 0; } else if (p < 0) { s.losses++; s.gl += -p; ls++; ws = 0; } else { s.be++; ws = 0; ls = 0; }
+      s.maxWinStreak = Math.max(s.maxWinStreak, ws); s.maxLossStreak = Math.max(s.maxLossStreak, ls);
+      if (!s.best || p > closedPnl(s.best)) s.best = t; if (!s.worst || p < closedPnl(s.worst)) s.worst = t;
+      eq += p; peak = Math.max(peak, eq); const dd = peak - eq; if (dd > s.maxDD) { s.maxDD = dd; s.maxDDpct = (base + peak) > 0 ? dd / (base + peak) * 100 : 0; }
+      if (t.closeTs && t.ts) { hold += t.closeTs - t.ts; holdN++; }
+    }
+    s.curStreak = ws > 0 ? ws : -ls;
+    s.winrate = n ? (s.wins / n * 100) : 0; s.pf = s.gl > 0 ? s.gw / s.gl : (s.gw > 0 ? 99 : 0);
+    s.avgWin = s.wins ? s.gw / s.wins : 0; s.avgLoss = s.losses ? s.gl / s.losses : 0;
+    s.exp = n ? s.pnl / n : 0; s.expR = n ? s.sumR / n : 0; s.avgHold = holdN ? hold / holdN : 0;
+    return s;
+  }
+  function groupBy(list, keyFn) { const m = {}; for (const t of list) { const k = keyFn(t); if (k == null) continue; (m[k] = m[k] || []).push(t); } return Object.entries(m).map(([k, v]) => ({ k, s: stats(v) })); }
+  function monthList(ts) { const k = dkey(ts || now()).slice(0, 7); return closed().filter(t => dkey(t.closeTs).startsWith(k)); }
+  const todayList = () => closed().filter(t => dkey(t.closeTs) === todayStr());
+  function posSize(bal, riskPct, entry, stop) { const d = Math.abs(entry - stop); if (!(d > 0) || !(bal > 0)) return 0; return bal * riskPct / 100 / d; }
+
+  // ---------- РИСК-АЛЕРТЫ ----------
+  function alerts() {
+    const c = cfg(), bal = balance(), out = []; const td = todayList(); const tp = td.reduce((s, t) => s + closedPnl(t), 0);
+    const limit = bal * c.maxDay / 100;
+    if (bal > 0 && tp < 0 && -tp >= limit) out.push({ lv: 'r', i: '🛑', t: `<b>Стоп на сегодня.</b> Потеряно ${fmt0(-tp)} ₽ — это ${(-tp / bal * 100).toFixed(1)}% депозита при лимите ${c.maxDay}%. Закрой терминал, вернись завтра.` });
+    else if (bal > 0 && tp < 0 && -tp >= limit * 0.6) out.push({ lv: 'o', i: '⚠️', t: `Сегодня −${fmt0(-tp)} ₽ — уже ${Math.round(-tp / limit * 100)}% дневного лимита. Следующая сделка только по чеклисту.` });
+    const all = closed(); let ls = 0; for (let i = all.length - 1; i >= 0 && closedPnl(all[i]) < 0; i--) ls++;
+    if (ls >= 3) out.push({ lv: 'r', i: '🧊', t: `<b>${ls} убытка подряд.</b> Статистически следующая сделка «на эмоциях» — худшая в серии. Пауза минимум на час, разбор последних сделок в журнале.` });
+    if (c.maxTrades && td.length + open().filter(t => dkey(t.ts) === todayStr()).length >= c.maxTrades) out.push({ lv: 'o', i: '🔁', t: `Лимит сделок на день (${c.maxTrades}) достигнут. Переторговля — самая дорогая ошибка в твоём журнале.` });
+    let totalRisk = 0; const syms = {};
+    for (const t of open()) {
+      const r = tradeRisk(t); totalRisk += r; syms[t.sym] = (syms[t.sym] || 0) + 1;
+      if (!(t.stop > 0)) out.push({ lv: 'r', i: '🚫', t: `<b>${esc(t.sym)}</b> открыта без стопа. Одна такая сделка способна обнулить месяц — поставь стоп сейчас.` });
+      else if (bal > 0 && r > bal * c.risk / 100 * 1.5) out.push({ lv: 'o', i: '🐘', t: `В <b>${esc(t.sym)}</b> риск ${fmt0(r)} ₽ (${(r / bal * 100).toFixed(1)}%) — выше лимита ${c.risk}% на сделку.` });
+    }
+    if (bal > 0 && totalRisk > bal * c.risk / 100 * 3) out.push({ lv: 'o', i: '📚', t: `Суммарный риск открытых позиций ${fmt0(totalRisk)} ₽ (${(totalRisk / bal * 100).toFixed(1)}%). Одновременные стопы сильно ударят по депозиту.` });
+    for (const [s, n] of Object.entries(syms)) if (n >= 3) out.push({ lv: 'o', i: '🎯', t: `${n} открытых позиции по ${esc(s)} — концентрация. Диверсифицируй или сократи.` });
+    const st = stats(all.slice(-20));
+    if (all.length >= 10 && st.pf < 1) out.push({ lv: 'o', i: '📉', t: `Последние 20 сделок: профит-фактор ${st.pf.toFixed(2)} (< 1). Система не в плюсе — снизь объём вдвое, пока не найдёшь причину в разборе ошибок.` });
+    if (!out.length) out.push({ lv: 'g', i: '✅', t: 'Лимиты в норме. Торгуй по плану — риск под контролем.' });
+    return out;
+  }
+
+  // ---------- ЦЕНЫ ----------
+  const API = 'https://api.coingecko.com/api/v3';
+  let _rl = 0; const _cache = {}; const _px = {}; let _lastPx = 0;
+  async function api(path, ttl) {
+    const c = _cache[path]; if (c && now() - c.ts < (ttl || 45e3)) return c.v;
+    if (now() < _rl) throw new Error('rate');
+    const r = await fetch(API + path, { headers: { accept: 'application/json' }, signal: AbortSignal.timeout(9000) });
+    if (r.status === 429) { _rl = now() + 60e3; throw new Error('rate'); }
+    if (!r.ok) throw new Error('http ' + r.status);
+    const v = await r.json(); _cache[path] = { ts: now(), v }; return v;
+  }
+  function px(sym) { const id = coinIdFor(sym); const p = id && _px[id]; return p ? p.rub : 0; }
+  function pxInfo(sym) { const id = coinIdFor(sym); return id ? _px[id] : null; }
+  function neededIds() { const ids = new Set(); for (const t of open()) { const id = coinIdFor(t.sym); if (id) ids.add(id); } for (const w of watch()) if (w.coinId) ids.add(w.coinId); return [...ids]; }
+  async function refreshPrices(force) {
+    const ids = neededIds(); if (!ids.length) return false;
+    if (!force && now() - _lastPx < 50e3) return false;
+    try {
+      const d = await api('/simple/price?ids=' + ids.join(',') + '&vs_currencies=rub,usd&include_24hr_change=true', force ? 1 : 45e3);
+      for (const [id, v] of Object.entries(d)) _px[id] = { rub: v.rub || 0, usd: v.usd || 0, ch: v.rub_24h_change || v.usd_24h_change || 0 };
+      _lastPx = now(); try { uSet('v9_tr_px', { ts: now(), px: _px }); } catch (e) {}
+      checkWatchHits(); return true;
+    } catch (e) { return false; }
+  }
+  try { const c = uGet('v9_tr_px', null); if (c && c.px) Object.assign(_px, c.px); } catch (e) {}
+
+  // ---------- СЛЕЖЕНИЕ: уровни ----------
+  function checkWatchHits() {
+    const w = watch(); let ch = false;
+    for (const it of w) {
+      const p = it.coinId && _px[it.coinId]; if (!p || !p.rub) continue;
+      const hitUp = it.target > 0 && p.rub >= it.target && !it.hitUp, hitDn = it.stop > 0 && p.rub <= it.stop && !it.hitDn;
+      if (hitUp) { it.hitUp = now(); ch = true; ping('🎯 ' + it.sym + ' достиг цели', fmt(p.rub) + ' ₽ ≥ ' + fmt(it.target) + ' ₽ — по плану фиксируем прибыль'); }
+      if (hitDn) { it.hitDn = now(); ch = true; ping('🛑 ' + it.sym + ' на уровне стопа', fmt(p.rub) + ' ₽ ≤ ' + fmt(it.stop) + ' ₽ — защищай депозит, не усредняй'); }
+    }
+    if (ch) saveWatch(w);
+  }
+  function ping(t, b) { try { showToast(t + ' · ' + b, 'warn'); } catch (e) {} try { haptic('medium'); } catch (e) {} try { if (window.V8 && typeof Notification !== 'undefined' && Notification.permission === 'granted') { if (navigator.serviceWorker && navigator.serviceWorker.ready) navigator.serviceWorker.ready.then(r => r.showNotification(t, { body: b, tag: 'v9w', icon: 'icon-192.png' })); else new Notification(t, { body: b }); } } catch (e) {} }
+
+  // ---------- БАЗА ЗНАНИЙ ----------
+  const KB = [
+    { c: 'Риск', ic: '🛡', t: 'Правило 1% — почему оно работает', s: 'Как не вылететь с рынка', b: '<p>Риск на одну сделку — не больше <b>1–2% депозита</b> (расстояние до стопа × объём). При 1% серия из 10 стопов подряд — минус ~10%, это переживаемо. При 10% на сделку та же серия — минус 65%, из которых нужно +186%, чтобы вернуться.</p><p>Именно поэтому размер позиции считается <b>от стопа</b>, а не «на сколько хватает денег». Калькулятор объёма в разделе «Сделки» делает это автоматически.</p>' },
+    { c: 'Риск', ic: '📉', t: 'Математика просадки', s: 'Сколько нужно отыграть после убытка', b: '<p>Потери и прибыль несимметричны:</p><ul><li>−10% → нужно +11%</li><li>−20% → +25%</li><li>−30% → +43%</li><li>−50% → <b>+100%</b></li><li>−70% → +233%</li><li>−90% → +900%</li></ul><p>Вывод: защищать депозит важнее, чем ловить прибыль. Дневной лимит убытка (по умолчанию 3%) — твой страховочный трос.</p>' },
+    { c: 'Риск', ic: '⚖', t: 'R:R и математическое ожидание', s: 'Почему винрейт — не главное', b: '<p><b>R</b> — риск сделки в деньгах. Прибыль измеряй в R: тейк 2R означает «заработал два своих риска».</p><p>Ожидание = Winrate × средняя прибыль − (1 − Winrate) × средний убыток. При R:R 1:3 достаточно <b>30% прибыльных сделок</b>, чтобы быть в плюсе. При R:R 1:1 нужно больше 50% — а плюс комиссии.</p><p>Профит-фактор (сумма прибылей / сумма убытков) выше 1.5 — хорошо, выше 2 — отлично. Ниже 1 — система убыточна, её нужно менять, а не «пересиживать».</p>' },
+    { c: 'Психология', ic: '🧠', t: 'Тильт и отыгрыш', s: 'Самая дорогая ошибка', b: '<p>После убытка мозг требует «вернуть своё». Сделки в этом состоянии открываются с увеличенным объёмом, без сетапа и без стопа — это и есть <b>отыгрыш</b>.</p><p>Правила защиты: после 2 стопов подряд — пауза 1 час; после 3 — день закрыт. Трекер напомнит сам. Запиши эмоцию в журнале — через месяц статистика «сделок в тильте» покажет их реальную стоимость.</p>' },
+    { c: 'Психология', ic: '🎢', t: 'FOMO и погоня за свечой', s: 'Почему поздний вход всегда дорогой', b: '<p>Страх упустить движение заставляет покупать после сильного роста — там, где закрываются те, кто вошёл раньше. Поздний вход = далёкий стоп = маленький объём или большой риск.</p><p>Правило: если сетап уже «уехал» больше чем на 1R от точки входа — сделки нет. Рынок даёт новые возможности каждый день.</p>' },
+    { c: 'Система', ic: '📓', t: 'Зачем вести журнал', s: 'Единственный способ найти свой «край»', b: '<p>Память трейдера избирательна: помнятся удачные сделки, забываются глупые. Журнал с тегами ошибок и эмоций за 30–50 сделок показывает: какая стратегия работает, в какое время ты сливаешь, какие ошибки стоят дороже всего.</p><p>Разбирай раз в неделю: раздел «Риски → Разбор ошибок» считает цену каждой ошибки в рублях.</p>' },
+    { c: 'Система', ic: '✅', t: 'Чеклист перед входом', s: 'Семь вопросов за 30 секунд', b: '<ul>' + CHECKLIST.map(x => '<li>' + x + '</li>').join('') + '</ul><p>Если хоть один пункт «нет» — сделки нет. Чеклист встроен в форму новой сделки.</p>' },
+    { c: 'Портфель', ic: '🧺', t: 'Распределение и ребаланс', s: 'Как собирать портфель при пополнении', b: '<p>Долгосрочная часть капитала не должна зависеть от одной монеты. Базовая структура: <b>ядро</b> (BTC, ETH — 50–70%), <b>сателлиты</b> (сильные альты — 15–30%), <b>кэш в стейблах</b> (10–25%) для докупок на просадках.</p><p>При пополнении депозита трекер предложит покупки под твой профиль риска и сам выставит уровни фиксации и защиты. Ребаланс — раз в квартал или при отклонении доли на 10+ п.п.</p>' },
+    { c: 'Портфель', ic: '🪙', t: 'DCA против «поймать дно»', s: 'Регулярность бьёт точность', b: '<p>Никто стабильно не угадывает дно. Покупка фиксированной суммой по расписанию (DCA) даёт среднюю цену и убирает эмоции. Для долгосрочных позиций это основа; для спекуляций — нет: усреднять убыточную спекулятивную сделку — путь к крупной потере.</p>' },
+    { c: 'История', ic: '🏛', t: 'Лучшие сделки в истории', s: 'Что у них общего', b: '<p><b>Сорос, 1992</b> — шорт фунта: ставка на структурную ошибку (переоценённая валюта в ERM), ~1 млрд $. <b>Полсон, 2007</b> — шорт субстандартной ипотеки через CDS: год исследований, ~15 млрд $. <b>Бьюрри, 2005–08</b> — то же, прочитав тысячи ипотечных проспектов. <b>Друкенмиллер, 1992</b> — настоял увеличить позицию Сороса: «когда уверен — бей в полную силу».</p><p>Общее: <b>асимметрия</b> (ограниченный риск, огромный потенциал), глубокий анализ и терпение — сделки вынашивались месяцами.</p>' },
+    { c: 'История', ic: '💥', t: 'Худшие сделки в истории', s: 'Как сливают миллиарды', b: '<p><b>Ник Лисон, Barings 1995</b> — прятал убытки на счёте 88888, удваивал позицию, чтобы «отыграться»: −1.3 млрд $, банк с 233-летней историей исчез. <b>Archegos, 2021</b> — плечо 5–6× на концентрированных позициях через свопы: −20 млрд $ за два дня. <b>LTCM, 1998</b> — два нобелевских лауреата, плечо 25×, «этого не может случиться» — случилось. <b>Brian Hunter, Amaranth 2006</b> — одна ставка на газ, −6.6 млрд $.</p><p>Общее: <b>нет стопа, плечо, концентрация, отыгрыш</b>. Все четыре ошибки есть в твоих тегах журнала — не просто так.</p>' },
+    { c: 'Словарь', ic: '📖', t: 'Термины', s: 'Коротко о главном', b: '<p><b>Стоп-лосс</b> — цена принудительного выхода с убытком. <b>Тейк-профит</b> — цена фиксации прибыли. <b>R</b> — риск сделки. <b>R:R</b> — отношение потенциальной прибыли к риску. <b>Просадка (DD)</b> — падение от пика капитала. <b>Профит-фактор (PF)</b> — прибыли/убытки. <b>Ожидание</b> — средний результат сделки. <b>Лонг/Шорт</b> — ставка на рост/падение. <b>ТФ</b> — таймфрейм. <b>Безубыток</b> — стоп на цене входа.</p>' },
+  ];
+  const TIPS = [
+    'Размер позиции считается от стопа, а не от свободных денег.', 'Лучшая сделка — та, которую ты не открыл без сетапа.', 'После двух стопов подряд — пауза. Рынок никуда не денется.',
+    'Прибыль в R, а не в рублях: так сравнимы сделки разного объёма.', 'Не двигай стоп против себя — это превращает маленький убыток в большой.', 'Журнал — единственный тренер, который видит все твои сделки.',
+    'Винрейт 40% с R:R 1:3 прибыльнее винрейта 70% с R:R 1:0.5.', 'Деньги делаются на ожидании, а не на действии.', 'Плечо не увеличивает твой «край» — только скорость, с которой ты его теряешь.',
+    'Цель месяца — не повод увеличивать объём в последнюю неделю.', 'Любая «уверенность 100%» — сигнал проверить размер позиции.', 'Фиксируй частями: половину на 1R, остальное — по плану.',
+  ];
+  const tipOfDay = () => { const d = Math.floor(now() / 864e5) + (misc().tipShift || 0); return TIPS[((d % TIPS.length) + TIPS.length) % TIPS.length]; };
+
+  // ---------- UI: ОБЩЕЕ ----------
+  let _view = 'overview', _month = null, _timer = null;
+  const VIEWS = [['overview', '📊 Обзор'], ['trades', '📓 Сделки'], ['strats', '🎯 Стратегии'], ['goals', '🏁 Цели'], ['risk', '🛡 Риски'], ['watch', '👀 Слежение'], ['kb', '📚 Знания']];
+  function root() {
+    const live = document.getElementById('contentLive'); if (!live) return null;
+    let box = document.getElementById('v9Trader');
+    if (!box) { box = document.createElement('div'); box.id = 'v9Trader'; box.className = 'v9'; const wallet = document.getElementById('wallet'); if (wallet) wallet.insertAdjacentElement('afterend', box); else live.insertBefore(box, live.firstChild); }
+    return box;
+  }
+  function render() {
+    const box = root(); if (!box) return;
+    if (!isTrader()) { box.style.display = 'none'; return; }
+    box.style.display = '';
+    const nOpen = open().length, nW = watch().length;
+    const nav = '<div class="v9-nav">' + VIEWS.map(([id, l]) => '<button class="' + (_view === id ? 'on' : '') + '" onclick="TRADER.view(\'' + id + '\')">' + l + (id === 'trades' && nOpen ? '<span class="n">' + nOpen + '</span>' : '') + (id === 'watch' && nW ? '<span class="n">' + nW + '</span>' : '') + '</button>').join('') + '</div>';
+    let body = '';
+    try { body = ({ overview: overviewHtml, trades: tradesHtml, strats: stratsHtml, goals: goalsHtml, risk: riskHtml, watch: watchHtml, kb: kbHtml })[_view](); } catch (e) { console.error('[v9]', e); body = '<div class="v9-card"><div class="v9-empty">Ошибка отрисовки: ' + esc(e.message) + '</div></div>'; }
+    box.innerHTML = nav + body;
+    if (_view === 'overview' || _view === 'trades' || _view === 'watch') refreshPrices(false).then(ok => { if (ok && _view !== 'kb') render(); });
+    renderDashCard();
+  }
+  function view(v) { _view = v; try { haptic('light'); } catch (e) {} render(); }
+  function setup() { const b = balance(); if (!cfg().deposit && !deps().length) return '<div class="v9-card"><div class="v9-empty">Начни с депозита: укажи стартовый капитал и профиль риска — от них считаются лимиты, размер позиции и цели.<div class="v9-btns"><button class="v9-btn p" onclick="TRADER.editCfg()">⚙ Настроить депозит</button></div></div></div>'; return ''; }
+
+  function eqSvg(list, W, H) {
+    W = W || 320; H = H || 96; if (list.length < 2) return '';
+    let eq = 0; const pts = [0]; for (const t of list) { eq += closedPnl(t); pts.push(eq); }
+    const mn = Math.min(0, ...pts), mx = Math.max(0, ...pts), rg = mx - mn || 1; const pad = 6;
+    const X = i => pad + i / (pts.length - 1) * (W - 2 * pad), Y = v => pad + (mx - v) / rg * (H - 2 * pad);
+    const d = pts.map((v, i) => (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(v).toFixed(1)).join(' ');
+    const last = pts[pts.length - 1]; const col = last >= 0 ? 'var(--green)' : 'var(--red)';
+    return '<svg class="v9-svg" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none"><defs><linearGradient id="v9g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="' + col + '" stop-opacity=".28"/><stop offset="1" stop-color="' + col + '" stop-opacity="0"/></linearGradient></defs><line x1="' + pad + '" x2="' + (W - pad) + '" y1="' + Y(0).toFixed(1) + '" y2="' + Y(0).toFixed(1) + '" stroke="var(--border)" stroke-dasharray="3 3"/><path d="' + d + ' L' + X(pts.length - 1).toFixed(1) + ' ' + Y(mn).toFixed(1) + ' L' + pad + ' ' + Y(mn).toFixed(1) + ' Z" fill="url(#v9g)"/><path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="2" stroke-linejoin="round"/><circle cx="' + X(pts.length - 1).toFixed(1) + '" cy="' + Y(last).toFixed(1) + '" r="3.5" fill="' + col + '"/></svg>';
+  }
+  function tradeRow(t) {
+    const isOpen = t.status === 'open'; const p = isOpen ? px(t.sym) : 0; const pnl = isOpen ? (p ? pnlAt(t, p) : null) : closedPnl(t); const r = isOpen ? (p && tradeRisk(t) ? pnlAt(t, p) / tradeRisk(t) : null) : rMult(t);
+    const st = stratById(t.strategy);
+    const sub = (isOpen ? 'вход ' + fmt(t.entry) + ' · ' + (p ? 'сейчас ' + fmt(p) : 'нет цены') : dlbl(t.closeTs) + ' · ' + fmt(t.entry) + ' → ' + fmt(t.exit)) + (t.stop ? ' · стоп ' + fmt(t.stop) : ' · <span class="v9-r">без стопа</span>');
+    return '<div class="v9-row" onclick="TRADER.openTrade(\'' + t.id + '\')"><div class="ico">' + st.icon + '</div><div class="t"><span class="v9-side ' + t.side + '">' + (t.side === 'short' ? 'SHORT' : 'LONG') + '</span> ' + esc(t.sym) + (t.errors && t.errors.length ? ' <span class="v9-chip r" style="padding:1px 6px">' + t.errors.length + ' ош.</span>' : '') + '<span class="s">' + sub + '</span></div><div class="v"><span class="' + (pnl == null ? '' : cls(pnl)) + '">' + (pnl == null ? '—' : sgn(pnl) + ' ₽') + '</span><span class="s">' + (r == null ? (isOpen ? 'открыта' : '') : r.toFixed(2) + 'R') + '</span></div></div>';
+  }
+  function kpi(cells) { return '<div class="v9-kpi">' + cells.map(([v, l, c]) => '<div class="c"><div class="v ' + (c || '') + '">' + v + '</div><div class="l">' + l + '</div></div>').join('') + '</div>'; }
+
+  // ---------- VIEW: ОБЗОР ----------
+  function overviewHtml() {
+    const s0 = setup(); const c = cfg(), bal = balance(), un = unrealized(), all = closed(), st = stats(all), m = stats(monthList()), td = todayList(), tp = td.reduce((a, t) => a + closedPnl(t), 0);
+    const base = c.deposit + depositsTotal(); const ret = base > 0 ? (bal - base) / base * 100 : 0;
+    const al = alerts().slice(0, 2);
+    const hero = '<div class="v9-card"><div class="v9-hero"><div><div class="lbl">Капитал' + (open().length ? ' · с открытыми' : '') + '</div><div class="big">' + fmt0(bal + un) + '<small>₽</small></div></div><div style="text-align:right"><div class="lbl">Сегодня</div><div class="big ' + cls(tp) + '" style="font-size:18px">' + sgn(tp) + ' ₽</div></div></div>' +
+      '<div class="v9-chip ' + cls(ret) + '">' + pc(ret) + ' к вложенному</div><div class="v9-chip">' + fmt0(base) + ' ₽ вложено</div>' + (un ? '<div class="v9-chip ' + cls(un) + '">' + sgn(un) + ' ₽ нереализ.</div>' : '') +
+      eqSvg(all.slice(-60)) + (all.length < 2 ? '<div class="v9-empty" style="margin-top:8px">Кривая капитала появится после первых закрытых сделок.</div>' : '') +
+      '<div class="v9-btns"><button class="v9-btn p" onclick="TRADER.newTrade()">＋ Сделка</button><button class="v9-btn" onclick="TRADER.deposit()">💵 Пополнение</button><button class="v9-btn" onclick="TRADER.editCfg()">⚙</button></div></div>';
+    const k = '<div class="v9-card"><div class="v9-head"><span class="v9-title">Этот месяц</span><span class="v9-sub">' + m.n + ' ' + plural(m.n, 'сделка', 'сделки', 'сделок') + '</span></div>' + kpi([[sgn(m.pnl) + ' ₽', 'результат', cls(m.pnl)], [m.n ? m.winrate.toFixed(0) + '%' : '—', 'винрейт'], [m.n ? m.pf.toFixed(2) : '—', 'профит-фактор', m.n ? (m.pf >= 1.5 ? 'g' : m.pf < 1 ? 'r' : '') : ''], [m.n ? m.expR.toFixed(2) + 'R' : '—', 'ожидание'], [m.n ? sgn(m.exp) + ' ₽' : '—', 'на сделку', cls(m.exp)], [m.maxDD ? '−' + m.maxDDpct.toFixed(1) + '%' : '0%', 'макс. просадка', m.maxDDpct > 10 ? 'r' : '']]) + (c.monthGoal ? '<div class="v9-bar" style="margin-top:10px"><i class="' + (m.pnl >= c.monthGoal ? 'g' : '') + '" style="width:' + Math.max(0, Math.min(100, m.pnl / c.monthGoal * 100)) + '%"></i></div><div class="v9-sub">Цель месяца ' + fmt0(c.monthGoal) + ' ₽ · ' + (m.pnl >= c.monthGoal ? 'выполнена ✓' : 'осталось ' + fmt0(c.monthGoal - m.pnl) + ' ₽') + '</div>' : '') + '</div>';
+    const alHtml = '<div class="v9-card"><div class="v9-head"><span class="v9-title">Риск-контроль</span><button class="acc-mini go" onclick="TRADER.view(\'risk\')">Все</button></div>' + al.map(a => '<div class="v9-alert ' + a.lv + '"><span class="x">' + a.i + '</span><span>' + a.t + '</span></div>').join('') + '</div>';
+    const op = open();
+    const opHtml = op.length ? '<div class="v9-card"><div class="v9-head"><span class="v9-title">Открытые позиции</span><span class="v9-sub">' + op.length + '</span></div>' + op.slice(0, 4).map(tradeRow).join('') + '</div>' : '';
+    const tip = '<div class="v9-card v9-tip"><div class="h"><span>💡 Мысль дня</span><button onclick="TRADER.nextTip()">ещё →</button></div>' + tipOfDay() + '</div>';
+    const wl = watch().filter(w => w.coinId && _px[w.coinId]);
+    const wlHtml = wl.length ? '<div class="v9-card"><div class="v9-head"><span class="v9-title">Слежение</span><button class="acc-mini go" onclick="TRADER.view(\'watch\')">Все</button></div>' + wl.slice(0, 3).map(w => { const p = _px[w.coinId]; const d = w.target ? (w.target - p.rub) / p.rub * 100 : null; return '<div class="v9-row" onclick="TRADER.view(\'watch\')"><div class="ico">' + esc(w.sym[0]) + '</div><div class="t">' + esc(w.sym) + '<span class="s">' + (d != null ? 'до цели ' + pc(d) : 'без цели') + '</span></div><div class="v">' + fmt(p.rub) + ' ₽<span class="s ' + cls(p.ch) + '">' + pc(p.ch) + ' 24ч</span></div></div>'; }).join('') + '</div>' : '';
+    return s0 + hero + alHtml + k + opHtml + wlHtml + tip;
+  }
+  function nextTip() { const m = misc(); m.tipShift = (m.tipShift || 0) + 1; saveMisc(m); render(); }
+
+  // ---------- VIEW: СДЕЛКИ ----------
+  function monthKeys() { const s = new Set(closed().map(t => dkey(t.closeTs).slice(0, 7))); s.add(todayStr().slice(0, 7)); return [...s].sort().reverse(); }
+  function tradesHtml() {
+    const keys = monthKeys(); if (!_month || !keys.includes(_month)) _month = keys[0];
+    const op = open(), cl = closed().filter(t => dkey(t.closeTs).startsWith(_month)).reverse(); const s = stats(cl);
+    const opHtml = '<div class="v9-card"><div class="v9-head"><span class="v9-title">Открытые</span><span class="v9-sub">' + (op.length ? 'риск ' + fmt0(op.reduce((a, t) => a + tradeRisk(t), 0)) + ' ₽' : 'нет позиций') + '</span></div>' + (op.length ? op.map(tradeRow).join('') : '<div class="v9-empty">Нет открытых позиций. Добавь сделку — ₽/R и риск посчитаются сами.</div>') + '<div class="v9-btns"><button class="v9-btn p" onclick="TRADER.newTrade()">＋ Новая сделка</button><button class="v9-btn" onclick="TRADER.calc()">🧮 Объём</button></div></div>';
+    const sel = '<select onchange="TRADER.setMonth(this.value)" style="font:inherit;font-size:12px;font-weight:700;border:1px solid var(--border);border-radius:8px;padding:4px 8px;background:var(--bg-card);color:var(--text)">' + keys.map(k => '<option value="' + k + '" ' + (k === _month ? 'selected' : '') + '>' + mlabel(k) + '</option>').join('') + '</select>';
+    const jr = '<div class="v9-card"><div class="v9-head"><span class="v9-title">Журнал</span>' + sel + '</div>' + (cl.length ? kpi([[sgn(s.pnl) + ' ₽', 'итог', cls(s.pnl)], [s.wins + ' / ' + s.losses, 'плюс / минус'], [s.expR.toFixed(2) + 'R', 'ожидание']]) + '<div style="margin-top:6px">' + cl.map(tradeRow).join('') + '</div>' : '<div class="v9-empty">Закрытых сделок за ' + mlabel(_month) + ' нет.</div>') + '</div>';
+    return opHtml + jr;
+  }
+  const mlabel = k => { const [y, m] = k.split('-'); return new Date(+y, +m - 1, 1).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }); };
+  function setMonth(k) { _month = k; render(); }
+
+  // ---------- VIEW: СТРАТЕГИИ ----------
+  function stratsHtml() {
+    const all = closed(); const by = {}; for (const t of all) { const k = t.strategy || 'none'; (by[k] = by[k] || []).push(t); }
+    const list = strats().map(s => ({ s, st: stats(by[s.id] || []) }));
+    const ranked = list.filter(x => x.st.n >= 3).sort((a, b) => b.st.expR - a.st.expR);
+    const best = ranked[0], worst = ranked.length > 1 ? ranked[ranked.length - 1] : null;
+    const ins = (best || worst) ? '<div class="v9-card"><div class="v9-head"><span class="v9-title">Что работает</span></div>' + (best ? '<div class="v9-alert g"><span class="x">🏆</span><span><b>' + best.s.icon + ' ' + esc(best.s.name) + '</b> — лучшее ожидание: ' + best.st.expR.toFixed(2) + 'R на сделку, винрейт ' + best.st.winrate.toFixed(0) + '%, ' + sgn(best.st.pnl) + ' ₽ за ' + best.st.n + ' ' + plural(best.st.n, 'сделку', 'сделки', 'сделок') + '. Торгуй её чаще.</span></div>' : '') + (worst && worst.st.expR < 0 ? '<div class="v9-alert r"><span class="x">🧪</span><span><b>' + worst.s.icon + ' ' + esc(worst.s.name) + '</b> в минусе: ' + worst.st.expR.toFixed(2) + 'R, ' + sgn(worst.st.pnl) + ' ₽. Либо правь правила, либо убери из арсенала.</span></div>' : '') + '</div>' : '';
+    const rows = list.map(({ s, st }) => '<div class="v9-row" onclick="TRADER.openStrat(\'' + s.id + '\')"><div class="ico">' + s.icon + '</div><div class="t">' + esc(s.name) + ' <span class="v9-sub">' + esc(s.tf || '') + '</span><span class="s">' + (st.n ? st.n + ' ' + plural(st.n, 'сделка', 'сделки', 'сделок') + ' · винрейт ' + st.winrate.toFixed(0) + '% · PF ' + st.pf.toFixed(2) : 'сделок пока нет') + '</span></div><div class="v"><span class="' + cls(st.pnl) + '">' + (st.n ? sgn(st.pnl) + ' ₽' : '—') + '</span><span class="s">' + (st.n ? st.expR.toFixed(2) + 'R' : '') + '</span></div></div>').join('');
+    return ins + '<div class="v9-card"><div class="v9-head"><span class="v9-title">Мои стратегии</span><button class="acc-mini go" onclick="TRADER.editStrat()">＋ Новая</button></div>' + rows + '<div class="v9-empty" style="margin-top:10px">Нажми на стратегию — правила, статистика и разбор по ней. Стратегия без прописанных правил — это не стратегия, а настроение.</div></div>';
+  }
+
+  // ---------- VIEW: ЦЕЛИ ----------
+  function goalsHtml() {
+    const c = cfg(), bal = balance(), all = closed(), m = stats(monthList()), st = stats(all.slice(-30));
+    const base = c.deposit + depositsTotal();
+    const rows = [];
+    const row = (ico, l, v, pct, s, ok) => '<div class="v8-goal ' + (ok ? 'ok' : '') + '"><span class="i">' + ico + '</span><span class="l">' + l + '</span><span class="v">' + v + '</span><div class="bar"><i style="width:' + Math.max(0, Math.min(100, pct)) + '%"></i></div><span class="s">' + s + '</span></div>';
+    if (c.monthGoal) { const left = c.monthGoal - m.pnl; const need = left > 0 && st.exp > 0 ? Math.ceil(left / st.exp) : 0; rows.push(row('📅', 'Месяц', sgn(m.pnl) + ' <small>/ ' + fmt0(c.monthGoal) + ' ₽</small>', m.pnl / c.monthGoal * 100, left <= 0 ? 'цель закрыта ✓' : 'осталось ' + fmt0(left) + ' ₽' + (need ? ' ≈ ' + need + ' ' + plural(need, 'сделка', 'сделки', 'сделок') + ' при текущем ожидании' : st.n && st.exp <= 0 ? ' · ожидание отрицательное — сначала чини систему' : ''), left <= 0)); }
+    if (c.depGoal) rows.push(row('💰', 'Капитал', fmt0(bal) + ' <small>/ ' + fmt0(c.depGoal) + ' ₽</small>', bal / c.depGoal * 100, bal >= c.depGoal ? 'цель закрыта ✓' : 'до цели ' + fmt0(c.depGoal - bal) + ' ₽ (' + pc((c.depGoal - bal) / Math.max(bal, 1) * 100, 0) + ')', bal >= c.depGoal));
+    if (c.winGoal) rows.push(row('🎯', 'Винрейт (30 сд.)', (st.n ? st.winrate.toFixed(0) : '—') + '% <small>/ ' + c.winGoal + '%</small>', st.n ? st.winrate / c.winGoal * 100 : 0, st.n ? (st.winrate >= c.winGoal ? 'выше цели' : 'ниже на ' + (c.winGoal - st.winrate).toFixed(0) + ' п.п.') : 'нужны закрытые сделки', st.n && st.winrate >= c.winGoal));
+    if (c.rrMin) { const avgRR = all.slice(-30).filter(t => tradeRR(t) > 0); const a = avgRR.length ? avgRR.reduce((x, t) => x + tradeRR(t), 0) / avgRR.length : 0; rows.push(row('⚖', 'Плановый R:R', (a ? '1:' + a.toFixed(1) : '—') + ' <small>/ 1:' + c.rrMin + '</small>', a / c.rrMin * 100, a ? (a >= c.rrMin ? 'план соблюдается' : 'входы с низким потенциалом') : 'ставь тейк в сделках', a >= c.rrMin && a > 0)); }
+    const disc = discipline();
+    rows.push(row('🧘', 'Дисциплина', disc.score + '<small>/100</small>', disc.score, disc.text, disc.score >= 80));
+    const goals = '<div class="v9-card"><div class="v9-head"><span class="v9-title">Цели</span><button class="acc-mini go" onclick="TRADER.editGoals()">Изменить</button></div>' + (rows.length ? rows.join('') : '<div class="v9-empty">Задай цель месяца, целевой капитал и винрейт.</div>') + '</div>';
+    // Стратегический план
+    const risk = bal * c.risk / 100; const rr = c.rrMin || 2;
+    const plan = '<div class="v9-card"><div class="v9-head"><span class="v9-title">План и ожидание</span></div><div class="v9-grid2"><div class="v9-mini"><div class="l">Риск на сделку</div><div class="v">' + fmt0(risk) + ' ₽</div><div class="s">' + c.risk + '% от ' + fmt0(bal) + '</div></div><div class="v9-mini"><div class="l">Лимит дня</div><div class="v">' + fmt0(bal * c.maxDay / 100) + ' ₽</div><div class="s">' + c.maxDay + '% · до ' + c.maxTrades + ' сделок</div></div><div class="v9-mini"><div class="l">Безубыток при R:R 1:' + rr + '</div><div class="v">' + Math.ceil(100 / (1 + rr)) + '% винрейт</div><div class="s">твой: ' + (st.n ? st.winrate.toFixed(0) + '%' : '—') + '</div></div><div class="v9-mini"><div class="l">Ожидание за 30 сд.</div><div class="v ' + cls(st.exp) + '">' + (st.n ? sgn(st.exp) + ' ₽' : '—') + '</div><div class="s">' + (st.n ? st.expR.toFixed(2) + 'R на сделку' : 'нет данных') + '</div></div></div>' +
+      '<div class="v9-sec">Сценарии при ' + c.risk + '% риска и R:R 1:' + rr + '</div>' + [30, 40, 50, 60].map(w => { const e = (w / 100 * rr - (1 - w / 100)) * risk; return '<div class="v9-hbar"><span class="l">винрейт ' + w + '%</span><div class="b"><i class="' + (e < 0 ? 'r' : '') + '" style="left:' + (e < 0 ? 50 - Math.min(50, -e / risk / rr * 50) : 50) + '%;width:' + Math.min(50, Math.abs(e) / risk / rr * 50) + '%"></i></div><span class="v ' + cls(e) + '">' + sgn(e) + ' ₽/сд</span></div>'; }).join('') +
+      '<div class="v9-sub" style="margin-top:8px">Месяц из 40 сделок при винрейте 45% даст ≈ ' + sgn((0.45 * rr - 0.55) * risk * 40) + ' ₽ — без увеличения риска. Рост депозита = рост абсолютной прибыли при том же проценте риска.</div></div>';
+    return goals + plan;
+  }
+  function discipline() {
+    const l = closed().slice(-30); if (!l.length) return { score: 100, text: 'нет закрытых сделок — оценка появится позже' };
+    let pts = 100; const noStop = l.filter(t => !(t.stop > 0)).length, errs = l.reduce((a, t) => a + (t.errors || []).length, 0), noPlan = l.filter(t => !t.strategy).length;
+    pts -= noStop / l.length * 40; pts -= Math.min(40, errs / l.length * 25); pts -= noPlan / l.length * 20;
+    const c = cfg(), bal = balance(); const big = bal > 0 ? l.filter(t => tradeRisk(t) > bal * c.risk / 100 * 1.5).length : 0; pts -= big / l.length * 20;
+    const s = Math.max(0, Math.round(pts)); const parts = []; if (noStop) parts.push(noStop + ' без стопа'); if (errs) parts.push(errs + ' ' + plural(errs, 'ошибка', 'ошибки', 'ошибок')); if (big) parts.push(big + ' с перебором риска');
+    return { score: s, text: parts.length ? 'за 30 сделок: ' + parts.join(', ') : 'за 30 сделок — без нарушений' };
+  }
+
+  // ---------- VIEW: РИСКИ + РАЗБОР ----------
+  function riskHtml() {
+    const c = cfg(), bal = balance(), all = closed(), P = PROFILES[c.profile] || PROFILES.mod;
+    const al = alerts();
+    const alHtml = '<div class="v9-card"><div class="v9-head"><span class="v9-title">Контроль сейчас</span><span class="v9-sub">' + P.icon + ' ' + P.name + '</span></div>' + al.map(a => '<div class="v9-alert ' + a.lv + '"><span class="x">' + a.i + '</span><span>' + a.t + '</span></div>').join('') + '<div class="v9-btns"><button class="v9-btn" onclick="TRADER.editCfg()">⚙ Лимиты и профиль</button><button class="v9-btn" onclick="TRADER.calc()">🧮 Объём по стопу</button></div></div>';
+    const st = stats(all);
+    const dd = '<div class="v9-card"><div class="v9-head"><span class="v9-title">Просадка</span><span class="v9-sub">макс. −' + st.maxDDpct.toFixed(1) + '% · ' + fmt0(st.maxDD) + ' ₽</span></div>' + [10, 20, 30, 50].map(d => { const need = d / (100 - d) * 100; return '<div class="v9-hbar"><span class="l">потеря ' + d + '%</span><div class="b"><i class="r" style="left:0;width:' + Math.min(100, need / 1.2) + '%"></i></div><span class="v">нужно +' + need.toFixed(0) + '%</span></div>'; }).join('') + '<div class="v9-sub" style="margin-top:6px">Самая длинная серия убытков: ' + st.maxLossStreak + ' · прибылей: ' + st.maxWinStreak + '. При риске ' + c.risk + '% серия из ' + Math.max(st.maxLossStreak, 5) + ' стопов = −' + (100 - Math.pow(1 - c.risk / 100, Math.max(st.maxLossStreak, 5)) * 100).toFixed(1) + '%.</div></div>';
+    // Разбор ошибок
+    const errAgg = {}; let errPnl = 0, errN = 0;
+    for (const t of all) for (const e of (t.errors || [])) { const o = errAgg[e] = errAgg[e] || { n: 0, pnl: 0 }; o.n++; o.pnl += closedPnl(t); }
+    for (const t of all) if (t.errors && t.errors.length) { errN++; errPnl += closedPnl(t); }
+    const clean = all.filter(t => !(t.errors && t.errors.length)); const cs = stats(clean), es = stats(all.filter(t => t.errors && t.errors.length));
+    const errRows = Object.entries(errAgg).sort((a, b) => a[1].pnl - b[1].pnl).map(([id, o]) => { const tag = ERR_TAGS.find(x => x.id === id); const w = Math.min(100, Math.abs(o.pnl) / Math.max(1, ...Object.values(errAgg).map(x => Math.abs(x.pnl))) * 100); return '<div class="v9-hbar"><span class="l">' + esc(tag ? tag.l : id) + '</span><div class="b"><i class="' + (o.pnl < 0 ? 'r' : '') + '" style="left:0;width:' + w + '%"></i></div><span class="v ' + cls(o.pnl) + '">' + sgn(o.pnl) + ' ₽ · ' + o.n + '×</span></div>'; }).join('');
+    const errs = '<div class="v9-card"><div class="v9-head"><span class="v9-title">Разбор ошибок</span><span class="v9-sub">' + (errN ? errN + ' из ' + all.length + ' с ошибками' : '') + '</span></div>' + (errN ? '<div class="v9-grid2" style="margin-bottom:8px"><div class="v9-mini"><div class="l">Сделки по плану</div><div class="v ' + cls(cs.exp) + '">' + (cs.n ? sgn(cs.exp) + ' ₽/сд' : '—') + '</div><div class="s">' + cs.n + ' шт · винрейт ' + cs.winrate.toFixed(0) + '%</div></div><div class="v9-mini"><div class="l">С ошибками</div><div class="v ' + cls(es.exp) + '">' + sgn(es.exp) + ' ₽/сд</div><div class="s">' + es.n + ' шт · винрейт ' + es.winrate.toFixed(0) + '%</div></div></div>' + errRows + (cs.n && es.n && cs.exp > es.exp ? '<div class="v9-alert i" style="margin-top:8px"><span class="x">💡</span><span>Без ошибок ты зарабатываешь на <b>' + fmt0(cs.exp - es.exp) + ' ₽</b> больше за сделку. Дисциплина — твой самый прибыльный «индикатор».</span></div>' : '') : '<div class="v9-empty">Отмечай ошибки при закрытии сделки — здесь появится их цена в рублях и самые дорогие привычки.</div>') + '</div>';
+    // Ресёрч лучших/худших
+    const rs = research();
+    const resHtml = '<div class="v9-card"><div class="v9-head"><span class="v9-title">Ресёрч сделок</span><span class="v9-sub">лучшие и худшие</span></div>' + (all.length >= 5 ? rs : '<div class="v9-empty">Нужно хотя бы 5 закрытых сделок — тогда покажу, где ты зарабатываешь, а где сливаешь: по стратегиям, времени, дням, стороне и эмоциям.</div>') + '</div>';
+    return alHtml + resHtml + errs + dd;
+  }
+  function research() {
+    const all = closed(), st = stats(all); let h = '';
+    if (st.best) h += '<div class="v9-sec">Лучшая и худшая</div>' + tradeRow(st.best) + tradeRow(st.worst);
+    const dims = [
+      ['Стратегия', t => t.strategy ? stratById(t.strategy).icon + ' ' + stratById(t.strategy).name : 'Без стратегии'],
+      ['Сторона', t => t.side === 'short' ? 'Шорт' : 'Лонг'],
+      ['Время входа', t => { const hh = new Date(t.ts).getHours(); return hh < 9 ? 'ночь/утро' : hh < 13 ? 'утро 9–13' : hh < 18 ? 'день 13–18' : 'вечер 18+'; }],
+      ['День недели', t => ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'][new Date(t.ts).getDay()]],
+      ['Эмоция', t => t.emotion ? EMO[t.emotion] : null],
+      ['Удержание', t => { const hrs = (t.closeTs - t.ts) / 36e5; return hrs < 1 ? '< 1 ч' : hrs < 8 ? '1–8 ч' : hrs < 48 ? '8–48 ч' : '> 2 дней'; }],
+      ['Актив', t => t.sym],
+    ];
+    const ins = [];
+    for (const [name, fn] of dims) {
+      const g = groupBy(all, fn).filter(x => x.s.n >= 2).sort((a, b) => b.s.expR - a.s.expR); if (g.length < 2) continue;
+      const b = g[0], w = g[g.length - 1];
+      ins.push('<div class="v9-sec">' + name + '</div>' + g.map(x => { const mx = Math.max(...g.map(y => Math.abs(y.s.pnl))) || 1; return '<div class="v9-hbar"><span class="l">' + esc(x.k) + '</span><div class="b"><i class="' + (x.s.pnl < 0 ? 'r' : '') + '" style="left:' + (x.s.pnl < 0 ? 50 - Math.abs(x.s.pnl) / mx * 50 : 50) + '%;width:' + Math.abs(x.s.pnl) / mx * 50 + '%"></i></div><span class="v ' + cls(x.s.pnl) + '">' + sgn(x.s.pnl) + ' ₽ · ' + x.s.n + '</span></div>'; }).join('') + (w.s.expR < 0 && b.s.expR > 0 ? '<div class="v9-sub" style="margin-top:4px">' + esc(b.k) + ': ' + b.s.expR.toFixed(2) + 'R · ' + esc(w.k) + ': ' + w.s.expR.toFixed(2) + 'R — разница ' + (b.s.expR - w.s.expR).toFixed(2) + 'R на сделку.</div>' : ''));
+    }
+    return h + ins.join('');
+  }
+
+  // ---------- VIEW: СЛЕЖЕНИЕ + ПОПОЛНЕНИЕ ----------
+  function watchHtml() {
+    const w = watch(); const c = cfg(); const P = PROFILES[c.profile] || PROFILES.mod;
+    const dep = '<div class="v9-card"><div class="v9-head"><span class="v9-title">Пополнение бюджета</span><span class="v9-sub">' + P.icon + ' ' + P.name + '</span></div><div class="v9-sub" style="margin-bottom:8px">Укажи сумму пополнения — подберу активы под профиль риска, рассчитаю количество, уровни фиксации (+' + P.tp + '%) и защиты (−' + P.sl + '%), добавлю в портфель и слежение.</div><div class="v9-btns"><button class="v9-btn p" onclick="TRADER.deposit()">💵 Пополнить и подобрать</button><button class="v9-btn" onclick="TRADER.addWatch()">👀 Следить вручную</button></div>' + (deps().length ? '<div class="v9-sec">История пополнений</div>' + deps().slice(-5).reverse().map(d => '<div class="v9-row" style="cursor:default"><div class="ico">💵</div><div class="t">' + fmt0(d.amount) + ' ₽<span class="s">' + dlbl(d.ts) + (d.picks ? ' · ' + d.picks.map(p => p.sym).join(', ') : ' · в кэш') + '</span></div></div>').join('') : '') + '</div>';
+    const rows = w.map(it => {
+      const p = it.coinId && _px[it.coinId]; const cur = p ? p.rub : 0;
+      const lo = it.stop || (cur ? cur * 0.85 : 0), hi = it.target || (cur ? cur * 1.2 : 0); const pos = cur && hi > lo ? Math.max(0, Math.min(100, (cur - lo) / (hi - lo) * 100)) : 50;
+      const fromBuy = it.buy && cur ? (cur - it.buy) / it.buy * 100 : null;
+      return '<div class="v9-wl"><div class="n">' + esc(it.sym) + (it.qty ? '<small>' + fmt(it.qty) + ' шт</small>' : '') + (it.hitUp ? ' <span class="v9-chip g" style="padding:1px 6px">цель ✓</span>' : it.hitDn ? ' <span class="v9-chip r" style="padding:1px 6px">стоп!</span>' : '') + '</div><div class="p">' + (cur ? fmt(cur) + ' ₽' : '—') + '<small class="' + cls(p ? p.ch : 0) + '">' + (p ? pc(p.ch) + ' 24ч' : 'нет цены') + (fromBuy != null ? ' · ' + pc(fromBuy) + ' от входа' : '') + '</small></div><div class="v9-range"><i style="left:' + pos + '%"></i></div><div class="v9-range-l"><span>🛑 ' + (it.stop ? fmt(it.stop) : '—') + '</span><span>' + (it.buy ? 'вход ' + fmt(it.buy) : '') + '</span><span>🎯 ' + (it.target ? fmt(it.target) : '—') + '</span></div><div class="acts"><button onclick="TRADER.editWatch(\'' + it.id + '\')">✏ Уровни</button>' + (it.qty ? '<button onclick="TRADER.sellWatch(\'' + it.id + '\')">💰 Продал</button>' : '') + '<button onclick="TRADER.removeWatch(\'' + it.id + '\')">🗑</button></div></div>';
+    }).join('');
+    const list = '<div class="v9-card"><div class="v9-head"><span class="v9-title">Слежение</span><button class="acc-mini" onclick="TRADER.refresh()">⟳ Цены</button></div>' + (w.length ? rows : '<div class="v9-empty">Пока пусто. Пополни бюджет или добавь актив вручную — буду следить за ценой и предупрежу о достижении цели или стопа.</div>') + '</div>';
+    return dep + list;
+  }
+  async function deposit() {
+    const c = cfg(); const P = PROFILES[c.profile] || PROFILES.mod;
+    const r = await askForm([{ key: 'amount', label: 'Сумма пополнения, ₽', type: 'number', placeholder: '10000' }, { key: 'mode', label: 'Что сделать', type: 'select', options: [{ value: 'pick', label: '🧺 Подобрать активы под профиль' }, { value: 'cash', label: '💵 Просто добавить в капитал' }] }], { icon: '💵', title: 'Пополнение', okText: 'Далее' });
+    if (!r || !(num(r.amount) > 0)) return;
+    const amount = num(r.amount);
+    const d = deps(); const rec = { id: 'dep_' + now(), amount, ts: now() }; d.push(rec); saveDeps(d);
+    if (r.mode !== 'pick') { showToast('💵 +' + fmt0(amount) + ' ₽ в капитал', 'success'); render(); return; }
+    showToast('⏳ Загружаю цены и подбираю…', 'success');
+    const ids = Object.keys(P.alloc);
+    let mk = [];
+    try { mk = await api('/coins/markets?vs_currency=rub&ids=' + ids.join(',') + '&price_change_percentage=7d,30d&sparkline=false', 60e3); } catch (e) {}
+    if (!mk.length) { showToast('Не удалось получить цены — пополнение записано в капитал', 'warn'); render(); return; }
+    for (const m of mk) _px[m.id] = { rub: m.current_price, usd: 0, ch: m.price_change_percentage_24h || 0 };
+    const picks = ids.map(id => { const m = mk.find(x => x.id === id); if (!m) return null; const share = P.alloc[id] / 100; const stable = id === 'tether'; const ch7 = m.price_change_percentage_7d_in_currency || 0, ch30 = m.price_change_percentage_30d_in_currency || 0;
+      let why = stable ? 'кэш для докупок на просадках' : (ch7 < -8 ? 'просел на ' + ch7.toFixed(0) + '% за неделю — хорошая точка для набора' : ch30 > 15 ? 'сильный тренд (+' + ch30.toFixed(0) + '% за месяц) — покупать частями' : 'в диапазоне, набор по плану');
+      return { id, sym: m.symbol.toUpperCase(), name: m.name, price: m.current_price, rub: amount * share, qty: amount * share / m.current_price, share: P.alloc[id], why, stable, ch7, ch30, tp: stable ? 0 : m.current_price * (1 + P.tp / 100), sl: stable ? 0 : m.current_price * (1 - P.sl / 100) }; }).filter(Boolean);
+    openPickModal(rec, picks, P);
+  }
+  let _pick = null;
+  function openPickModal(rec, picks, P) {
+    _pick = { rec, picks, sel: picks.map(() => true) };
+    let m = document.getElementById('v9PickModal');
+    if (!m) { m = document.createElement('div'); m.className = 'modal-overlay v9-modal'; m.id = 'v9PickModal'; document.body.appendChild(m); }
+    const rows = picks.map((p, i) => '<div class="it ' + (i === 0 ? 'top' : '') + '" onclick="TRADER.togglePick(' + i + ')"><div class="ic">' + (_pick.sel[i] ? '✓' : esc(p.sym[0])) + '</div><div class="nm">' + esc(p.sym) + ' · ' + p.share + '%<small>' + esc(p.name) + ' · ' + fmt(p.price) + ' ₽' + (p.stable ? '' : ' · 7д ' + pc(p.ch7, 0)) + '</small></div><div class="pr">' + fmt0(p.rub) + ' ₽<small>' + fmt(p.qty) + ' шт</small></div><div class="why">' + p.why + (p.tp ? ' · 🎯 ' + fmt(p.tp) + ' · 🛑 ' + fmt(p.sl) : '') + '</div></div>').join('');
+    m.innerHTML = '<div class="modal-content"><div class="modal-title">🧺 Подбор под ' + P.icon + ' ' + P.name + '</div><div class="modal-info">' + fmt0(rec.amount) + ' ₽ · нажми на актив, чтобы исключить. Уровни: фиксация +' + P.tp + '%, защита −' + P.sl + '%.</div><div class="v9-pick">' + rows + '</div><div class="v9-alert i" style="margin-top:10px"><span class="x">⚠️</span><span>Это план по правилам профиля, а не инвестиционная рекомендация. Купи на бирже, затем подтверди — добавлю в портфель и слежение.</span></div><div class="modal-buttons" style="margin-top:12px"><button class="modal-btn secondary" onclick="TRADER.closePick()">Позже</button><button class="modal-btn primary" onclick="TRADER.confirmPick()">Купил — добавить</button></div></div>';
+    m.classList.add('show'); document.body.classList.add('modal-open');
+  }
+  function togglePick(i) { if (!_pick) return; _pick.sel[i] = !_pick.sel[i]; const P = PROFILES[cfg().profile] || PROFILES.mod; openPickModal(_pick.rec, _pick.picks, P); }
+  function closePick() { const m = document.getElementById('v9PickModal'); if (m) m.classList.remove('show'); document.body.classList.remove('modal-open'); _pick = null; render(); }
+  function confirmPick() {
+    if (!_pick) return; const chosen = _pick.picks.filter((p, i) => _pick.sel[i]); if (!chosen.length) { closePick(); return; }
+    const w = watch(); let hold = []; try { hold = CRYPTO.getHoldings(); } catch (e) {}
+    let usd = 0; try { const p = _px[chosen[0].id]; usd = p && p.usd ? p.usd / p.rub : 0; } catch (e) {}
+    const rubUsd = (() => { try { const x = _px.tether; return x && x.rub ? x.rub : 0; } catch (e) { return 0; } })();
+    for (const p of chosen) {
+      w.push({ id: 'w_' + now() + '_' + p.sym, sym: p.sym, coinId: p.id, qty: p.qty, buy: p.price, target: p.tp || 0, stop: p.sl || 0, ts: now(), dep: _pick.rec.id });
+      hold.push({ id: 'hold_' + now() + '_' + p.sym, coinId: p.id, symbol: p.sym, name: p.name, amount: p.qty, buyPrice: rubUsd ? p.price / rubUsd : 0, addedAt: now() });
+    }
+    saveWatch(w); try { uSet('v6_crypto_holdings', hold); } catch (e) {}
+    const d = deps(); const rec = d.find(x => x.id === _pick.rec.id); if (rec) { rec.picks = chosen.map(p => ({ sym: p.sym, rub: p.rub })); saveDeps(d); }
+    try { haptic('success'); } catch (e) {}
+    showToast('✅ ' + chosen.map(p => p.sym).join(', ') + ' — в портфеле и на слежении', 'success');
+    closePick(); _view = 'watch'; render(); try { CRYPTO.render(); } catch (e) {}
+  }
+  async function addWatch() {
+    const r = await askForm([{ key: 'sym', label: 'Тикер (BTC, ETH, SOL…)', placeholder: 'BTC' }, { key: 'buy', label: 'Цена входа, ₽ (необязательно)', type: 'number', placeholder: '' }, { key: 'qty', label: 'Количество (необязательно)', type: 'number', placeholder: '' }, { key: 'target', label: 'Цель, ₽', type: 'number', placeholder: '' }, { key: 'stop', label: 'Стоп, ₽', type: 'number', placeholder: '' }], { icon: '👀', title: 'Следить за активом', okText: 'Добавить' });
+    if (!r || !r.sym) return; const sym = cleanSym(r.sym); const id = coinIdFor(sym);
+    if (!id) { showToast('Не знаю монету ' + sym + ' — поддерживаются основные тикеры CoinGecko', 'error'); return; }
+    const w = watch(); w.push({ id: 'w_' + now(), sym, coinId: id, qty: num(r.qty), buy: num(r.buy), target: num(r.target), stop: num(r.stop), ts: now() }); saveWatch(w);
+    showToast('👀 ' + sym + ' на слежении', 'success'); refreshPrices(true).then(render); render();
+  }
+  async function editWatch(id) {
+    const w = watch(); const it = w.find(x => x.id === id); if (!it) return;
+    const r = await askForm([{ key: 'target', label: 'Цель, ₽', type: 'number', value: it.target || '' }, { key: 'stop', label: 'Стоп, ₽', type: 'number', value: it.stop || '' }, { key: 'buy', label: 'Цена входа, ₽', type: 'number', value: it.buy || '' }, { key: 'qty', label: 'Количество', type: 'number', value: it.qty || '' }], { icon: '✏️', title: it.sym + ' — уровни', okText: 'Сохранить' });
+    if (!r) return; it.target = num(r.target); it.stop = num(r.stop); it.buy = num(r.buy); it.qty = num(r.qty); it.hitUp = 0; it.hitDn = 0; saveWatch(w); render();
+  }
+  async function removeWatch(id) { const ok = await askConfirm('Убрать из слежения? Портфель не изменится.', { icon: '🗑', title: 'Слежение', okText: 'Убрать', noText: 'Отмена' }); if (!ok) return; saveWatch(watch().filter(x => x.id !== id)); render(); }
+  async function sellWatch(id) {
+    const w = watch(); const it = w.find(x => x.id === id); if (!it) return; const cur = it.coinId && _px[it.coinId] ? _px[it.coinId].rub : 0;
+    const r = await askForm([{ key: 'price', label: 'Цена продажи, ₽', type: 'number', value: cur ? fmt(cur, 2).replace(/\s/g, '') : '' }, { key: 'qty', label: 'Сколько продал', type: 'number', value: it.qty }], { icon: '💰', title: 'Продажа ' + it.sym, okText: 'Записать' });
+    if (!r || !(num(r.price) > 0)) return; const q = Math.min(it.qty || num(r.qty), num(r.qty) || it.qty); const price = num(r.price);
+    const t = trades(); t.push({ id: 'tr_' + now(), sym: it.sym, side: 'long', entry: it.buy || price, exit: price, qty: q, stop: it.stop || 0, take: it.target || 0, fee: 0, strategy: 'dca', status: 'closed', ts: it.ts || now(), closeTs: now(), emotion: '', errors: [], note: 'Из слежения' }); saveTrades(t);
+    it.qty = (it.qty || 0) - q; if (it.qty <= 0.0000001) { const i = w.indexOf(it); w.splice(i, 1); } saveWatch(w);
+    try { const h = CRYPTO.getHoldings(); const hh = h.find(x => x.coinId === it.coinId); if (hh) { hh.amount -= q; if (hh.amount <= 0) h.splice(h.indexOf(hh), 1); uSet('v6_crypto_holdings', h); } } catch (e) {}
+    const pnl = (price - (it.buy || price)) * q; showToast((pnl >= 0 ? '✅ ' : '📉 ') + it.sym + ' продан: ' + sgn(pnl) + ' ₽ — сделка в журнале', pnl >= 0 ? 'success' : 'warn'); render();
+  }
+  function refresh() { refreshPrices(true).then(ok => { showToast(ok ? '⟳ Цены обновлены' : 'Цены недоступны (лимит API) — попробуй через минуту', ok ? 'success' : 'warn'); render(); }); }
+
+  // ---------- VIEW: ЗНАНИЯ ----------
+  let _kbCat = 'all';
+  function kbHtml() {
+    const cats = ['all', ...new Set(KB.map(a => a.c))];
+    const seg = '<div class="v9-nav" style="padding-bottom:4px">' + cats.map(c => '<button class="' + (_kbCat === c ? 'on' : '') + '" onclick="TRADER.kbCat(\'' + c + '\')">' + (c === 'all' ? 'Все' : c) + '</button>').join('') + '</div>';
+    const read = misc().read || {};
+    const list = KB.filter(a => _kbCat === 'all' || a.c === _kbCat).map((a, i) => '<details class="v9-art" ontoggle="if(this.open)TRADER.markRead(\'' + a.t.replace(/'/g, '') + '\')"><summary><span class="ic">' + a.ic + '</span><span>' + esc(a.t) + (read[a.t.replace(/'/g, '')] ? ' <span class="v9-chip g" style="padding:0 6px">✓</span>' : '') + '<span class="s">' + esc(a.s) + '</span></span><span class="ar">›</span></summary><div class="body">' + a.b + '</div></details>').join('');
+    const n = Object.keys(read).length;
+    const chk = '<div class="v9-card"><div class="v9-head"><span class="v9-title">Чеклист перед входом</span><span class="v9-sub">30 секунд</span></div>' + CHECKLIST.map((x, i) => '<label class="v9-check"><input type="checkbox" onchange="TRADER.chkTick(this)"><span>' + x + '</span></label>').join('') + '<div class="v9-sub" style="margin-top:8px" id="v9ChkRes">Отметь все пункты — если хоть один «нет», сделки нет.</div></div>';
+    return '<div class="v9-card"><div class="v9-head"><span class="v9-title">База знаний</span><span class="v9-sub">' + n + ' / ' + KB.length + ' прочитано</span></div>' + seg + list + '</div>' + chk;
+  }
+  function kbCat(c) { _kbCat = c; render(); }
+  function markRead(t) { const m = misc(); m.read = m.read || {}; if (m.read[t]) return; m.read[t] = 1; saveMisc(m); try { if (Object.keys(m.read).length === KB.length) addLifeXP('v9_kb_all', 150, 'trader'); } catch (e) {} }
+  function chkTick() { const all = [...document.querySelectorAll('#v9Trader .v9-check input')]; const ok = all.every(i => i.checked); const el = document.getElementById('v9ChkRes'); if (el) el.innerHTML = ok ? '<span class="v9-g">✅ Все условия выполнены — можно входить по плану.</span>' : (all.filter(i => i.checked).length + ' из ' + all.length + ' — ещё не всё.'); if (ok) try { haptic('success'); } catch (e) {} }
+
+  // ---------- МОДАЛКА СДЕЛКИ ----------
+  let _tr = null;
+  function tradeModal() { let m = document.getElementById('v9TradeModal'); if (!m) { m = document.createElement('div'); m.className = 'modal-overlay v9-modal'; m.id = 'v9TradeModal'; document.body.appendChild(m); } return m; }
+  function closeTradeModal() { const m = document.getElementById('v9TradeModal'); if (m) m.classList.remove('show'); document.body.classList.remove('modal-open'); _tr = null; }
+  function newTrade() { _tr = { id: '', sym: '', side: 'long', entry: '', stop: '', take: '', qty: '', fee: '', strategy: strats()[0].id, emotion: 'calm', note: '', status: 'open', errors: [], exit: '' }; drawTradeModal(); }
+  function openTrade(id) { const t = trades().find(x => x.id === id); if (!t) return; _tr = Object.assign({}, t, { errors: (t.errors || []).slice() }); drawTradeModal(); }
+  function drawTradeModal() {
+    const t = _tr, m = tradeModal(), isNew = !t.id, isOpen = t.status === 'open';
+    const bal = balance(), c = cfg();
+    const sOpts = strats().map(s => '<option value="' + s.id + '" ' + (s.id === t.strategy ? 'selected' : '') + '>' + s.icon + ' ' + esc(s.name) + '</option>').join('');
+    const eOpts = Object.entries(EMO).map(([k, l]) => '<option value="' + k + '" ' + (k === t.emotion ? 'selected' : '') + '>' + l + '</option>').join('');
+    const tags = ERR_TAGS.map(e => '<button type="button" class="' + (t.errors.includes(e.id) ? 'on' : '') + '" onclick="TRADER.toggleErr(\'' + e.id + '\',this)">' + e.l + '</button>').join('');
+    m.innerHTML = '<div class="modal-content"><div class="modal-title">' + (isNew ? '＋ Новая сделка' : (isOpen ? '📌 ' + esc(t.sym) + ' — открыта' : '📓 ' + esc(t.sym) + ' — ' + dlbl(t.closeTs))) + '</div><div class="v9-form">' +
+      '<div class="g2"><div><label>Актив</label><input id="v9Sym" value="' + esc(t.sym) + '" placeholder="BTC" oninput="TRADER.calcLive()"></div><div><label>Сторона</label><div class="v9-seg"><button type="button" class="long ' + (t.side === 'long' ? 'on' : '') + '" onclick="TRADER.setSide(\'long\')">LONG</button><button type="button" class="short ' + (t.side === 'short' ? 'on' : '') + '" onclick="TRADER.setSide(\'short\')">SHORT</button></div></div></div>' +
+      '<div class="g3"><div><label>Вход ₽</label><input id="v9Entry" type="number" inputmode="decimal" value="' + (t.entry || '') + '" oninput="TRADER.calcLive()"></div><div><label>Стоп ₽</label><input id="v9Stop" type="number" inputmode="decimal" value="' + (t.stop || '') + '" oninput="TRADER.calcLive()"></div><div><label>Тейк ₽</label><input id="v9Take" type="number" inputmode="decimal" value="' + (t.take || '') + '" oninput="TRADER.calcLive()"></div></div>' +
+      '<div class="g2"><div><label>Объём (шт)</label><input id="v9Qty" type="number" inputmode="decimal" value="' + (t.qty || '') + '" oninput="TRADER.calcLive()"></div><div><label>Комиссия ₽</label><input id="v9Fee" type="number" inputmode="decimal" value="' + (t.fee || '') + '" oninput="TRADER.calcLive()"></div></div>' +
+      '<div class="v9-calc" id="v9Calc"></div>' +
+      '<div class="g2"><div><label>Стратегия</label><select id="v9Strat">' + sOpts + '</select></div><div><label>Состояние</label><select id="v9Emo">' + eOpts + '</select></div></div>' +
+      (isOpen && !isNew ? '<div><label>Цена выхода ₽ (чтобы закрыть)</label><input id="v9Exit" type="number" inputmode="decimal" placeholder="' + (px(t.sym) ? fmt(px(t.sym), 2).replace(/\s/g, '') : '') + '" oninput="TRADER.calcLive()"></div>' : '') +
+      (!isOpen ? '<div><label>Выход ₽</label><input id="v9Exit" type="number" inputmode="decimal" value="' + (t.exit || '') + '" oninput="TRADER.calcLive()"></div>' : '') +
+      '<div><label>Ошибки (если были)</label><div class="v9-tags">' + tags + '</div></div>' +
+      '<div><label>Заметка / сетап</label><textarea id="v9Note" placeholder="почему вошёл, что увидел">' + esc(t.note || '') + '</textarea></div>' +
+      '</div><div class="modal-buttons" style="margin-top:12px;flex-wrap:wrap">' + (!isNew ? '<button class="modal-btn secondary v9-btn d" onclick="TRADER.deleteTrade()">🗑</button>' : '') + '<button class="modal-btn secondary" onclick="TRADER.closeTradeModal()">Отмена</button>' + (isOpen && !isNew ? '<button class="modal-btn primary" onclick="TRADER.saveTrade(true)">Закрыть сделку</button><button class="modal-btn secondary" onclick="TRADER.saveTrade(false)">Сохранить</button>' : '<button class="modal-btn primary" onclick="TRADER.saveTrade(false)">' + (isNew ? 'Открыть' : 'Сохранить') + '</button>') + '</div></div>';
+    m.classList.add('show'); document.body.classList.add('modal-open'); calcLive();
+  }
+  function setSide(s) { if (!_tr) return; _tr.side = s; document.querySelectorAll('#v9TradeModal .v9-seg button').forEach(b => b.classList.toggle('on', b.classList.contains(s))); calcLive(); }
+  function toggleErr(id, btn) { if (!_tr) return; const i = _tr.errors.indexOf(id); if (i >= 0) _tr.errors.splice(i, 1); else _tr.errors.push(id); btn.classList.toggle('on', i < 0); }
+  const gv = id => { const el = document.getElementById(id); return el ? num(el.value) : 0; };
+  function calcLive() {
+    const el = document.getElementById('v9Calc'); if (!el || !_tr) return;
+    const entry = gv('v9Entry'), stop = gv('v9Stop'), take = gv('v9Take'), qty = gv('v9Qty'), fee = gv('v9Fee'), exit = gv('v9Exit'); const bal = balance(), c = cfg(); const side = _tr.side;
+    const t = { entry, stop, take, qty, fee, side }; const risk = tradeRisk(t), rew = tradeReward(t), rr = tradeRR(t);
+    const parts = [];
+    if (entry && stop && bal > 0) { const sug = posSize(bal, c.risk, entry, stop); parts.push('Рекомендуемый объём при риске ' + c.risk + '%: <b>' + fmt(sug) + ' шт</b> (' + fmt0(sug * entry) + ' ₽) <button type="button" class="acc-mini go" style="margin-left:6px" onclick="TRADER.useSize(' + sug + ')">применить</button>'); }
+    if (entry && stop && ((side === 'long' && stop >= entry) || (side === 'short' && stop <= entry))) parts.push('<span class="v9-r">⚠ Стоп не на той стороне от входа для ' + side.toUpperCase() + '</span>');
+    if (qty && entry) parts.push('Позиция <b>' + fmt0(qty * entry) + ' ₽</b>' + (bal > 0 ? ' · ' + (qty * entry / bal * 100).toFixed(0) + '% капитала' : ''));
+    if (risk) parts.push('Риск <b class="' + (bal > 0 && risk > bal * c.risk / 100 * 1.5 ? 'v9-r' : '') + '">' + fmt0(risk) + ' ₽</b>' + (bal > 0 ? ' (' + (risk / bal * 100).toFixed(2) + '%)' : '') + (rew ? ' · потенциал <b>' + fmt0(rew) + ' ₽</b> · R:R <b class="' + (rr < (c.rrMin || 2) ? 'v9-o' : 'v9-g') + '">1:' + rr.toFixed(1) + '</b>' : ''));
+    else if (entry && qty) parts.push('<span class="v9-r">Без стопа риск не ограничен</span>');
+    if (exit && entry && qty) { const p = pnlAt(t, exit); parts.push('Результат: <b class="' + cls(p) + '">' + sgn(p) + ' ₽</b>' + (risk ? ' = ' + (p / risk).toFixed(2) + 'R' : '')); }
+    el.innerHTML = parts.length ? parts.join('<br>') : 'Введи вход и стоп — посчитаю объём, риск и R:R.';
+  }
+  function useSize(n) { const el = document.getElementById('v9Qty'); if (el) { el.value = Number(n.toPrecision(6)); calcLive(); } }
+  function saveTrade(close) {
+    const t = _tr; if (!t) return;
+    t.sym = cleanSym(document.getElementById('v9Sym').value); t.entry = gv('v9Entry'); t.stop = gv('v9Stop'); t.take = gv('v9Take'); t.qty = gv('v9Qty'); t.fee = gv('v9Fee');
+    t.strategy = document.getElementById('v9Strat').value; t.emotion = document.getElementById('v9Emo').value; t.note = document.getElementById('v9Note').value.trim();
+    if (!t.sym || !(t.entry > 0) || !(t.qty > 0)) { showToast('Нужны актив, цена входа и объём', 'error'); return; }
+    const exit = gv('v9Exit');
+    if (close || t.status === 'closed') { if (!(exit > 0)) { showToast('Укажи цену выхода', 'error'); return; } t.exit = exit; t.status = 'closed'; t.closeTs = t.closeTs || now(); t.pnl = pnlAt(t, exit); }
+    const list = trades(); if (!t.id) { t.id = 'tr_' + now(); t.ts = now(); list.push(t); } else { const i = list.findIndex(x => x.id === t.id); if (i >= 0) list[i] = t; else list.push(t); }
+    saveTrades(list); closeTradeModal(); try { haptic(close ? 'success' : 'medium'); } catch (e) {}
+    if (t.status === 'closed') { const p = closedPnl(t); showToast((p >= 0 ? '✅ ' : '📉 ') + t.sym + ': ' + sgn(p) + ' ₽' + (tradeRisk(t) ? ' · ' + rMult(t).toFixed(2) + 'R' : ''), p >= 0 ? 'success' : 'warn'); try { addLifeXP('v9_tr_' + t.id, t.errors.length ? 10 : 25, 'trader'); } catch (e) {} const a = alerts()[0]; if (a && a.lv === 'r') setTimeout(() => showToast(a.t.replace(/<[^>]+>/g, ''), 'error'), 1200); }
+    else showToast('📌 ' + t.sym + ' открыта' + (t.stop ? '' : ' — без стопа!'), t.stop ? 'success' : 'warn');
+    render();
+  }
+  async function deleteTrade() { if (!_tr || !_tr.id) return; const ok = await askConfirm('Удалить сделку из журнала?', { icon: '🗑', title: 'Удаление', okText: 'Удалить', noText: 'Отмена' }); if (!ok) return; saveTrades(trades().filter(x => x.id !== _tr.id)); closeTradeModal(); render(); }
+  async function calc() {
+    const c = cfg(), bal = balance();
+    const r = await askForm([{ key: 'entry', label: 'Цена входа', type: 'number', placeholder: '0' }, { key: 'stop', label: 'Цена стопа', type: 'number', placeholder: '0' }, { key: 'risk', label: 'Риск, % капитала', type: 'number', value: c.risk }], { icon: '🧮', title: 'Объём по стопу · капитал ' + fmt0(bal) + ' ₽', okText: 'Посчитать' });
+    if (!r) return; const e = num(r.entry), s = num(r.stop), rp = num(r.risk) || c.risk; const q = posSize(bal, rp, e, s);
+    if (!q) { showToast('Нужны вход, стоп и капитал > 0', 'error'); return; }
+    showToast('🧮 Объём ' + fmt(q) + ' шт = ' + fmt0(q * e) + ' ₽ · риск ' + fmt0(bal * rp / 100) + ' ₽ (' + rp + '%) · стоп ' + (Math.abs(e - s) / e * 100).toFixed(2) + '%', 'success');
+  }
+
+  // ---------- СТРАТЕГИИ / ЦЕЛИ / НАСТРОЙКИ ----------
+  async function openStrat(id) {
+    const s = strats().find(x => x.id === id); if (!s) return; const l = closed().filter(t => t.strategy === id); const st = stats(l);
+    let m = document.getElementById('v9StratModal'); if (!m) { m = document.createElement('div'); m.className = 'modal-overlay v9-modal'; m.id = 'v9StratModal'; document.body.appendChild(m); }
+    m.innerHTML = '<div class="modal-content"><div class="modal-title">' + s.icon + ' ' + esc(s.name) + ' <span class="v9-sub">' + esc(s.tf || '') + '</span></div><div class="v9-calc" style="margin-bottom:10px">' + esc(s.rules || 'Правила не описаны') + '</div>' + (st.n ? kpi([[sgn(st.pnl) + ' ₽', 'итог', cls(st.pnl)], [st.winrate.toFixed(0) + '%', 'винрейт'], [st.pf.toFixed(2), 'PF'], [st.expR.toFixed(2) + 'R', 'ожидание'], [sgn(st.avgWin) + ' / −' + fmt0(st.avgLoss), 'ср. плюс / минус'], [st.maxLossStreak, 'макс. серия минусов']]) + eqSvg(l) + '<div style="margin-top:6px">' + l.slice(-5).reverse().map(tradeRow).join('') + '</div>' : '<div class="v9-empty">Сделок по этой стратегии ещё нет.</div>') + '<div class="modal-buttons" style="margin-top:12px"><button class="modal-btn secondary" onclick="TRADER.closeStrat()">Закрыть</button><button class="modal-btn primary" onclick="TRADER.closeStrat();TRADER.editStrat(\'' + id + '\')">✏ Править</button></div></div>';
+    m.classList.add('show'); document.body.classList.add('modal-open');
+  }
+  function closeStrat() { const m = document.getElementById('v9StratModal'); if (m) m.classList.remove('show'); document.body.classList.remove('modal-open'); }
+  async function editStrat(id) {
+    const list = strats(); const s = id ? list.find(x => x.id === id) : null;
+    const r = await askForm([{ key: 'name', label: 'Название', value: s ? s.name : '', placeholder: 'Например: Пробой с ретестом' }, { key: 'icon', label: 'Иконка (эмодзи)', value: s ? s.icon : '🎯' }, { key: 'tf', label: 'Таймфрейм', value: s ? s.tf : '', placeholder: '1H–4H' }, { key: 'rules', label: 'Правила входа / стопа / выхода', type: 'textarea', value: s ? s.rules : '' }], { icon: '🎯', title: s ? 'Стратегия' : 'Новая стратегия', okText: 'Сохранить' });
+    if (!r || !r.name) return;
+    if (s) { Object.assign(s, { name: r.name, icon: r.icon || '🎯', tf: r.tf || '', rules: r.rules || '' }); } else list.push({ id: 's_' + now(), name: r.name, icon: r.icon || '🎯', tf: r.tf || '', rules: r.rules || '' });
+    saveStrats(list); showToast('🎯 Стратегия сохранена', 'success'); render();
+  }
+  async function editGoals() {
+    const c = cfg();
+    const r = await askForm([{ key: 'monthGoal', label: 'Цель месяца, ₽ прибыли', type: 'number', value: c.monthGoal || '' }, { key: 'depGoal', label: 'Целевой капитал, ₽', type: 'number', value: c.depGoal || '' }, { key: 'winGoal', label: 'Целевой винрейт, %', type: 'number', value: c.winGoal || '' }, { key: 'rrMin', label: 'Минимальный R:R (1:X)', type: 'number', value: c.rrMin || 2 }], { icon: '🏁', title: 'Цели трейдера', okText: 'Сохранить' });
+    if (!r) return; c.monthGoal = num(r.monthGoal); c.depGoal = num(r.depGoal); c.winGoal = num(r.winGoal); c.rrMin = num(r.rrMin) || 2; saveCfg(c); showToast('🏁 Цели сохранены', 'success'); render();
+  }
+  async function editCfg() {
+    const c = cfg();
+    const r = await askForm([{ key: 'deposit', label: 'Стартовый депозит, ₽', type: 'number', value: c.deposit || '' }, { key: 'profile', label: 'Профиль риска', type: 'select', value: c.profile, options: Object.entries(PROFILES).map(([k, p]) => ({ value: k, label: p.icon + ' ' + p.name + ' · ' + p.risk + '% на сделку, ' + p.maxDay + '% в день' })) }, { key: 'risk', label: 'Риск на сделку, %', type: 'number', value: c.risk }, { key: 'maxDay', label: 'Лимит убытка в день, %', type: 'number', value: c.maxDay }, { key: 'maxTrades', label: 'Макс. сделок в день', type: 'number', value: c.maxTrades }], { icon: '⚙', title: 'Депозит и лимиты', okText: 'Сохранить' });
+    if (!r) return;
+    const prevP = c.profile; c.deposit = num(r.deposit); c.profile = PROFILES[r.profile] ? r.profile : 'mod';
+    if (c.profile !== prevP) { const P = PROFILES[c.profile]; c.risk = P.risk; c.maxDay = P.maxDay; } else { c.risk = num(r.risk) || c.risk; c.maxDay = num(r.maxDay) || c.maxDay; }
+    c.maxTrades = Math.round(num(r.maxTrades)) || 0; saveCfg(c); showToast('⚙ Настройки сохранены', 'success'); render();
+  }
+
+  // ---------- ДАШБОРД-КАРТОЧКА ----------
+  function renderDashCard() {
+    const root = document.getElementById('dashboardContent'); if (!root) return;
+    let box = document.getElementById('v9Dash');
+    if (!isTrader()) { if (box) box.remove(); return; }
+    if (!box) { box = document.createElement('div'); box.id = 'v9Dash'; box.className = 'v9-dash'; box.onclick = () => { switchTab('live'); _view = 'overview'; render(); }; const after = document.getElementById('v8Goals') || document.getElementById('v7DashExtra'); if (after) after.insertAdjacentElement('afterend', box); else root.appendChild(box); }
+    const bal = balance() + unrealized(), td = todayList().reduce((a, t) => a + closedPnl(t), 0), op = open().length, a = alerts()[0];
+    box.innerHTML = '<span style="font-size:22px">📈</span><div class="t">Трейдинг · ' + fmt0(bal) + ' ₽<span class="s">' + (op ? op + ' ' + plural(op, 'позиция', 'позиции', 'позиций') + ' · ' : '') + (a && a.lv !== 'g' ? a.t.replace(/<[^>]+>/g, '').slice(0, 60) + '…' : 'риск под контролем') + '</span></div><div class="big ' + cls(td) + '">' + sgn(td) + ' ₽</div>';
+  }
+
+  // ---------- BOOT ----------
+  let _booted = false;
+  function boot() {
+    if (_booted) return; _booted = true;
+    try {
+      try { for (const k of KEYS) if (!PROGRESS_KEYS.includes(k)) PROGRESS_KEYS.push(k); } catch (e) {}
+      const oRender = window.render;
+      if (typeof oRender === 'function' && !oRender._v9) { window.render = function () { const r = oRender.apply(this, arguments); try { if (document.getElementById('contentLive')?.classList.contains('active')) render(); } catch (e) {} return r; }; window.render._v9 = 1; }
+      const oSw = window.switchTab;
+      if (typeof oSw === 'function' && !oSw._v9) { window.switchTab = function (tab) { const r = oSw.apply(this, arguments); try { if (tab === 'live') render(); if (tab === 'dashboard') renderDashCard(); } catch (e) {} return r; }; window.switchTab._v9 = 1; }
+      if (typeof DASHBOARD !== 'undefined' && DASHBOARD.render && !DASHBOARD._v9) { const o = DASHBOARD.render; DASHBOARD.render = function () { const r = o.apply(this, arguments); try { renderDashCard(); } catch (e) {} return r; }; DASHBOARD._v9 = 1; }
+      const oAW = window.V7 && V7.applyWorkType;
+      if (typeof oAW === 'function' && !oAW._v9) { V7.applyWorkType = function () { const r = oAW.apply(this, arguments); try { render(); } catch (e) {} return r; }; V7.applyWorkType._v9 = 1; }
+      render();
+      _timer = setInterval(() => { if (!isTrader()) return; refreshPrices(false).then(ok => { if (ok && document.getElementById('contentLive')?.classList.contains('active') && !document.querySelector('.modal-overlay.show')) render(); }); }, 60000);
+      console.log('[v9] trader ready');
+    } catch (e) { console.error('[v9] boot', e); _booted = false; }
+  }
+  (function hook() {
+    const ob = window.bootV6;
+    if (typeof ob === 'function') { window.bootV6 = function () { const r = ob.apply(this, arguments); setTimeout(boot, 600); return r; }; }
+    document.addEventListener('v7:login', () => setTimeout(boot, 500));
+    setTimeout(() => { if (!_booted && typeof currentUser !== 'undefined' && currentUser) boot(); }, 7000);
+  })();
+
+  return { boot, render, view, newTrade, openTrade, closeTradeModal, saveTrade, deleteTrade, setSide, toggleErr, calcLive, useSize, calc, setMonth, openStrat, closeStrat, editStrat, editGoals, editCfg, deposit, togglePick, closePick, confirmPick, addWatch, editWatch, removeWatch, sellWatch, refresh, kbCat, markRead, chkTick, nextTip, balance, stats, closed, open, alerts, isTrader };
+})();
+window.TRADER = TRADER;
 
 
 // ====== START ======
