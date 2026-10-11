@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1220">
+<title>Мой план: чайник → осознанный трейдер</title>
+<style>
+:root{--bg:#0b1220;--card:#121c2e;--card2:#182540;--tx:#e7edf7;--mut:#8b9ab5;--acc:#4f8cff;--ok:#2ecc71;--bad:#ff5c5c;--warn:#ffb020;--br:#223252}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 -apple-system,system-ui,Segoe UI,Roboto,sans-serif;padding:16px 14px calc(40px + env(safe-area-inset-bottom))}
+.wrap{max-width:720px;margin:0 auto}
+h1{font-size:24px;margin:8px 0 4px}
+h2{font-size:19px;margin:28px 0 10px;display:flex;align-items:center;gap:8px}
+h3{font-size:16px;margin:18px 0 6px;color:var(--acc)}
+p{margin:8px 0}
+.sub{color:var(--mut);font-size:14px}
+.card{background:var(--card);border:1px solid var(--br);border-radius:14px;padding:14px 16px;margin:12px 0}
+.ok{border-left:4px solid var(--ok)}.bad{border-left:4px solid var(--bad)}.warn{border-left:4px solid var(--warn)}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--card2);color:var(--mut);margin-left:6px;vertical-align:middle}
+label.ck{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--br);cursor:pointer}
+label.ck:last-child{border-bottom:0}
+label.ck input{width:22px;height:22px;flex:0 0 22px;margin-top:2px;accent-color:var(--ok)}
+label.ck.done span{color:var(--mut);text-decoration:line-through}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+ul{padding-left:20px;margin:6px 0}li{margin:4px 0}
+.prog{height:8px;background:var(--card2);border-radius:999px;overflow:hidden;margin:10px 0 4px}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--ok));width:0;transition:width .3s}
+.links a{display:block;padding:8px 0;border-bottom:1px solid var(--br)}.links a:last-child{border-bottom:0}
+.links small{display:block;color:var(--mut);font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0}
+td,th{padding:7px 6px;border-bottom:1px solid var(--br);text-align:left;vertical-align:top}th{color:var(--mut);font-weight:600}
+.g{color:var(--ok)}.r{color:var(--bad)}.y{color:var(--warn)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+button{background:var(--card2);color:var(--tx);border:1px solid var(--br);border-radius:10px;padding:8px 12px;font-size:14px;cursor:pointer}
+.back{font-size:14px}
+footer{color:var(--mut);font-size:13px;margin-top:30px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<a class="back" href="./">← Life Tracker</a>
+<h1>Чайник → осознанный трейдер</h1>
+<p class="sub">Личный план на 6 месяцев. Галочки сохраняются на этом устройстве. Пункты идут по порядку — не перескакивай.</p>
+
+<div class="card">
+  <div class="top"><b>Прогресс</b><span id="pt" class="sub">0 / 0</span></div>
+  <div class="prog"><i id="pb"></i></div>
+  <div class="sub" id="pnext"></div>
+</div>
+
+<div class="card warn">
+  <b>Главная мысль.</b> Трейдинг и инвестирование — разные занятия. Инвестирование (купил индекс, держишь годами) работает почти у всех, кто не дёргается. Трейдинг — по данным ESMA и CFTC <b>70–85% убыточны через год</b>. Поэтому порядок такой: <b>сначала инвестор, потом — небольшой долей — трейдер.</b>
+</div>
+
+<!-- ======================== 1 ======================== -->
+<h2>1. Деньги в порядке <span class="tag">месяц 1 · ничего не покупаем</span></h2>
+<div class="card" data-step="1">
+  <label class="ck"><input type="checkbox" data-k="s1a"><span>Закрыть кредиты и рассрочки дороже 15% годовых. Вкладывать с кредитом = брать в долг под 25%, чтобы заработать 10%.</span></label>
+  <label class="ck"><input type="checkbox" data-k="s1b"><span>Подушка — 3 месяца расходов на накопительном счёте. У курьера доход скачет, подушка нужна больше, чем офисному.</span></label>
+  <label class="ck"><input type="checkbox" data-k="s1c"><span>Посчитать цифру «на инвестиции в месяц»: 10% от свободных денег после подушки. Калькулятор «Сколько можно вложить» — в Life Tracker → Трейдинг → Знания.</span></label>
+  <label class="ck"><input type="checkbox" data-k="s1d"><span>Вести учёт доход/расходы в Life Tracker → Деньги хотя бы 4 недели подряд.</span></label>
+</div>
+<div class="links card">
+  <a href="https://www.banki.ru/products/deposits/" target="_blank">Сравнение накопительных счетов и вкладов — Банки.ру<small>Сейчас безрисковые 15–18% годовых — это уже «доходность», которую трейдер-новичок обычно не обгоняет.</small></a>
+  <a href="https://www.cbr.ru/hd_base/KeyRate/" target="_blank">Ключевая ставка ЦБ<small>От неё зависят ставки по вкладам и облигациям.</small></a>
+</div>
+
+<!-- ======================== 2 ======================== -->
+<h2>2. Теория <span class="tag">месяцы 1–2 · 30–40 мин в день</span></h2>
+<div class="card" data-step="2">
+  <label class="ck"><input type="checkbox" data-k="s2a"><span>Школа Мосбиржи — бесплатный курс для начинающих (акции, облигации, ИИС, налоги в РФ).</span></label>
+  <label class="ck"><input type="checkbox" data-k="s2b"><span>Академия Т-Инвестиций — короткие уроки в приложении.</span></label>
+  <label class="ck"><input type="checkbox" data-k="s2c"><span>Книга: Мэлкиел «Случайная прогулка по Уолл-стрит» — почему индекс обгоняет 90% активных трейдеров. Прочитать <b>до</b> того, как захочется торговать.</span></label>
+  <label class="ck"><input type="checkbox" data-k="s2d"><span>Книга: Хаусел «Психология денег» — про поведение, не про графики.</span></label>
+  <label class="ck"><input type="checkbox" data-k="s2e"><span>(если тянет в трейдинг) BabyPips School of Pipsology — лучшая бесплатная база по теханализу и риску.</span></label>
+  <label class="ck"><input type="checkbox" data-k="s2f"><span>(если тянет в трейдинг) Книга: Даглас «Зональный трейдинг» — психология сделок.</span></label>
+</div>
+<div class="links card">
+  <a href="https://school.moex.com/" target="_blank">Школа Московской биржи<small>Бесплатно. Курс «Инвестиции для начинающих» — начать отсюда.</small></a>
+  <a href="https://www.tbank.ru/invest/education/" target="_blank">Академия Т-Инвестиций<small>Бесплатно, в приложении брокера.</small></a>
+  <a href="https://www.babypips.com/learn/forex" target="_blank">BabyPips — School of Pipsology<small>Англ., простой язык. Разделы Preschool → Kindergarten → Elementary достаточно.</small></a>
+  <a href="https://academy.binance.com/ru" target="_blank">Binance Academy<small>Если крипта: что такое кошелёк, 2FA, funding, ликвидация.</small></a>
+  <a href="https://www.coursera.org/learn/financial-markets-global" target="_blank">Yale «Financial Markets» (Роберт Шиллер) — Coursera<small>Бесплатно без сертификата. Нобелевский лауреат, лучший общий курс о рынках.</small></a>
+  <a href="https://www.investopedia.com/" target="_blank">Investopedia<small>Словарь: любой непонятный термин — сюда.</small></a>
+  <a href="https://www.litres.ru/search/?q=Случайная+прогулка+по+Уолл-стрит" target="_blank">📖 Мэлкиел — «Случайная прогулка по Уолл-стрит»</a>
+  <a href="https://www.litres.ru/search/?q=Психология+денег+Хаусел" target="_blank">📖 Хаусел — «Психология денег»</a>
+  <a href="https://www.litres.ru/search/?q=Зональный+трейдинг+Даглас" target="_blank">📖 Даглас — «Зональный трейдинг»</a>
+  <a href="https://www.litres.ru/search/?q=Воспоминания+биржевого+спекулянта" target="_blank">📖 Лефевр — «Воспоминания биржевого спекулянта» (для удовольствия, история Ливермора)</a>
+</div>
+
+<!-- ======================== 3 ======================== -->
+<h2>3. Первые реальные деньги — инвестиции <span class="tag">месяц 2</span></h2>
+<div class="card" data-step="3">
+  <label class="ck"><input type="checkbox" data-k="s3a"><span>Открыть брокерский счёт в крупном банке, где уже обслуживаешься (Т-Банк, Сбер, ВТБ, Альфа). Сразу открыть <b>ИИС тип 3</b> — налоговая льгота плюс деньги «заперты», меньше соблазна дёргаться.</span></label>
+  <label class="ck"><input type="checkbox" data-k="s3b"><span>Первая покупка: фонд на индекс Мосбиржи (SBMX / TMOS / EQMX) + фонд облигаций или ОФЗ. Старт 50/50.</span></label>
+  <label class="ck"><input type="checkbox" data-k="s3c"><span>Автопополнение на свою цифру из пункта 1. Один день в месяц, независимо от новостей.</span></label>
+  <label class="ck"><input type="checkbox" data-k="s3d"><span>Смотреть на счёт не чаще раза в неделю. 4 недели подряд.</span></label>
+</div>
+<div class="card ok"><b>Это фундамент.</b> Он работает, пока ты учишься. Просадка −30% в кризис — норма, не продавать. Ожидание: 10–20% в год в рублях.</div>
+<div class="links card">
+  <a href="https://www.moex.com/s188" target="_blank">ИИС — официальная страница Мосбиржи<small>Что это, какие льготы, как открыть.</small></a>
+  <a href="https://www.nalog.gov.ru/rn77/taxation/taxes/ndfl/nalog_vichet/inv_vichet/" target="_blank">Инвестиционный налоговый вычет — ФНС</a>
+  <a href="https://rusetfs.com/" target="_blank">RusETFs — сравнение фондов на Мосбирже<small>Комиссии фондов, состав, доходность. Берём с самой низкой комиссией.</small></a>
+</div>
+
+<!-- ======================== 4 ======================== -->
+<h2>4. Демо-трейдинг <span class="tag">месяцы 3–4 · только после пп. 1–3</span></h2>
+<div class="card" data-step="4">
+  <label class="ck"><input type="checkbox" data-k="s4a"><span>Выбрать <b>один</b> рынок: акции Мосбиржи (прозрачно, налоги просто) или BTC/ETH (24/7, выше риск). Не форекс.</span></label>
+  <label class="ck"><input type="checkbox" data-k="s4b"><span>Написать торговый план на одну страницу: что торгую, когда, сигнал входа, стоп, тейк, риск 1% на сделку, лимит дня 3%, после 2 стопов подряд — стоп на день.</span></label>
+  <label class="ck"><input type="checkbox" data-k="s4c"><span>50 сделок на демо (TradingView Paper Trading или демо брокера). Каждую — в журнал Life Tracker → Трейдинг.</span></label>
+  <label class="ck"><input type="checkbox" data-k="s4d"><span>Разбор: винрейт, средний R, макс. серия стопов. Если винрейт &lt;40% при R:R 1:1.5 — менять план, не рынок.</span></label>
+  <label class="ck"><input type="checkbox" data-k="s4e"><span>Прогнать свои цифры через «Симулятор серии сделок» в Знаниях — понять, что 6 стопов подряд при винрейте 40% — норма.</span></label>
+</div>
+<div class="links card">
+  <a href="https://www.tradingview.com/" target="_blank">TradingView<small>Графики + бесплатный Paper Trading (демо) + Bar Replay для бэктеста.</small></a>
+  <a href="https://ru.investing.com/economic-calendar/" target="_blank">Экономический календарь — Investing.com<small>Не торговать в момент выхода ставки ЦБ / ФРС / CPI.</small></a>
+  <a href="https://www.coinglass.com/" target="_blank">CoinGlass<small>Для крипты: ликвидации, funding, открытый интерес.</small></a>
+  <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank">Crypto Fear &amp; Greed Index<small>Когда «Extreme Greed» — все уже купили.</small></a>
+</div>
+
+<!-- ======================== 5 ======================== -->
+<h2>5. Микродепозит <span class="tag">месяцы 5–6</span></h2>
+<div class="card" data-step="5">
+  <label class="ck"><input type="checkbox" data-k="s5a"><span>Демо в плюсе на 50+ сделках → завести реальные <b>10–15 тыс. ₽</b>. Не больше. Задача — узнать, как ведёшь себя, когда больно по-настоящему.</span></label>
+  <label class="ck"><input type="checkbox" data-k="s5b"><span>Те же правила: 1% риск, журнал, лимит дня. Ещё 50 сделок.</span></label>
+  <label class="ck"><input type="checkbox" data-k="s5c"><span><b>Без плеча вообще.</b> Плечо 10× = ликвидация при движении 10% против тебя.</span></label>
+  <label class="ck"><input type="checkbox" data-k="s5d"><span>Честный разбор через 6 месяцев: статистика в плюсе? психологически тянешь? Да — поднимать до 10–20% от всех инвестиций. Нет — индексный фонд всё это время рос, ты ничего не потерял.</span></label>
+</div>
+
+<!-- ======================== Наставник ======================== -->
+<h2>Про наставника — честно</h2>
+<div class="card bad">
+  <b>Платные наставники, сигналы, закрытые каналы — нет.</b> Кто стабильно зарабатывает трейдингом, тому невыгодно продавать курс за 30 тыс.
+  <p><b>Красные флаги:</b> гарантия доходности · скрин прибыли без скрина депозита · «успей на поток» · давление срочностью · всё только в Telegram · «я научу, а ты мне % с прибыли».</p>
+</div>
+<div class="card ok">
+  <b>Кто реально может быть наставником:</b>
+  <ul>
+    <li><b>Книги выше</b> — лучшие трейдеры мира за 500 ₽.</li>
+    <li><b>Твой журнал сделок.</b> Через 100 записей расскажет о тебе больше любого коуча.</li>
+    <li><b>Я (ассистент).</b> Разбирать сделки, считать риск, искать дырки в плане, проверять идеи на истории, говорить «ты сейчас в FOMO». Это ровно то, что делает хороший наставник.</li>
+    <li><b>Чужие ошибки</b> — раздел «Трейдеры» в Знаниях: Ливермор, Дракенмиллер, FTX. Чужие потери дешевле своих.</li>
+  </ul>
+</div>
+<div class="links card">
+  <a href="https://smart-lab.ru/" target="_blank">Smart-Lab<small>Главный русский форум. Много мусора, но есть адекватные практики. Ничего не покупать.</small></a>
+  <a href="https://www.reddit.com/r/investing/" target="_blank">r/investing<small>Долгосрочные инвестиции, здравый смысл, англ.</small></a>
+  <a href="https://www.reddit.com/r/Daytrading/" target="_blank">r/Daytrading<small>Посты «как я слил депозит» читать обязательно.</small></a>
+  <a href="https://www.youtube.com/@chatwithtraders" target="_blank">Chat With Traders (YouTube/подкаст)<small>Интервью с реальными трейдерами, без продаж.</small></a>
+  <a href="https://www.youtube.com/@smbcapital" target="_blank">SMB Capital (YouTube)<small>Проп-фирма из Нью-Йорка, бесплатно учат процессу и разбору сделок.</small></a>
+</div>
+
+<!-- ======================== Никогда ======================== -->
+<h2>Чего не делать никогда</h2>
+<div class="card bad">
+  <ul>
+    <li>Кредитные деньги, деньги на аренду и еду, «последние».</li>
+    <li>Плечо в первый год.</li>
+    <li>Усреднять убыточную сделку, двигать стоп дальше.</li>
+    <li>Покупать то, что «все обсуждают» — к этому моменту уже поздно.</li>
+    <li>Начинать с альткоинов и мем-монет.</li>
+    <li>Торговать после стопа, чтобы «отбить».</li>
+    <li>Платить за сигналы и «наставничество».</li>
+  </ul>
+</div>
+
+<h2>Честные ожидания</h2>
+<div class="card">
+<table>
+<tr><th>Что</th><th>Реально</th><th>Враньё</th></tr>
+<tr><td>Год 1 трейдинга</td><td class="g">0% — не потерять, выработать дисциплину. Это победа.</td><td class="r">«Удвоил за месяц»</td></tr>
+<tr><td>Индекс Мосбиржи</td><td class="g">10–20% в год, просадки до −30%</td><td class="r">«Без рисков 30% годовых»</td></tr>
+<tr><td>Трейдинг с системой</td><td class="g">2–5% в месяц к депозиту — отлично</td><td class="r">«30% в месяц стабильно»</td></tr>
+<tr><td>Срок до стабильности</td><td class="g">2–3 года практики</td><td class="r">«Курс за 2 недели»</td></tr>
+</table>
+</div>
+
+<div class="card ok">
+  <b>Первое действие сегодня:</b> поставь галочку на том, что уже сделано, и посчитай подушку. Остальное — по порядку.
+</div>
+
+<div class="top" style="margin-top:20px">
+  <a class="back" href="./">← Открыть Life Tracker</a>
+  <button id="reset">Сбросить галочки</button>
+</div>
+<footer>Life Tracker · личный план · <span id="d"></span></footer>
+</div>
+
+<script>
+(function(){
+  var KEY='lt_trading_plan_v1';
+  var st={};try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  var boxes=[].slice.call(document.querySelectorAll('input[data-k]'));
+  function save(){localStorage.setItem(KEY,JSON.stringify(st));}
+  function render(){
+    var done=0;boxes.forEach(function(b){var k=b.dataset.k;b.checked=!!st[k];b.parentNode.classList.toggle('done',!!st[k]);if(st[k])done++;});
+    document.getElementById('pt').textContent=done+' / '+boxes.length;
+    document.getElementById('pb').style.width=(100*done/boxes.length)+'%';
+    var nx=boxes.filter(function(b){return !st[b.dataset.k]})[0];
+    document.getElementById('pnext').textContent=nx?'Следующий шаг: '+nx.nextSibling.textContent.trim().slice(0,110)+'…':'Все шаги пройдены. Теперь — разбор статистики и решение, продолжать ли.';
+  }
+  boxes.forEach(function(b){b.addEventListener('change',function(){st[b.dataset.k]=b.checked;if(b.checked)st[b.dataset.k+'_at']=Date.now();else delete st[b.dataset.k+'_at'];save();render();});});
+  document.getElementById('reset').onclick=function(){if(confirm('Сбросить все галочки?')){st={};save();render();}};
+  document.getElementById('d').textContent='обновлён 11.10.2026';
+  render();
+})();
+</script>
+</body>
+</html>
