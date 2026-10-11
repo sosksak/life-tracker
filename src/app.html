@@ -559,6 +559,9 @@ body.splash .tab-nav, body.splash .fab-container, body.splash .sync-status, body
   display: flex; align-items: baseline; gap: 4px;
 }
 .wallet-total .currency { font-size: 16px; color: rgba(255,255,255,0.7); font-weight: 600; }
+.wallet-edit-link { text-transform: none; letter-spacing: 0; color: rgba(255,255,255,0.75); cursor: pointer; text-decoration: underline dotted; }
+.wallet-sub { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 4px; line-height: 1.35; }
+.wallet-sub b { color: #fff; font-weight: 700; }
 .wallet-badge {
   background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);
   border-radius: var(--radius-md); padding: 6px 10px; text-align: center;
@@ -4299,10 +4302,11 @@ body.v95-more .v95-back { display: inline-flex; }
 <div class="wallet" id="wallet">
   <div class="wallet-top">
     <div class="wallet-balance">
-      <div class="wallet-label">Общий доход</div>
-      <div class="wallet-total">
+      <div class="wallet-label">Баланс · <span class="wallet-edit-link" onclick="editWalletBalance()">изменить ✏️</span></div>
+      <div class="wallet-total" onclick="editWalletBalance()" style="cursor:pointer">
         <span id="totalEarned">0</span> <span class="currency">₽</span>
       </div>
+      <div class="wallet-sub" id="walletSub"></div>
     </div>
     <div class="wallet-badge">
       <div class="wb-icon" id="walletBadgeIcon">📈</div>
@@ -8631,7 +8635,16 @@ function render() {
   const goal = DIFFICULTIES[difficulty].goal;
   const { totalEarned, totalHours, avgRate } = getShiftTotals();
 
-  document.getElementById('totalEarned').textContent = totalEarned.toLocaleString('ru-RU');
+  const wb = getWalletBalance();
+  document.getElementById('totalEarned').textContent = Math.round(wb.balance).toLocaleString('ru-RU');
+  const wsub = document.getElementById('walletSub');
+  if (wsub) {
+    const exp = wb.shiftExp + wb.txExp;
+    const parts = [`доход <b>${Math.round(wb.totalEarned + wb.txInc).toLocaleString('ru-RU')}</b>`];
+    if (exp) parts.push(`расходы <b>−${Math.round(exp).toLocaleString('ru-RU')}</b>`);
+    if (wb.adj) parts.push(`корр. <b>${wb.adj > 0 ? '+' : '−'}${Math.abs(Math.round(wb.adj)).toLocaleString('ru-RU')}</b>`);
+    wsub.innerHTML = parts.join(' · ');
+  }
   document.getElementById('totalShifts').textContent = shifts.length;
   document.getElementById('totalHours').textContent = totalHours.toFixed(1);
   document.getElementById('avgRate').textContent = avgRate.toLocaleString('ru-RU');
@@ -9076,7 +9089,7 @@ function renderChart() {
 
 // ====== PWA: SERVICE WORKER ======
 // Регистрируем только по http/https — с file:// браузер ругается.
-const APP_VERSION = 'v9.6.1';
+const APP_VERSION = 'v9.6.2';
 
 // v7.2.0 — политика обновлений «страница никогда не стартует старой»:
 //   Воркер (sw.js) перед отдачей index.html сверяет ETag с сервером и при
@@ -10025,6 +10038,36 @@ function getShiftTotals() {
   _shiftCache = { len: shifts.length, totalEarned, totalHours, avgRate: totalHours > 0 ? Math.round(totalEarned / totalHours) : 0 };
   return _shiftCache;
 }
+// v9.6.2: баланс кошелька = смены + прочие доходы − расходы смен − записанные расходы (± корректировки)
+function getWalletBalance() {
+  const { totalEarned } = getShiftTotals();
+  const shiftExp = shifts.reduce((a, s) => a + (s.expenses || 0), 0);
+  let txInc = 0, txExp = 0, adj = 0;
+  try {
+    (FINANCE.getTransactions() || []).forEach(t => {
+      const a = +t.amount || 0;
+      if (t.category === 'adjust') adj += t.type === 'income' ? a : -a;
+      else if (t.type === 'income') txInc += a;
+      else txExp += a;
+    });
+  } catch (e) {}
+  return { balance: totalEarned + txInc + adj - shiftExp - txExp, totalEarned, shiftExp, txInc, txExp, adj };
+}
+async function editWalletBalance() {
+  const w = getWalletBalance();
+  const res = await askForm([
+    { key: 'amount', label: 'Сколько денег есть на самом деле, ₽', type: 'number', placeholder: String(Math.round(w.balance)), value: Math.round(w.balance) },
+  ], { icon: '⚖️', title: 'Изменить баланс', okText: 'Сохранить', text: 'Разница запишется корректировкой во вкладке «Деньги». Смены и история не меняются.' });
+  if (!res || res.amount === '' || res.amount == null) return;
+  const target = Math.round(parseFloat(res.amount));
+  if (isNaN(target)) { showToast('Нужно число', 'warn'); return; }
+  const diff = target - Math.round(w.balance);
+  if (!diff) { showToast('Баланс уже такой', 'info'); return; }
+  FINANCE.addAdjustment(diff);
+  showToast(`⚖️ Баланс скорректирован: ${diff > 0 ? '+' : '−'}${Math.abs(diff).toLocaleString('ru-RU')} ₽`, 'success');
+  haptic('light');
+  render();
+}
 function invalidateShiftCache() { _shiftCache.len = -1; _streakCache.key = ''; _heatmapLastKey = ''; }
 
 // --- Debounced render to avoid rapid re-renders ---
@@ -10039,8 +10082,7 @@ const _origRender = render;
 render = function() {
   _origRender();
   try { EFF.render(); } catch (e) { console.warn('EFF', e); }
-  const { totalEarned } = getShiftTotals();
-  countUp(document.getElementById('totalEarned'), totalEarned);
+  countUp(document.getElementById('totalEarned'), Math.round(getWalletBalance().balance));
   // Only render heavy stats widgets when stats tab is active
   const statsActive = document.getElementById('contentStats')?.classList.contains('active');
   const liveActive = document.getElementById('contentLive')?.classList.contains('active');
@@ -10976,6 +11018,7 @@ const FINANCE = (() => {
     education: { name: 'Обучение',       icon: '📚', color: '#4299E1' },
     subscr:    { name: 'Подписки',       icon: '📱', color: '#667EEA' },
     other:     { name: 'Прочее',         icon: '📋', color: '#718096' },
+    adjust:    { name: 'Корректировка',  icon: '⚖️', color: '#A0AEC0' },
   };
 
   const INCOME_CATEGORIES = {
@@ -10984,6 +11027,7 @@ const FINANCE = (() => {
     gift:      { name: 'Подарки',         icon: '🎁', color: '#D69E2E' },
     invest:    { name: 'Инвестиции',      icon: '📈', color: '#9F7AEA' },
     other_inc: { name: 'Прочее',          icon: '📋', color: '#718096' },
+    adjust:    { name: 'Корректировка',   icon: '⚖️', color: '#A0AEC0' },
   };
 
   function getTransactions() {
@@ -11020,7 +11064,7 @@ const FINANCE = (() => {
   async function addTransaction(type) {
     const isExpense = type === 'expense';
     const cats = isExpense ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
-    const catOptions = Object.entries(cats).map(([k, v]) => ({
+    const catOptions = Object.entries(cats).filter(([k]) => k !== 'adjust').map(([k, v]) => ({
       value: k, label: v.icon + ' ' + v.name
     }));
 
@@ -11052,6 +11096,20 @@ const FINANCE = (() => {
     haptic('light');
     render();
     if (typeof DASHBOARD !== 'undefined') DASHBOARD.render();
+    if (typeof scheduleRender === 'function') scheduleRender(); // кошелёк на Работе
+  }
+
+  // v9.6.2: ручная корректировка баланса кошелька (знак = направление)
+  function addAdjustment(diff, note) {
+    const tx = getTransactions();
+    tx.unshift({
+      id: 'tx_' + Date.now(), type: diff > 0 ? 'income' : 'expense',
+      amount: Math.abs(Math.round(diff)), category: 'adjust',
+      note: note || 'Корректировка баланса', date: todayStr(), ts: Date.now(),
+    });
+    saveTransactions(tx);
+    render();
+    if (typeof DASHBOARD !== 'undefined') DASHBOARD.render();
   }
 
   async function quickExpense() {
@@ -11067,6 +11125,7 @@ const FINANCE = (() => {
     saveTransactions(tx);
     showToast('Запись удалена', 'warn');
     render();
+    if (typeof scheduleRender === 'function') scheduleRender();
   }
 
   // --- Аналитика ---
@@ -11310,7 +11369,7 @@ const FINANCE = (() => {
   }
 
   return {
-    getTransactions, addTransaction, deleteTransaction, quickExpense,
+    getTransactions, addTransaction, addAdjustment, deleteTransaction, quickExpense,
     getMonthSummary, getCategoryBreakdown, setupBudget,
     addGoal, addToGoal, removeGoal, getGoals,
     render, openPanel,
