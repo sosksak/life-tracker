@@ -4071,6 +4071,22 @@ input, textarea, select, [contenteditable], .lt-copy,
 .lt-foot button { font-size: 11px; color: var(--text-dim); background: none; border: none; font-family: inherit; cursor: pointer; padding: 4px 8px; }
 .lt-sheet .row .n { flex: 1; font-size: 12.5px; font-weight: 700; }
 .lt-sheet .hint { font-size: 11px; color: var(--text-dim); margin-bottom: 8px; }
+.lt-empty { font-size: 12.5px; color: var(--text-dim); line-height: 1.5; padding: 28px 16px; }
+.lt-empty button { display: inline-block; margin-top: 10px; font-size: 12px; color: var(--primary-ink); background: var(--accent-soft-2); border: none; border-radius: 10px; padding: 8px 14px; font-weight: 800; font-family: inherit; }
+/* ===== v9.5 — экран «Ещё»: чипсы разделов + слайд при свайпе ===== */
+.v95-chips { display: none; gap: 6px; padding: 8px 12px 4px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; position: sticky; top: 0; z-index: 20; background: var(--bg); }
+.v95-chips::-webkit-scrollbar { display: none; }
+.v95-chips.show { display: flex; }
+.v95-chip { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; padding: 8px 13px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-dim); font-family: inherit; font-size: 12px; font-weight: 800; letter-spacing: .2px; cursor: pointer; transition: background var(--dur-fast), color var(--dur-fast), transform var(--dur-fast); }
+.v95-chip span { font-size: 14px; }
+.v95-chip.on { background: var(--primary); color: #fff; border-color: transparent; }
+.v95-chip:active { transform: scale(.95); }
+#tabMore .tab-ico .ico { color: inherit; }
+.tab-content.v95-in-l { animation: v95InL .3s var(--ease-out) both; }
+.tab-content.v95-in-r { animation: v95InR .3s var(--ease-out) both; }
+@keyframes v95InL { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+@keyframes v95InR { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .tab-content.v95-in-l, .tab-content.v95-in-r { animation: none; } }
 
 .w92-pulse { animation: w92pulse 2s ease-in-out infinite; }
 @keyframes w92pulse { 0%,100% { opacity: 1 } 50% { opacity: .55 } }
@@ -4118,6 +4134,7 @@ input, textarea, select, [contenteditable], .lt-copy,
 <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path class="f" d="M6 7h12l-1 13H7z"/><path d="M4 7h16M6 7l1 13h10l1-13M9.5 7V4.5h5V7M10 11v5M14 11v5"/></symbol>
 <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path class="f" d="M12 2.5l8 3v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10v-6z"/><path d="M12 2.5l8 3v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10v-6zM9 12l2 2 4-4"/></symbol>
 <symbol id="i-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path class="f" d="M4 4h12l4 4v12H4z"/><path d="M4 4h12l4 4v12H4zM8 4v5h7V4M7 20v-6h10v6"/></symbol>
+<symbol id="i-dots" viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="5" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/></symbol>
 <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path class="f" d="M4 11l8-7 8 7v9h-5v-6h-6v6H4z"/><path d="M4 11l8-7 8 7v9h-5v-6h-6v6H4z"/></symbol>
 <symbol id="i-party" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path class="f" d="M5.5 20l4-11 7 7z"/><path d="M5.5 20l4-11 7 7zM12.5 11.5c1-3 3-3.5 5-2M14.5 7.5c0-2 1-3 3-3M15.5 14c2.5-1 4-.5 5 1"/><circle cx="18" cy="4" r="1" fill="currentColor"/><circle cx="21" cy="11" r="1" fill="currentColor"/></symbol>
 <symbol id="i-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path class="f" d="M12 20.5s-8-5-8-11a4.5 4.5 0 018-2.8 4.5 4.5 0 018 2.8c0 6-8 11-8 11z"/><path d="M12 20.5s-8-5-8-11a4.5 4.5 0 018-2.8 4.5 4.5 0 018 2.8c0 6-8 11-8 11z"/></symbol>
@@ -9025,7 +9042,7 @@ function renderChart() {
 
 // ====== PWA: SERVICE WORKER ======
 // Регистрируем только по http/https — с file:// браузер ругается.
-const APP_VERSION = 'v9.4.0';
+const APP_VERSION = 'v9.5.0';
 
 // v7.2.0 — политика обновлений «страница никогда не стартует старой»:
 //   Воркер (sw.js) перед отдачей index.html сверяет ETag с сервером и при
@@ -12217,12 +12234,12 @@ function buildV6TabBar() {
   const nav = document.querySelector('.tab-nav');
   if (!nav) return;
 
+  // v9.5: три основных вкладки; Жизнь, Стата и второстепенные карточки — на экране «Ещё» (свайп влево)
   const TABS = [
     { id: 'dashboard', icon: '🏠', label: 'ГЛАВНАЯ' },
     { id: 'live',      icon: '💼', label: 'РАБОТА' },
-    { id: 'life',      icon: '🎯', label: 'ЖИЗНЬ' },
     { id: 'money',     icon: '💰', label: 'ДЕНЬГИ' },
-    { id: 'stats',     icon: '📊', label: 'СТАТА' },
+    { id: 'more',      icon: '⋯',  label: 'ЕЩЁ' },
   ];
 
   nav.innerHTML = TABS.map(t => `
@@ -12278,7 +12295,7 @@ function installV6SwitchTab() {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
 
     const cap = tab.charAt(0).toUpperCase() + tab.slice(1);
-    const btn = document.getElementById('tab' + cap);
+    const btn = document.getElementById('tab' + cap) || document.getElementById('tabMore');
     const content = document.getElementById('content' + cap) || document.getElementById(tab + 'Content');
     if (btn) btn.classList.add('active');
     if (content) content.classList.add('active');
@@ -12369,7 +12386,7 @@ function bootV6() {
     let start = 'dashboard';
     try { const s = uGet('active_tab', null); if (s && (V6_COMPOSITE[s] || V5_TABS.includes(s))) start = s; } catch (e) {}
     const cap = start.charAt(0).toUpperCase() + start.slice(1);
-    const btn = document.getElementById('tab' + cap);
+    const btn = document.getElementById('tab' + cap) || document.getElementById('tabMore');
     const content = document.getElementById('content' + cap) || document.getElementById(start + 'Content');
     if (btn) btn.classList.add('active');
     if (content) content.classList.add('active');
@@ -12407,6 +12424,7 @@ const UI_HINTS = [
   { id: 'wt', target: '#wtChip', title: '💼 Тип работы', text: 'Здесь меняется тип работы: цвета, термины и целевая ставка подстроятся. Это же есть в «Профиль → Режим приложения».', when: () => true },
   { id: 'cat', target: '#catHub', title: '🎯 Направление заданий', text: 'Тут выбираешь, из какого направления будут завтрашние личные задания. Цветная метка под каждым заданием — его направление.', when: () => document.getElementById('lifeContent')?.classList.contains('active') },
   { id: 'trader', target: '#v9Trader .v9-nav', title: '📈 Режим трейдера', text: 'Обзор, журнал сделок с расчётом риска и R, стратегии со статистикой, цели, риск-контроль, слежение за активами и база знаний. Начни с «⚙ Настроить депозит».', when: () => { try { return V7.getWorkType().id === 'trader' && document.getElementById('contentLive')?.classList.contains('active'); } catch (e) { return false; } } },
+  { id: 'more95', target: '#tabMore', title: '⋯ Ещё', text: 'Жизнь, Стата и карточки, убранные с основных вкладок, живут здесь. Листай экраны свайпом влево/вправо — допы идут после Денег.', when: () => true },
   { id: 'shop', target: '#tabMoney', title: '💰 Деньги', text: 'Биржа с живым курсом крипты, финансы и портфель — здесь. Бусты (замены, двойной XP, направление заданий) покупаются за Life XP.', when: () => true }
 ];
 function getHintsSeen() { try { return uGet('v7_hints_seen', {}) || {}; } catch (e) { return {}; } }
@@ -14672,8 +14690,12 @@ const V93 = (() => {
     c._d = DEFAULTS_FLAG; uSet(KEY, c);
     try { markLocalChange(); schedulePushProgress(); } catch (e) {}
   }
+  // v9.5: «инверсия» — на экране «Ещё» вкладка показывает ТОЛЬКО скрытые карточки (допы)
+  let inverted = {};
+  function setInverted(tabId, on) { inverted[tabId] = !!on; }
+  function isInverted(tabId) { return !!inverted[tabId]; }
   // Для модулей: скрытую карточку можно не рендерить вовсе
-  function isHidden(tabId, key) { try { return tabCfg(tabId).hidden.includes(key); } catch (e) { return false; } }
+  function isHidden(tabId, key) { try { const h = tabCfg(tabId).hidden.includes(key); return inverted[tabId] ? !h : h; } catch (e) { return false; } }
   // После «показать» карточку нужно дорисовать — модули её пропускали
   function rerender(tabId) {
     try {
@@ -14716,17 +14738,25 @@ const V93 = (() => {
     try {
       const tc = tabCfg(tabId), list = cards(tabEl);
       const pos = k => { const i = tc.order.indexOf(k); return i < 0 ? 500 + list.findIndex(e => e.dataset.ltCard === k) : i; };
+      const inv = !!inverted[tabId];
+      let shown = 0;
       for (const el of list) {
         const k = el.dataset.ltCard;
-        el.classList.toggle('lt-card-hidden', tc.hidden.includes(k));
+        const h = tc.hidden.includes(k);
+        const hide = inv ? !h : h;
+        el.classList.toggle('lt-card-hidden', hide);
+        if (!hide) shown++;
         el.style.order = String(pos(k));
       }
       // Подвал «Настроить экран»
-      if (!tabEl.querySelector('.lt-foot')) {
-        const f = document.createElement('div'); f.className = 'lt-foot'; f.dataset.ltUi = '1';
-        f.innerHTML = `<button onclick="V93.edit('${tabId}')">⚙ Настроить экран · зажми карточку</button>`;
+      let f = tabEl.querySelector('.lt-foot');
+      if (!f) {
+        f = document.createElement('div'); f.className = 'lt-foot'; f.dataset.ltUi = '1';
         tabEl.appendChild(f);
       }
+      f.innerHTML = inv
+        ? (shown ? `<button onclick="V93.sheet()">⚙ Что показывать здесь, а что на основной вкладке</button>` : `<div class="lt-empty">Здесь появляются карточки, убранные с основной вкладки.<br><button onclick="V93.sheet()">⚙ Настроить</button></div>`)
+        : `<button onclick="V93.edit('${tabId}')">⚙ Настроить экран · зажми карточку</button>`;
       if (editing === tabId) decorate(tabEl);
     } finally { _applying = false; }
   }
@@ -14806,7 +14836,7 @@ const V93 = (() => {
       document.body.appendChild(m);
     }
     document.getElementById('v93SheetTitle').textContent = '🧩 Карточки · ' + TABS[tabId];
-    document.getElementById('v93SheetBody').innerHTML = `<div class="hint">Выключенные карточки исчезают с экрана и не считаются — данные не теряются. Порядок — стрелками в режиме редактирования.</div>` + rows;
+    document.getElementById('v93SheetBody').innerHTML = `<div class="hint">${inverted[tabId] ? 'Включено — на основной вкладке. Выключено — здесь, на экране «Ещё». Данные не теряются.' : 'Выключенные карточки уезжают на экран «Ещё» (свайп влево) и не считаются — данные не теряются. Порядок — стрелками в режиме редактирования.'}</div>` + rows;
     document.getElementById('v93Reset').onclick = () => resetTab(tabId);
     document.getElementById('v93All').onclick = () => showAll(tabId);
     m.classList.add('show'); document.body.classList.add('modal-open');
@@ -14821,7 +14851,7 @@ const V93 = (() => {
       if (editing || document.body.classList.contains('modal-open')) return;
       if (e.pointerType === 'mouse' && e.button !== 0) return;
       if (e.target.closest('input,textarea,select,button,a,canvas,svg,[contenteditable],.tab-nav,.fab-container,[data-lt-ui]')) return;
-      const tab = e.target.closest('.tab-content.active'); if (!tab || !TABS[tab.id]) return;
+      const tab = e.target.closest('.tab-content.active'); if (!tab || !TABS[tab.id] || inverted[tab.id]) return;
       sx = e.clientX; sy = e.clientY; target = tab;
       timer = setTimeout(() => { timer = null; if (target) { edit(target.id); target = null; } }, 550);
     }, { passive: true });
@@ -14862,9 +14892,157 @@ const V93 = (() => {
     document.addEventListener('v7:login', () => setTimeout(boot, 600));
     setTimeout(() => { if (!_booted && typeof currentUser !== 'undefined' && currentUser) boot(); }, 7500);
   })();
-  return { boot, apply, applyAll, edit, done, hide, show, move, sheet, closeSheet, resetTab, showAll, isHidden, DEFAULT_HIDDEN };
+  return { boot, apply, applyAll, edit, done, hide, show, move, sheet, closeSheet, resetTab, showAll, isHidden, setInverted, isInverted, rerender, DEFAULT_HIDDEN, TABS };
 })();
 window.V93 = V93;
+
+// ====== v9.5 — ТРИ ВКЛАДКИ + ЭКРАН «ЕЩЁ» ======
+// Таб-бар: Главная · Работа · Деньги · Ещё. На «Ещё» лежат разделы: Жизнь, Стата,
+// и допы (карточки, скрытые с основных вкладок — V93 в режиме инверсии).
+// Свайп влево/вправо по экрану листает всё подряд: Главная → Работа → Деньги → Жизнь → Стата → допы.
+const V95 = (() => {
+  'use strict';
+  const MAIN = ['dashboard', 'live', 'money'];
+  const SECTIONS = [
+    { id: 'life',       tab: 'life',      icon: '🎯', label: 'Жизнь' },
+    { id: 'stats',      tab: 'stats',     icon: '📊', label: 'Стата' },
+    { id: 'x-dash',     tab: 'dashboard', icon: '🏠', label: 'Главная +', inv: 'dashboardContent' },
+    { id: 'x-live',     tab: 'live',      icon: '💼', label: 'Работа +',  inv: 'contentLive' },
+    { id: 'x-money',    tab: 'money',     icon: '💰', label: 'Деньги +',  inv: 'moneyContent' },
+  ];
+  const ORDER = MAIN.concat(SECTIONS.map(s => s.id)); // линейный порядок свайпа
+  const KEY = 'v95_more_section';
+  let cur = null;          // текущий экран: 'dashboard' | 'live' | 'money' | id секции
+  let _switching = false;
+
+  const contentOf = tab => document.getElementById('content' + tab.charAt(0).toUpperCase() + tab.slice(1)) || document.getElementById(tab + 'Content');
+
+  function chips() {
+    let bar = document.getElementById('v95Chips');
+    if (!bar) {
+      bar = document.createElement('div'); bar.id = 'v95Chips'; bar.className = 'v95-chips';
+      bar.innerHTML = SECTIONS.map(s => `<button class="v95-chip" data-sec="${s.id}" onclick="V95.open('${s.id}')"><span>${s.icon}</span>${s.label}</button>`).join('');
+      const first = document.querySelector('.tab-content');
+      if (first && first.parentNode) first.parentNode.insertBefore(bar, first); else document.body.appendChild(bar);
+    }
+    return bar;
+  }
+  function clearInverted() { for (const s of SECTIONS) if (s.inv) V93.setInverted(s.inv, false); }
+
+  // Открыть секцию экрана «Ещё»
+  function open(secId, dir) {
+    const sec = SECTIONS.find(s => s.id === secId); if (!sec) return;
+    clearInverted();
+    if (sec.inv) V93.setInverted(sec.inv, true);
+    cur = sec.id;
+    try { uSet(KEY, sec.id); } catch (e) {}
+    _switching = true;
+    try { _base(sec.tab); } finally { _switching = false; }
+    // кнопка «Ещё» активна, чипсы видны
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.id === 'tabMore'));
+    const bar = chips(); bar.classList.add('show');
+    bar.querySelectorAll('.v95-chip').forEach(c => c.classList.toggle('on', c.dataset.sec === sec.id));
+    const ch = bar.querySelector('.v95-chip.on'); if (ch) ch.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+    document.body.classList.add('v95-more');
+    const el = contentOf(sec.tab);
+    if (el) {
+      if (sec.inv) { V93.apply(sec.inv); V93.rerender(sec.inv); V93.apply(sec.inv); }
+      else { const id = el.id; if (V93.TABS && V93.TABS[id]) V93.apply(id); }
+      slide(el, dir);
+    }
+  }
+  // Основная вкладка
+  function main(tab, dir) {
+    // если уходим с «допов» этой же вкладки — основные карточки пропускались при рендере, дорисуем
+    const prev = SECTIONS.find(s => s.id === cur);
+    const needRerender = !!(prev && prev.inv && prev.tab === tab);
+    clearInverted();
+    cur = tab;
+    _switching = true;
+    try { _base(tab); } finally { _switching = false; }
+    document.body.classList.remove('v95-more');
+    const bar = document.getElementById('v95Chips'); if (bar) bar.classList.remove('show');
+    const el = contentOf(tab);
+    if (el) { const id = el.id; if (V93.TABS && V93.TABS[id]) { if (needRerender) V93.rerender(id); V93.apply(id); } slide(el, dir); }
+  }
+  function slide(el, dir) {
+    if (!dir) return;
+    el.classList.remove('v95-in-l', 'v95-in-r'); void el.offsetWidth;
+    el.classList.add(dir > 0 ? 'v95-in-l' : 'v95-in-r');
+    setTimeout(() => el.classList.remove('v95-in-l', 'v95-in-r'), 400);
+  }
+  function go(step) {
+    const i = ORDER.indexOf(cur); if (i < 0) return;
+    const j = i + step; if (j < 0 || j >= ORDER.length) { try { haptic('light'); } catch (e) {} return; }
+    const next = ORDER[j];
+    try { haptic('light'); } catch (e) {}
+    if (MAIN.includes(next)) main(next, step); else open(next, step);
+  }
+
+  // Единая точка: switchTab('more') → последняя секция «Ещё»; switchTab('life'|'stats') → секция; остальное — основная
+  let _base = null;
+  function install() {
+    if (_base) return;
+    _base = window.switchTab;
+    window.switchTab = function (tab) {
+      if (_switching) return _base.apply(this, arguments);
+      if (tab === 'more') { let s = null; try { s = uGet(KEY, null); } catch (e) {} if (!SECTIONS.some(x => x.id === s)) s = 'life'; open(s, 0); return; }
+      if (tab === 'life' || tab === 'stats') { open(tab, 0); return; }
+      if (MAIN.includes(tab)) { main(tab, 0); return; }
+      return _base.apply(this, arguments); // shop и прочее
+    };
+    window.switchTab._v95 = 1;
+  }
+
+  // Свайп по экрану
+  function bindSwipe() {
+    let sx = 0, sy = 0, t0 = 0, ok = false;
+    const SKIP = 'input,textarea,select,[contenteditable],.tab-nav,.fab-container,.modal-overlay,.v95-chips,.mk-chart,.w92-ticker,.lt-editbar';
+    const hscroll = n => { for (let e = n; e && e !== document.body; e = e.parentElement) { if (e.scrollWidth > e.clientWidth + 4) { const o = getComputedStyle(e).overflowX; if (o === 'auto' || o === 'scroll') return true; } } return false; };
+    document.addEventListener('touchstart', e => {
+      ok = false;
+      if (e.touches.length !== 1) return;
+      if (document.body.classList.contains('modal-open') || document.body.classList.contains('lt-edit')) return;
+      const t = e.target;
+      // короткий экран: палец может лечь на пустое место ниже карточек — свайп всё равно работает
+      if (!t.closest || (t.closest('.tab-content') && !t.closest('.tab-content.active'))) return;
+      if (t.closest(SKIP) || hscroll(t)) return;
+      sx = e.touches[0].clientX; sy = e.touches[0].clientY; t0 = Date.now(); ok = true;
+    }, { passive: true });
+    document.addEventListener('touchend', e => {
+      if (!ok) return; ok = false;
+      const c = e.changedTouches[0]; const dx = c.clientX - sx, dy = c.clientY - sy, dt = Date.now() - t0;
+      if (dt > 700 || Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx) * 0.6) return;
+      go(dx < 0 ? 1 : -1);
+    }, { passive: true });
+  }
+
+  let _booted = false;
+  function boot() {
+    if (_booted) return; _booted = true;
+    try {
+      try { if (!PROGRESS_KEYS.includes(KEY)) PROGRESS_KEYS.push(KEY); } catch (e) {}
+      chips();
+      install();
+      bindSwipe();
+      // Синхронизируем состояние с уже открытой вкладкой
+      const act = document.querySelector('.tab-content.active');
+      let tab = 'dashboard';
+      try { tab = uGet('active_tab', null) || 'dashboard'; } catch (e) {}
+      if (act) { const m = act.id.match(/^content(\w+)$/) || act.id.match(/^(\w+)Content$/); if (m) tab = m[1].toLowerCase(); }
+      if (tab === 'life' || tab === 'stats') open(tab, 0); else if (MAIN.includes(tab)) main(tab, 0); else cur = tab;
+      console.log('[v9.5] 3 tabs + more ready');
+    } catch (e) { console.error('[v95] boot', e); _booted = false; }
+  }
+  (function hook() {
+    const ob = window.bootV6;
+    if (typeof ob === 'function') { window.bootV6 = function () { const r = ob.apply(this, arguments); setTimeout(boot, 950); return r; }; }
+    document.addEventListener('v7:login', () => setTimeout(boot, 650));
+    setTimeout(() => { if (!_booted && typeof currentUser !== 'undefined' && currentUser) boot(); }, 7600);
+  })();
+  return { boot, open, go, SECTIONS };
+})();
+window.V95 = V95;
 
 
 // ====== START ======
@@ -15005,7 +15183,7 @@ setTimeout(function() {
 /* v6.1 ICON ENGINE — swaps emoji in rendered text for the custom SVG set.
    Works on initial DOM and on every innerHTML/append via MutationObserver. */
 (function () {
-  var MAP = {"📊": "chart", "📈": "trend-up", "📉": "trend-down", "💼": "briefcase", "📋": "clipboard", "📌": "pin", "✅": "check", "❌": "x", "✕": "close", "✓": "tick", "🎯": "target", "💰": "money", "🪙": "coin", "💵": "cash", "💸": "cash", "⚡": "bolt", "🎲": "dice", "🔥": "fire", "☕": "coffee", "🎁": "gift", "☁": "cloud", "📴": "cloud-off", "📵": "cloud-off", "🛠": "wrench", "🚀": "rocket", "🔄": "refresh", "⟳": "refresh", "🔒": "lock", "🔑": "key", "✨": "sparkles", "💫": "sparkles", "🌟": "sparkles", "👑": "crown", "⭐": "star", "☆": "star", "📝": "note", "💧": "drop", "🏆": "trophy", "💎": "diamond", "✏": "edit", "📱": "phone", "📲": "phone", "💪": "muscle", "🦾": "muscle", "🗑": "trash", "🛡": "shield", "💾": "save", "🏠": "home", "🎉": "party", "❤": "heart", "💜": "heart", "💚": "heart", "🏃": "run", "👤": "user", "👥": "users", "👯": "users", "⚠": "warning", "📅": "calendar", "📖": "book", "📚": "book", "🎨": "palette", "📓": "notebook", "📁": "notebook", "🧾": "note", "🌴": "palm", "😴": "zzz", "🌙": "moon", "☀": "sun", "🌅": "sun", "🌤": "sun", "🌆": "sun", "🏅": "medal", "🎖": "medal", "▶": "play", "⏸": "pause", "⏹": "stop", "⏱": "timer", "🕐": "clock", "⌛": "hourglass", "⚙": "gear", "➕": "plus", "📤": "export", "📥": "import", "🏪": "store", "🏢": "building", "🏛": "building", "👔": "shirt", "💬": "chat", "🗣": "speaker", "📢": "speaker", "🧠": "brain", "🌐": "globe", "💡": "bulb", "👀": "eye", "🌊": "wave", "🌱": "leaf", "🌿": "leaf", "🍀": "leaf", "🌲": "tree", "🌳": "tree", "🌸": "flower", "💐": "flower", "🌈": "rainbow", "👋": "hand", "🖐": "hand", "🙌": "hand", "🙏": "handshake", "📦": "box", "🔔": "bell", "🧭": "map", "⚖": "scale", "🏁": "flag", "🎩": "crown", "🍕": "pizza", "🍽": "cup", "📸": "camera", "🖼": "camera", "🎤": "mic", "🚪": "door", "✉": "mail", "🎬": "film", "📞": "phone-call", "🏋": "dumbbell", "💊": "pill", "💻": "laptop", "🚌": "bus", "🧮": "calc", "♟": "chess", "🎡": "wheel", "🎰": "wheel", "❓": "question", "🧘": "moon", "🪞": "mirror", "🧊": "square", "⬜": "square", "🔸": "circle", "🟢": "circle", "⬡": "circle", "😊": "face-happy", "😄": "face-happy", "😂": "face-happy", "🤑": "face-happy", "🙂": "face-ok", "😐": "face-meh", "😕": "face-sad", "😫": "face-bad", "😅": "face-ok", "😏": "face-cool", "😎": "face-cool", "🤔": "question", "💭": "chat", "🤖": "laptop", "🧍": "user", "👸": "crown", "🦸": "shield", "🦁": "fire", "🐺": "fire", "⚔": "bolt", "🏗": "building", "👂": "speaker", "💇": "mirror", "🧴": "drop", "💃": "run", "🔟": "badge", "🌧": "drop"};
+  var MAP = {"⋯": "dots", "📊": "chart", "📈": "trend-up", "📉": "trend-down", "💼": "briefcase", "📋": "clipboard", "📌": "pin", "✅": "check", "❌": "x", "✕": "close", "✓": "tick", "🎯": "target", "💰": "money", "🪙": "coin", "💵": "cash", "💸": "cash", "⚡": "bolt", "🎲": "dice", "🔥": "fire", "☕": "coffee", "🎁": "gift", "☁": "cloud", "📴": "cloud-off", "📵": "cloud-off", "🛠": "wrench", "🚀": "rocket", "🔄": "refresh", "⟳": "refresh", "🔒": "lock", "🔑": "key", "✨": "sparkles", "💫": "sparkles", "🌟": "sparkles", "👑": "crown", "⭐": "star", "☆": "star", "📝": "note", "💧": "drop", "🏆": "trophy", "💎": "diamond", "✏": "edit", "📱": "phone", "📲": "phone", "💪": "muscle", "🦾": "muscle", "🗑": "trash", "🛡": "shield", "💾": "save", "🏠": "home", "🎉": "party", "❤": "heart", "💜": "heart", "💚": "heart", "🏃": "run", "👤": "user", "👥": "users", "👯": "users", "⚠": "warning", "📅": "calendar", "📖": "book", "📚": "book", "🎨": "palette", "📓": "notebook", "📁": "notebook", "🧾": "note", "🌴": "palm", "😴": "zzz", "🌙": "moon", "☀": "sun", "🌅": "sun", "🌤": "sun", "🌆": "sun", "🏅": "medal", "🎖": "medal", "▶": "play", "⏸": "pause", "⏹": "stop", "⏱": "timer", "🕐": "clock", "⌛": "hourglass", "⚙": "gear", "➕": "plus", "📤": "export", "📥": "import", "🏪": "store", "🏢": "building", "🏛": "building", "👔": "shirt", "💬": "chat", "🗣": "speaker", "📢": "speaker", "🧠": "brain", "🌐": "globe", "💡": "bulb", "👀": "eye", "🌊": "wave", "🌱": "leaf", "🌿": "leaf", "🍀": "leaf", "🌲": "tree", "🌳": "tree", "🌸": "flower", "💐": "flower", "🌈": "rainbow", "👋": "hand", "🖐": "hand", "🙌": "hand", "🙏": "handshake", "📦": "box", "🔔": "bell", "🧭": "map", "⚖": "scale", "🏁": "flag", "🎩": "crown", "🍕": "pizza", "🍽": "cup", "📸": "camera", "🖼": "camera", "🎤": "mic", "🚪": "door", "✉": "mail", "🎬": "film", "📞": "phone-call", "🏋": "dumbbell", "💊": "pill", "💻": "laptop", "🚌": "bus", "🧮": "calc", "♟": "chess", "🎡": "wheel", "🎰": "wheel", "❓": "question", "🧘": "moon", "🪞": "mirror", "🧊": "square", "⬜": "square", "🔸": "circle", "🟢": "circle", "⬡": "circle", "😊": "face-happy", "😄": "face-happy", "😂": "face-happy", "🤑": "face-happy", "🙂": "face-ok", "😐": "face-meh", "😕": "face-sad", "😫": "face-bad", "😅": "face-ok", "😏": "face-cool", "😎": "face-cool", "🤔": "question", "💭": "chat", "🤖": "laptop", "🧍": "user", "👸": "crown", "🦸": "shield", "🦁": "fire", "🐺": "fire", "⚔": "bolt", "🏗": "building", "👂": "speaker", "💇": "mirror", "🧴": "drop", "💃": "run", "🔟": "badge", "🌧": "drop"};
   var SRC = '(?:' + "☁️|🛠️|✏️|🗑️|🛡️|❤️|⚠️|☀️|🎖️|▶️|⏸️|⏹️|⏱️|⚙️|🏛️|🖐️|⚖️|✉️|🏋️|⚔️|🌧️|📊|📈|📉|💼|📋|📌|✅|❌|✕|✓|🎯|💰|🪙|💵|💸|⚡|🎲|🔥|☕|🎁|☁|📴|📵|🛠|🚀|🔄|⟳|🔒|🔑|✨|💫|🌟|👑|⭐|☆|📝|💧|🏆|💎|✏|📱|📲|💪|🦾|🗑|🛡|💾|🏠|🎉|❤|💜|💚|🏃|👤|👥|👯|⚠|📅|📖|📚|🎨|📓|📁|🧾|🌴|😴|🌙|☀|🌅|🌤|🌆|🏅|🎖|▶|⏸|⏹|⏱|🕐|⌛|⚙|➕|📤|📥|🏪|🏢|👔|💬|🗣|📢|🧠|🌐|💡|👀|🌊|🌱|🌿|🍀|🌲|🌳|🌸|💐|🌈|👋|🙌|🙏|📦|🔔|🧭|🏁|🎩|🍕|🍽|📸|🖼|🎤|🚪|🎬|📞|💊|💻|🚌|🧮|♟|🎡|🎰|❓|🧘|🪞|🧊|⬜|🔸|🟢|⬡|😊|😄|😂|🤑|🙂|😐|😕|😫|😅|😏|😎|🤔|💭|🤖|🧍|👸|🦸|🦁|🐺|🏗|👂|💇|🧴|💃|🔟" + ')\\uFE0F?';
   var RE_T = new RegExp(SRC);
   var RE_G = new RegExp(SRC, 'g');
