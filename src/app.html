@@ -4116,6 +4116,25 @@ body.v95-more .v95-back { display: inline-flex; }
 [data-theme="dark"] .w92-strip { background: linear-gradient(135deg, #2A2240, #3A2F1A); }
 [data-theme="dark"] .w92-btn.o { background: rgba(221,107,32,.15); } [data-theme="dark"] .w92-btn.r { background: rgba(229,62,62,.15); }
 
+/* --- v9.7 goal impact + FX --- */
+.gi { margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 6px; }
+.gi summary { cursor: pointer; font-size: 12px; font-weight: 700; color: var(--accent); list-style: none; display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
+.gi summary::-webkit-details-marker { display: none; }
+.gi-net { color: var(--text); font-weight: 800; }
+.gi-body { padding: 4px 0 2px; }
+.gi-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; font-variant-numeric: tabular-nums; }
+.gi-row.plus b { color: var(--green); } .gi-row.minus b { color: var(--red, #E53E3E); }
+.gi-opt { display: flex; gap: 6px; align-items: center; font-size: 11px; margin: 6px 0; color: var(--text-muted); }
+.gi-no { font-size: 11px; color: var(--text-muted); margin-top: 4px; line-height: 1.4; }
+.fx-layer { position: fixed; inset: 0; pointer-events: none; z-index: 10000; overflow: hidden; }
+.fx-star { position: absolute; left: 0; top: 0; width: 10px; height: 10px; font-size: 12px; line-height: 1; will-change: transform, opacity; animation: fxStar .55s cubic-bezier(.2,.8,.3,1) forwards; }
+@keyframes fxStar { 0% { transform: translate(var(--x0), var(--y0)) scale(.4); opacity: 1; } 100% { transform: translate(var(--x1), var(--y1)) scale(1.1); opacity: 0; } }
+.fx-press { transform: scale(.96) !important; transition: transform .08s !important; }
+.fx-pulse { animation: fxPulse .5s ease-out; }
+@keyframes fxPulse { 0% { transform: scale(1); } 35% { transform: scale(1.12); color: var(--green); } 100% { transform: scale(1); } }
+.fx-flash { position: fixed; inset: 0; pointer-events: none; z-index: 9999; background: radial-gradient(circle at 50% 40%, rgba(72,187,120,.28), transparent 60%); animation: fxFlash .7s ease-out forwards; }
+@keyframes fxFlash { from { opacity: 1; } to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .fx-star, .fx-flash, .fx-pulse { animation: none !important; display: none; } }
 </style>
 </head>
 <body class="splash">
@@ -6191,6 +6210,7 @@ async function saveEndShift() {
   btn.disabled = false;
   btn.textContent = '💾 СОХРАНИТЬ';
 
+  const _hrs = pendingEndShift ? pendingEndShift.hours : 0;
   if (ok) {
     // Close modal
     document.getElementById('endShiftModal').classList.remove('show');
@@ -6206,7 +6226,9 @@ async function saveEndShift() {
     const coinCount = getShopOwned('rain_upgrade') ? Math.min(Math.floor(earned / 300), 50) : Math.min(Math.floor(earned / 500), 30);
     rainCoins(coinCount);
     render();
-    showToast(`✅ Смена сохранена. +${earned.toLocaleString('ru-RU')} ₽`, 'success');
+    const _ph = FX.shiftPhrase(earned, _hrs);
+    if (earned >= 5000 || /Монстр|воин/.test(_ph)) FX.big(earned >= 10000 ? 40 : 15); else haptic('medium');
+    showToast(_ph, 'success');
 
     // Check for bonus rewards from shift quests
     setTimeout(() => checkAndGrantBonuses(), 800);
@@ -6671,6 +6693,7 @@ function celebrateLevelUp(level) {
   toast.innerHTML = `<div class="lq-lu-title">${level.icon} НОВЫЙ УРОВЕНЬ!</div>
     <div class="lq-lu-sub">LVL ${level.lvl} — ${level.name}</div>`;
   requestAnimationFrame(() => toast.classList.add('show'));
+  try { FX.big(30); } catch (e) {}
   setTimeout(() => toast.classList.remove('show'), 2600);
 }
 
@@ -8846,9 +8869,36 @@ function renderMonthGoal() {
       <div class="mg-row"><span>💰 Доход за месяц</span><b>${Math.round(mn.gross).toLocaleString('ru-RU')} ₽${mn.txInc ? ` <span class="rec-date">смены ${earned.toLocaleString('ru-RU')} + прочее ${Math.round(mn.txInc).toLocaleString('ru-RU')}</span>` : ''}</b></div>
       ${mn.spent ? `<div class="mg-row"><span>💸 Расходы</span><b>−${Math.round(mn.spent).toLocaleString('ru-RU')} ₽${monthExp ? ` <span class="rec-date">в сменах ${monthExp.toLocaleString('ru-RU')}</span>` : ''}</b></div>` : ''}
       ${mn.adj ? `<div class="mg-row"><span>⚖️ Корректировка баланса</span><b>${mn.adj > 0 ? '+' : '−'}${Math.abs(Math.round(mn.adj)).toLocaleString('ru-RU')} ₽</b></div>` : ''}
+      ${goalImpactHtml(mn, earned, monthExp)}
       ${monthUnits ? `<div class="mg-row"><span>📦 Заказов за месяц</span><b>${monthUnits} · ${hours > 0 ? Math.round(monthUnits / hours * 10) / 10 : 0}/ч</b></div>` : ''}
       <div class="mg-row"><span>📅 Запланировано впереди</span><b>${plannedAhead ? plannedAhead + ' ' + pluralShifts(plannedAhead) : '<span style="color:var(--accent);cursor:pointer" onclick="document.getElementById(\'calGrid\')?.scrollIntoView({behavior:\'smooth\',block:\'center\'})">отметить в календаре ›</span>'}</b></div>
     </div>`;
+}
+
+// v9.7: прозрачность цели — что в неё входит, что нет
+function goalImpactHtml(mn, shiftEarned, shiftExp) {
+  const f = v => Math.round(Math.abs(v)).toLocaleString('ru-RU');
+  const cats = (typeof FINANCE !== 'undefined' && FINANCE.EXPENSE_CATEGORIES) || {};
+  const topCats = Object.entries(mn.byCat || {}).sort((a, b) => b[1] - a[1]).slice(0, 4);
+  const useAdj = uGet('lt_goal_use_adjust', true);
+  const rows = [
+    `<div class="gi-row plus"><span>Доход со смен</span><b>+${f(shiftEarned)}</b></div>`,
+    mn.txInc ? `<div class="gi-row plus"><span>Прочие доходы (Деньги)</span><b>+${f(mn.txInc)}</b></div>` : '',
+    shiftExp ? `<div class="gi-row minus"><span>Расходы в сменах (топливо и т.п.)</span><b>−${f(shiftExp)}</b></div>` : '',
+    ...topCats.map(([k, v]) => `<div class="gi-row minus"><span>${(cats[k] || {}).icon || '📋'} ${(cats[k] || {}).name || k}</span><b>−${f(v)}</b></div>`),
+    (mn.txExp - topCats.reduce((a, c) => a + c[1], 0)) > 0 ? `<div class="gi-row minus"><span>Остальные расходы</span><b>−${f(mn.txExp - topCats.reduce((a, c) => a + c[1], 0))}</b></div>` : '',
+    `<div class="gi-row ${mn.adj >= 0 ? 'plus' : 'minus'}" style="${useAdj ? '' : 'opacity:.5;text-decoration:line-through'}"><span>⚖️ Корректировка баланса</span><b>${mn.adj >= 0 ? '+' : '−'}${f(mn.adj)}</b></div>`,
+  ].filter(Boolean).join('');
+  const net = Math.round(mn.net);
+  return `<details class="gi" ontoggle="haptic('light')">
+    <summary>🔍 Что влияет на цель <span class="gi-net">= ${net.toLocaleString('ru-RU')} ₽ чистыми</span></summary>
+    <div class="gi-body">
+      ${rows}
+      <label class="gi-opt"><input type="checkbox" ${useAdj ? 'checked' : ''} onchange="uSet('lt_goal_use_adjust', this.checked); markLocalChange(); render(); try{renderStats()}catch(e){}"> учитывать корректировку баланса в цели</label>
+      <div class="gi-no"><b>Не влияют:</b> XP и бонусы квестов, запланированные (ещё не отработанные) смены, крипто-портфель, копилка. Только реальные деньги: пришло − ушло.</div>
+      <div class="gi-no">💡 Каждый расход, записанный в «Деньги», отодвигает цель. Хочешь закрыть 100к — считай, сколько тратишь, а не только сколько заработал.</div>
+    </div>
+  </details>`;
 }
 
 function pluralShifts(n) {
@@ -9093,7 +9143,7 @@ function renderChart() {
 
 // ====== PWA: SERVICE WORKER ======
 // Регистрируем только по http/https — с file:// браузер ругается.
-const APP_VERSION = 'v9.6.3';
+const APP_VERSION = 'v9.7.0';
 
 // v7.2.0 — политика обновлений «страница никогда не стартует старой»:
 //   Воркер (sw.js) перед отдачей index.html сверяет ETag с сервером и при
@@ -10064,19 +10114,20 @@ function getMonthNet(prefix) {
   const ms = (shifts || []).filter(x => x.date && x.date.startsWith(prefix));
   const shiftEarned = ms.reduce((a, x) => a + (x.earned || 0), 0);
   const shiftExp = ms.reduce((a, x) => a + (x.expenses || 0), 0);
-  let txInc = 0, txExp = 0, adj = 0;
+  let txInc = 0, txExp = 0, adj = 0; const byCat = {};
   try {
     (FINANCE.getTransactions() || []).forEach(t => {
       if (!t.date || !t.date.startsWith(prefix)) return;
       const a = +t.amount || 0;
       if (t.category === 'adjust') adj += t.type === 'income' ? a : -a;
       else if (t.type === 'income') txInc += a;
-      else txExp += a;
+      else { txExp += a; byCat[t.category || 'other'] = (byCat[t.category || 'other'] || 0) + a; }
     });
   } catch (e) {}
+  if (!uGet('lt_goal_use_adjust', true)) adj = 0; // настройка: учитывать ли корректировку в цели
   const gross = shiftEarned + txInc;
   const spent = shiftExp + txExp;
-  return { n: ms.length, shiftEarned, shiftExp, txInc, txExp, adj, gross, spent, net: gross - spent + adj,
+  return { n: ms.length, shiftEarned, shiftExp, txInc, txExp, adj, byCat, gross, spent, net: gross - spent + adj,
            avgNetPerShift: ms.length ? (shiftEarned - shiftExp) / ms.length : 0 };
 }
 async function editWalletBalance() {
@@ -11120,8 +11171,15 @@ const FINANCE = (() => {
     // Лимит записей
     if (tx.length > 5000) tx.length = 5000;
     saveTransactions(tx);
-    showToast(`${isExpense ? '📝' : '💰'} ${isExpense ? 'Расход' : 'Доход'} записан: ${Math.abs(res.amount).toLocaleString('ru-RU')} ₽`, 'success');
-    haptic('light');
+    const _amt = Math.abs(parseFloat(res.amount));
+    if (isExpense) {
+      let msg = `📝 Расход записан: ${_amt.toLocaleString('ru-RU')} ₽`;
+      try { const g = getMonthGoal(); if (g) { const mn = getMonthNet(); msg += ` · до цели ${Math.max(0, Math.round(g - mn.net)).toLocaleString('ru-RU')} ₽`; } } catch (e) {}
+      showToast(msg, _amt >= 5000 ? 'warn' : 'success'); haptic(_amt >= 5000 ? 'heavy' : 'medium');
+    } else {
+      showToast(`💰 Доход записан: +${_amt.toLocaleString('ru-RU')} ₽`, 'success');
+      if (_amt >= 10000) FX.big(25); else haptic('medium');
+    }
     render();
     if (typeof DASHBOARD !== 'undefined') DASHBOARD.render();
     if (typeof scheduleRender === 'function') scheduleRender(); // кошелёк, цели и прогнозы
@@ -11129,6 +11187,7 @@ const FINANCE = (() => {
 
   // v9.6.2: ручная корректировка баланса кошелька (знак = направление)
   function addAdjustment(diff, note) {
+    haptic('medium');
     const tx = getTransactions();
     tx.unshift({
       id: 'tx_' + Date.now(), type: diff > 0 ? 'income' : 'expense',
@@ -11399,7 +11458,7 @@ const FINANCE = (() => {
   }
 
   return {
-    getTransactions, addTransaction, addAdjustment, deleteTransaction, quickExpense,
+    getTransactions, addTransaction, addAdjustment, deleteTransaction, quickExpense, EXPENSE_CATEGORIES,
     getMonthSummary, getCategoryBreakdown, setupBudget,
     addGoal, addToGoal, removeGoal, getGoals,
     render, openPanel,
@@ -13464,7 +13523,7 @@ const V8 = (() => {
     const notif = ('Notification' in window);
     const nst = notif ? Notification.permission : 'unsupported';
     const nrow = `<div class="v7-set-row"><span style="font-size:20px">🔔</span><div class="t">Уведомления о целях<span class="s">${nst === 'granted' ? 'включены: сообщу, когда цель дня закрыта' : nst === 'denied' ? 'запрещены в настройках браузера' : nst === 'unsupported' ? 'не поддерживаются на этом устройстве' : 'сообщать, когда закрыта цель дня'}</span></div>${nst === 'default' ? '<button class="acc-mini go" onclick="V8.askNotify()">Включить</button>' : ''}</div>`;
-    return `<div class="acc-sec"><h4>Оформление</h4><div class="v7-set-row" style="border-top:none"><span style="font-size:20px">🎨</span><div class="t">Тема<span class="s">авто — тёмная с 20:00 до 7:00 и по системе</span></div><div class="v8-seg" id="v8ThemeSeg">${seg}</div></div>${nrow}</div>`;
+    return `<div class="acc-sec"><h4>Оформление</h4><div class="v7-set-row" style="border-top:none"><span style="font-size:20px">🎨</span><div class="t">Тема<span class="s">авто — тёмная с 20:00 до 7:00 и по системе</span></div><div class="v8-seg" id="v8ThemeSeg">${seg}</div></div>${nrow}<div class="v7-set-row"><span style="font-size:20px">✨</span><div class="t">Эффекты и вибрация<span class="s">звёздочки на тап, пульс чисел, салют за цель</span></div><button class="acc-mini ${uGet('lt_fx', true) ? 'go' : ''}" onclick="uSet('lt_fx', !uGet('lt_fx', true)); haptic('medium'); renderAccountModal()">${uGet('lt_fx', true) ? 'Вкл' : 'Выкл'}</button></div></div>`;
   }
   async function askNotify() {
     try { const p = await Notification.requestPermission(); showToast(p === 'granted' ? '🔔 Уведомления включены' : '🔕 Уведомления не разрешены', p === 'granted' ? 'success' : 'error'); } catch (e) {}
@@ -15234,6 +15293,70 @@ window.V95 = V95;
 }
 
 
+
+// ====== v9.7 FX — тактильный слой: звёздочки на тап, вибрация, пульс чисел, контекстные фразы ======
+const FX = (() => {
+  let layer = null, lastTap = 0;
+  const on = () => uGet('lt_fx', true) && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function getLayer() { if (!layer) { layer = document.createElement('div'); layer.className = 'fx-layer'; document.body.appendChild(layer); } return layer; }
+  function burst(x, y, n = 6, chars = ['✦', '✧', '★', '·']) {
+    if (!on()) return;
+    const l = getLayer();
+    for (let i = 0; i < n; i++) {
+      const el = document.createElement('span');
+      el.className = 'fx-star';
+      el.textContent = chars[i % chars.length];
+      const a = (Math.PI * 2 * i) / n + Math.random() * 0.6, r = 18 + Math.random() * 22;
+      el.style.setProperty('--x0', x + 'px'); el.style.setProperty('--y0', y + 'px');
+      el.style.setProperty('--x1', (x + Math.cos(a) * r) + 'px'); el.style.setProperty('--y1', (y + Math.sin(a) * r - 8) + 'px');
+      el.style.color = ['#F6C343', '#48BB78', '#4299E1', '#9F7AEA'][i % 4];
+      l.appendChild(el); setTimeout(() => el.remove(), 600);
+    }
+  }
+  function pulse(el) { if (!el || !on()) return; el.classList.remove('fx-pulse'); void el.offsetWidth; el.classList.add('fx-pulse'); }
+  function flash() { if (!on()) return; const f = document.createElement('div'); f.className = 'fx-flash'; document.body.appendChild(f); setTimeout(() => f.remove(), 800); }
+  // Большое событие: вспышка + дождь + сильная вибрация
+  function big(coins = 20) { flash(); try { rainCoins(coins); } catch (e) {} haptic('success'); }
+  // Фраза по контексту смены
+  function shiftPhrase(earned, hours) {
+    const rate = hours > 0 ? earned / hours : 0;
+    const today = todayStr(), yd = localDateStr(new Date(Date.now() - 864e5));
+    const last = (shifts || []).find(s => s.date !== today);
+    const gap = last ? Math.round((parseLocalDate(today) - parseLocalDate(last.date)) / 864e5) : 0;
+    if (earned >= 10000) return `ДЕСЯТКА! 💰💰💰 +${earned.toLocaleString('ru-RU')} ₽ — красавчик`;
+    if (rate >= 1200) return `Монстр! 🔥 ${Math.round(rate)} ₽/ч — ты в топ-форме`;
+    if (gap >= 4) return `С возвращением, воин! 💪 +${earned.toLocaleString('ru-RU')} ₽`;
+    if (earned >= 5000) return `Пятёрка закрыта 💪 +${earned.toLocaleString('ru-RU')} ₽`;
+    return `✅ Смена сохранена. +${earned.toLocaleString('ru-RU')} ₽`;
+  }
+  // Тап по любому кликабельному — звёздочки + лёгкая вибрация (не чаще 1/80мс)
+  document.addEventListener('pointerdown', e => {
+    const t = e.target.closest('button, [onclick], .hab-check, .tab-btn, .nav-item, .chip, summary, input[type=checkbox], .shop-item, .quest-item, a');
+    if (!t || e.pointerType === 'mouse' && e.button !== 0) return;
+    const now = Date.now(); if (now - lastTap < 80) return; lastTap = now;
+    t.classList.add('fx-press'); setTimeout(() => t.classList.remove('fx-press'), 120);
+    haptic('light');
+    burst(e.clientX, e.clientY, 5);
+  }, { passive: true });
+  // Пульс баланса/XP при изменении
+  const watched = {};
+  function watch(id) {
+    const el = document.getElementById(id); if (!el) return;
+    const v = el.textContent; if (watched[id] !== undefined && watched[id] !== v) { pulse(el); const r = el.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, 8, ['₽', '✦', '★']); }
+    watched[id] = v;
+  }
+  new MutationObserver(() => { ['totalEarned', 'xpText', 'shopXpBalance'].forEach(watch); }).observe(document.body, { childList: true, subtree: true, characterData: true });
+  // Цель месяца закрыта — один раз в месяц салют
+  function checkGoal() {
+    try {
+      const g = getMonthGoal(); if (!g) return;
+      const mn = getMonthNet(); const key = 'lt_goal_fired_' + new Date().toISOString().slice(0, 7);
+      if (mn.net >= g && !uGet(key, false)) { uSet(key, true); big(40); showToast(`🏆 ЦЕЛЬ МЕСЯЦА ЗАКРЫТА: ${g.toLocaleString('ru-RU')} ₽ чистыми!`, 'success'); }
+    } catch (e) {}
+  }
+  const _render = window.render; if (typeof _render === 'function') window.render = function () { const r = _render.apply(this, arguments); setTimeout(checkGoal, 300); return r; };
+  return { burst, pulse, flash, big, shiftPhrase, checkGoal };
+})();
 </script>
 
 <!-- FAILSAFE: если основной скрипт завис, через 6с показать UI -->
