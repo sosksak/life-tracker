@@ -18,3 +18,4 @@ index_pre_v61_*.html
 # v7.1: исходники в src/, index.html и sw.js собирает build.py; старые промежуточные артефакты не нужны в репо
 _*
 index_pre_v7_*.html
+node_modules/
