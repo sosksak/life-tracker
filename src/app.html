@@ -3168,7 +3168,8 @@ body { background: var(--bg-main); }
 .tab-nav {
   position: fixed; top: auto; bottom: 0; left: 0; right: 0; z-index: 900;
   background: var(--nav-bg);
-  -webkit-backdrop-filter: saturate(180%) blur(18px); backdrop-filter: saturate(180%) blur(18px);
+  /* v9.6 perf: blur(18px)+saturate на фиксированном таб-баре — дорогой слой на каждом кадре; фон делаем плотнее вместо блюра */
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
   border-top: 1px solid var(--border); border-bottom: none;
   padding: 4px 6px calc(4px + env(safe-area-inset-bottom, 0px));
   box-shadow: 0 -6px 24px rgba(27,58,92,.06);
@@ -3303,6 +3304,11 @@ body { padding-bottom: calc(var(--nav-h) + 72px + env(safe-area-inset-bottom, 0p
   .modal-overlay.show .modal { transform: translateY(0); }
 }
 .modal-overlay { background: rgba(15,36,64,.45); }
+/* v9.6 perf: 10 скрытых модалок висели в DOM как display:flex + opacity:0 + backdrop-filter —
+   на iOS каждая = полноэкранный композитный слой с блюром на каждом кадре скролла.
+   Невидимые — visibility:hidden и без блюра; слой появляется только при .show. */
+.modal-overlay { visibility: hidden; -webkit-backdrop-filter: none; backdrop-filter: none; transition: opacity .2s, visibility 0s linear .2s; }
+.modal-overlay.show { visibility: visible; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); transition: opacity .2s, visibility 0s; }
 .ask-box { border-radius: var(--radius-lg); }
 
 /* — FAB — */
@@ -3688,7 +3694,7 @@ body.v7-nav-hidden .sync-status { transform: translateY(calc(var(--nav-h) + 8px)
 /* ================================================================
    V8 — LEVEL UP: dark theme, motion, goals, shift assistant, reports
    ================================================================ */
-:root { --nav-bg: rgba(255,255,255,.88); color-scheme: light; }
+:root { --nav-bg: rgba(255,255,255,.96); color-scheme: light; }
 html[data-theme="dark"] {
   color-scheme: dark;
   --bg-main: #0F141A; --bg-card: #171D26; --bg-card2: #202834; --bg-input: #0F141A;
@@ -4087,6 +4093,20 @@ input, textarea, select, [contenteditable], .lt-copy,
 @keyframes v95InL { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
 @keyframes v95InR { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .tab-content.v95-in-l, .tab-content.v95-in-r { animation: none; } }
+/* v9.6 — меню «Ещё»: крупные плитки разделов + кнопка «← Меню» в секциях */
+.v95-menu { padding: 6px 0 20px; }
+.v95-menu .v95-h { font-size: 22px; font-weight: 900; color: var(--text); margin: 6px 2px 12px; letter-spacing: -.3px; }
+.v95-menu .v95-grp { font-size: 11px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase; color: var(--text-dim); margin: 14px 4px 8px; }
+.v95-tile { display: flex; align-items: center; gap: 14px; width: 100%; padding: 14px 16px; margin-bottom: 8px; border-radius: 18px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text); font-family: inherit; text-align: left; cursor: pointer; box-shadow: var(--shadow-sm); transition: transform var(--dur-fast), background var(--dur-fast); }
+.v95-tile:active { transform: scale(.98); background: var(--bg-card2, var(--bg-card)); }
+.v95-tile .ic { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: var(--bg-main); flex: 0 0 auto; }
+.v95-tile .tt { font-size: 15px; font-weight: 800; }
+.v95-tile .ss { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+.v95-tile .ar { margin-left: auto; color: var(--text-dim); font-size: 18px; }
+.v95-tile .bd { margin-left: auto; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 999px; background: var(--primary); color: #fff; }
+.v95-back { display: none; align-items: center; gap: 8px; margin: 2px 0 10px; padding: 9px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text); font-family: inherit; font-size: 13px; font-weight: 800; cursor: pointer; }
+body.v95-more .v95-back { display: inline-flex; }
+.v95-chips.show { display: none; }
 
 .w92-pulse { animation: w92pulse 2s ease-in-out infinite; }
 @keyframes w92pulse { 0%,100% { opacity: 1 } 50% { opacity: .55 } }
@@ -4502,6 +4522,9 @@ input, textarea, select, [contenteditable], .lt-copy,
     <button class="modal-btn secondary" onclick="closeCalendarModal()" style="width:100%;margin-top:12px">✕ Закрыть</button>
   </div>
 </div>
+
+<!-- ============ TAB: MORE (v9.6 меню «Ещё») ============ -->
+<div class="tab-content" id="contentMore"><div id="v95Menu" class="v95-menu"></div></div>
 
 <!-- ============ TAB: SHOP ============ -->
 <div class="tab-content" id="contentShop">
@@ -9042,7 +9065,7 @@ function renderChart() {
 
 // ====== PWA: SERVICE WORKER ======
 // Регистрируем только по http/https — с file:// браузер ругается.
-const APP_VERSION = 'v9.5.1';
+const APP_VERSION = 'v9.6.0';
 
 // v7.2.0 — политика обновлений «страница никогда не стартует старой»:
 //   Воркер (sw.js) перед отдачей index.html сверяет ETag с сервером и при
@@ -12424,7 +12447,7 @@ const UI_HINTS = [
   { id: 'wt', target: '#wtChip', title: '💼 Тип работы', text: 'Здесь меняется тип работы: цвета, термины и целевая ставка подстроятся. Это же есть в «Профиль → Режим приложения».', when: () => true },
   { id: 'cat', target: '#catHub', title: '🎯 Направление заданий', text: 'Тут выбираешь, из какого направления будут завтрашние личные задания. Цветная метка под каждым заданием — его направление.', when: () => document.getElementById('lifeContent')?.classList.contains('active') },
   { id: 'trader', target: '#v9Trader .v9-nav', title: '📈 Режим трейдера', text: 'Обзор, журнал сделок с расчётом риска и R, стратегии со статистикой, цели, риск-контроль, слежение за активами и база знаний. Начни с «⚙ Настроить депозит».', when: () => { try { return V7.getWorkType().id === 'trader' && document.getElementById('contentLive')?.classList.contains('active'); } catch (e) { return false; } } },
-  { id: 'more95', target: '#tabMore', title: '⋯ Ещё', text: 'Жизнь, Стата и карточки, убранные с основных вкладок, живут здесь. Листай экраны свайпом влево/вправо — допы идут после Денег.', when: () => true },
+  { id: 'more96', target: '#tabMore', title: '⋯ Ещё', text: 'Меню разделов: Жизнь, Стата, Магазин, Профиль и скрытые карточки. Свайп влево/вправо листает Главная → Работа → Деньги → Ещё.', when: () => true },
   { id: 'shop', target: '#tabMoney', title: '💰 Деньги', text: 'Биржа с живым курсом крипты, финансы и портфель — здесь. Бусты (замены, двойной XP, направление заданий) покупаются за Life XP.', when: () => true }
 ];
 function getHintsSeen() { try { return uGet('v7_hints_seen', {}) || {}; } catch (e) { return {}; } }
@@ -14912,56 +14935,84 @@ const V95 = (() => {
   'use strict';
   const MAIN = ['dashboard', 'live', 'money'];
   const SECTIONS = [
-    { id: 'life',       tab: 'life',      icon: '🎯', label: 'Жизнь' },
-    { id: 'stats',      tab: 'stats',     icon: '📊', label: 'Стата' },
-    { id: 'x-dash',     tab: 'dashboard', icon: '🏠', label: 'Главная +', inv: 'dashboardContent' },
-    { id: 'x-live',     tab: 'live',      icon: '💼', label: 'Работа +',  inv: 'contentLive' },
-    { id: 'x-money',    tab: 'money',     icon: '💰', label: 'Деньги +',  inv: 'moneyContent' },
+    { id: 'life',       tab: 'life',      icon: '🎯', label: 'Жизнь',   sub: 'Привычки, здоровье, личные задачи' },
+    { id: 'stats',      tab: 'stats',     icon: '📊', label: 'Стата',   sub: 'Отчёты, графики, история смен' },
+    { id: 'x-dash',     tab: 'dashboard', icon: '🏠', label: 'Главная · скрытые карточки', sub: 'Убранные с вкладки Главная', inv: 'dashboardContent' },
+    { id: 'x-live',     tab: 'live',      icon: '💼', label: 'Работа · скрытые карточки',  sub: 'Убранные с вкладки Работа',  inv: 'contentLive' },
+    { id: 'x-money',    tab: 'money',     icon: '💰', label: 'Деньги · скрытые карточки',  sub: 'Убранные с вкладки Деньги',  inv: 'moneyContent' },
   ];
-  const ORDER = MAIN.concat(SECTIONS.map(s => s.id)); // линейный порядок свайпа
-  const KEY = 'v95_more_section';
-  let cur = null;          // текущий экран: 'dashboard' | 'live' | 'money' | id секции
+  // v9.6: свайп листает только основные экраны и меню «Ещё»; разделы открываются из меню
+  const ORDER = MAIN.concat(['more']);
+  let cur = null;          // текущий экран: 'dashboard' | 'live' | 'money' | 'more' | id секции
   let _switching = false;
 
   const contentOf = tab => document.getElementById('content' + tab.charAt(0).toUpperCase() + tab.slice(1)) || document.getElementById(tab + 'Content');
-
-  function chips() {
-    let bar = document.getElementById('v95Chips');
-    if (!bar) {
-      bar = document.createElement('div'); bar.id = 'v95Chips'; bar.className = 'v95-chips';
-      bar.innerHTML = SECTIONS.map(s => `<button class="v95-chip" data-sec="${s.id}" onclick="V95.open('${s.id}')"><span>${s.icon}</span>${s.label}</button>`).join('');
-      const first = document.querySelector('.tab-content');
-      if (first && first.parentNode) first.parentNode.insertBefore(bar, first); else document.body.appendChild(bar);
-    }
-    return bar;
-  }
   function clearInverted() { for (const s of SECTIONS) if (s.inv) V93.setInverted(s.inv, false); }
 
-  // Открыть секцию экрана «Ещё»
+  // Сколько скрытых карточек на вкладке (для бейджа в меню)
+  function hiddenCount(sec) {
+    try {
+      const el = document.getElementById(sec.inv); if (!el) return 0;
+      let n = 0;
+      for (const k of el.children) { if (k.dataset.ltUi) continue; if (k.classList.contains('lt-card-hidden')) n++; else for (const kk of k.children) if (kk.classList && kk.classList.contains('lt-card-hidden')) n++; }
+      return n;
+    } catch (e) { return 0; }
+  }
+  function setActiveBtn(id) { document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.id === id)); }
+  function activate(el) { document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active')); el.classList.add('active'); }
+
+  // Меню «Ещё»
+  function renderMenu() {
+    const box = document.getElementById('v95Menu'); if (!box) return;
+    const tile = (ic, t, s, on, badge) => `<button class="v95-tile" onclick="${on}"><span class="ic">${ic}</span><span><div class="tt">${t}</div><div class="ss">${s}</div></span>${badge ? `<span class="bd">${badge}</span>` : '<span class="ar">›</span>'}</button>`;
+    const xs = SECTIONS.filter(s => s.inv).map(s => ({ s, n: hiddenCount(s) })).filter(x => x.n > 0);
+    box.innerHTML = `<div class="v95-h">Ещё</div>`
+      + `<div class="v95-grp">Разделы</div>`
+      + SECTIONS.filter(s => !s.inv).map(s => tile(s.icon, s.label, s.sub, `V95.open('${s.id}',1)`)).join('')
+      + `<div class="v95-grp">Профиль</div>`
+      + tile('🏪', 'Магазин', 'Бусты, темы, награды за XP', "switchTab('shop')")
+      + tile('👤', 'Профиль и доступ', 'Оформление, подсказки, аккаунт', "openAccountModal()")
+      + (xs.length ? `<div class="v95-grp">Скрытые карточки</div>` + xs.map(x => tile(x.s.icon, x.s.label.split(' · ')[0], x.s.sub, `V95.open('${x.s.id}',1)`, x.n)).join('') + `<div class="hint" style="margin:4px 4px 0">Карточки, выключенные на вкладках. Вернуть на место — в режиме «Настроить экран».</div>` : '');
+  }
+  function more(dir) {
+    clearInverted();
+    cur = 'more';
+    try { uSet('active_tab', 'more'); } catch (e) {}
+    document.body.classList.remove('v95-more');
+    const el = contentOf('more'); if (!el) return;
+    renderMenu();
+    setActiveBtn('tabMore');
+    activate(el);
+    window.scrollTo({ top: 0 });
+    slide(el, dir);
+  }
+  // Кнопка «← Меню» внутри раздела
+  function backBtn(el) {
+    let b = el.querySelector(':scope > .v95-back');
+    if (!b) { b = document.createElement('button'); b.className = 'v95-back'; b.dataset.ltUi = '1'; b.innerHTML = '‹ Меню «Ещё»'; b.onclick = () => more(-1); el.insertBefore(b, el.firstChild); }
+    el.insertBefore(b, el.firstChild); b.style.order = '-1000';
+  }
+  // Открыть раздел
   function open(secId, dir) {
     const sec = SECTIONS.find(s => s.id === secId); if (!sec) return;
     clearInverted();
     if (sec.inv) V93.setInverted(sec.inv, true);
     cur = sec.id;
-    try { uSet(KEY, sec.id); } catch (e) {}
+    try { uSet('active_tab', 'more'); } catch (e) {}
     _switching = true;
     try { _base(sec.tab); } finally { _switching = false; }
-    // кнопка «Ещё» активна, чипсы видны
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.id === 'tabMore'));
-    const bar = chips(); bar.classList.add('show');
-    bar.querySelectorAll('.v95-chip').forEach(c => c.classList.toggle('on', c.dataset.sec === sec.id));
-    const ch = bar.querySelector('.v95-chip.on'); if (ch) ch.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+    setActiveBtn('tabMore');
     document.body.classList.add('v95-more');
     const el = contentOf(sec.tab);
     if (el) {
       if (sec.inv) { V93.apply(sec.inv); V93.rerender(sec.inv); V93.apply(sec.inv); }
       else { const id = el.id; if (V93.TABS && V93.TABS[id]) V93.apply(id); }
+      backBtn(el);
       slide(el, dir);
     }
   }
   // Основная вкладка
   function main(tab, dir) {
-    // если уходим с «допов» этой же вкладки — основные карточки пропускались при рендере, дорисуем
     const prev = SECTIONS.find(s => s.id === cur);
     const needRerender = !!(prev && prev.inv && prev.tab === tab);
     clearInverted();
@@ -14969,7 +15020,6 @@ const V95 = (() => {
     _switching = true;
     try { _base(tab); } finally { _switching = false; }
     document.body.classList.remove('v95-more');
-    const bar = document.getElementById('v95Chips'); if (bar) bar.classList.remove('show');
     const el = contentOf(tab);
     if (el) { const id = el.id; if (V93.TABS && V93.TABS[id]) { if (needRerender) V93.rerender(id); V93.apply(id); } slide(el, dir); }
   }
@@ -14980,24 +15030,29 @@ const V95 = (() => {
     setTimeout(() => el.classList.remove('v95-in-l', 'v95-in-r'), 400);
   }
   function go(step) {
+    // внутри раздела свайп вправо = назад в меню
+    if (SECTIONS.some(s => s.id === cur)) { if (step < 0) { try { haptic('light'); } catch (e) {} more(-1); } return; }
     const i = ORDER.indexOf(cur); if (i < 0) return;
     const j = i + step; if (j < 0 || j >= ORDER.length) { try { haptic('light'); } catch (e) {} return; }
     const next = ORDER[j];
     try { haptic('light'); } catch (e) {}
-    if (MAIN.includes(next)) main(next, step); else open(next, step);
+    if (next === 'more') more(step); else main(next, step);
   }
 
-  // Единая точка: switchTab('more') → последняя секция «Ещё»; switchTab('life'|'stats') → секция; остальное — основная
+  // Единая точка: switchTab('more') → меню; switchTab('life'|'stats') → раздел; остальное — основная
   let _base = null;
   function install() {
     if (_base) return;
     _base = window.switchTab;
     window.switchTab = function (tab) {
       if (_switching) return _base.apply(this, arguments);
-      if (tab === 'more') { let s = null; try { s = uGet(KEY, null); } catch (e) {} if (!SECTIONS.some(x => x.id === s)) s = 'life'; open(s, 0); return; }
+      if (tab === 'more') { more(0); return; }
       if (tab === 'life' || tab === 'stats') { open(tab, 0); return; }
       if (MAIN.includes(tab)) { main(tab, 0); return; }
-      return _base.apply(this, arguments); // shop и прочее
+      // shop и прочее — кнопка «Ещё» остаётся активной
+      const r = _base.apply(this, arguments);
+      if (tab === 'shop') { cur = 'shop'; setActiveBtn('tabMore'); document.body.classList.remove('v95-more'); const el = contentOf('shop'); if (el) { let b = el.querySelector(':scope > .v95-back'); if (!b) { b = document.createElement('button'); b.className = 'v95-back'; b.style.display = 'inline-flex'; b.innerHTML = '‹ Меню «Ещё»'; b.onclick = () => more(-1); el.insertBefore(b, el.firstChild); } } }
+      return r;
     };
     window.switchTab._v95 = 1;
   }
@@ -15012,7 +15067,6 @@ const V95 = (() => {
       if (e.touches.length !== 1) return;
       if (document.body.classList.contains('modal-open') || document.body.classList.contains('lt-edit')) return;
       const t = e.target;
-      // короткий экран: палец может лечь на пустое место ниже карточек — свайп всё равно работает
       if (!t.closest || (t.closest('.tab-content') && !t.closest('.tab-content.active'))) return;
       if (t.closest(SKIP) || hscroll(t)) return;
       sx = e.touches[0].clientX; sy = e.touches[0].clientY; t0 = Date.now(); ok = true;
@@ -15029,17 +15083,14 @@ const V95 = (() => {
   function boot() {
     if (_booted) return; _booted = true;
     try {
-      try { if (!PROGRESS_KEYS.includes(KEY)) PROGRESS_KEYS.push(KEY); } catch (e) {}
-      chips();
       install();
       bindSwipe();
-      // Синхронизируем состояние с уже открытой вкладкой
       const act = document.querySelector('.tab-content.active');
       let tab = 'dashboard';
       try { tab = uGet('active_tab', null) || 'dashboard'; } catch (e) {}
       if (act) { const m = act.id.match(/^content(\w+)$/) || act.id.match(/^(\w+)Content$/); if (m) tab = m[1].toLowerCase(); }
-      if (tab === 'life' || tab === 'stats') open(tab, 0); else if (MAIN.includes(tab)) main(tab, 0); else cur = tab;
-      console.log('[v9.5] 3 tabs + more ready');
+      if (tab === 'more' || tab === 'life' || tab === 'stats') more(0); else if (MAIN.includes(tab)) main(tab, 0); else cur = tab;
+      console.log('[v9.6] 3 tabs + more menu ready');
     } catch (e) { console.error('[v95] boot', e); _booted = false; }
   }
   (function hook() {
@@ -15048,7 +15099,7 @@ const V95 = (() => {
     document.addEventListener('v7:login', () => setTimeout(boot, 650));
     setTimeout(() => { if (!_booted && typeof currentUser !== 'undefined' && currentUser) boot(); }, 7600);
   })();
-  return { boot, open, go, SECTIONS };
+  return { boot, open, go, more, SECTIONS };
 })();
 window.V95 = V95;
 
