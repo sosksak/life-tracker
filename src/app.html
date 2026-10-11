@@ -3648,6 +3648,32 @@ body.v7-nav-hidden .sync-status { transform: translateY(calc(var(--nav-h) + 8px)
 .mk-hist-price { font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
 .mk-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 var(--sp-3) var(--sp-3); font-size: 10.5px; color: var(--text-dim); }
 .mk-err { color: var(--orange); font-weight: 700; }
+
+/* — Валюты ЦБ РФ (fiat) — */
+.mk-fx-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.mk-fx-date { font-size: 10.5px; color: var(--text-dim); font-weight: 600; white-space: nowrap; }
+.mk-fx-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; margin-top: var(--sp-3); }
+.mk-fx { display: block; width: 100%; text-align: left; padding: 10px 12px; background: var(--bg-card2); border: 1.5px solid transparent; border-radius: var(--radius-md); font: inherit; cursor: pointer; min-width: 0; transition: border-color var(--dur-fast); }
+.mk-fx.on { border-color: var(--accent); background: var(--accent-soft, var(--bg-card2)); }
+.mk-fx-top { display: flex; align-items: center; gap: 6px; }
+.mk-fx-flag { font-size: 16px; line-height: 1; }
+.mk-fx-code { font-size: 11px; font-weight: 800; color: var(--text-secondary); }
+.mk-fx-name { font-size: 10px; color: var(--text-dim); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mk-fx-val { font-size: 17px; font-weight: 900; color: var(--text); margin-top: 4px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mk-fx-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 3px; }
+.mk-fx-ch { font-size: 10.5px; font-weight: 800; white-space: nowrap; }
+.mk-fx-ch.flat { color: var(--text-dim); }
+.mk-fx-spark { width: 52px; height: 18px; flex: none; }
+.mk-fx-spark polyline { fill: none; stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; }
+.mk-fx-spark.up polyline { stroke: var(--green); } .mk-fx-spark.down polyline { stroke: var(--red); } .mk-fx-spark.flat polyline { stroke: var(--text-dim); }
+.mk-fx-calc { display: flex; gap: 8px; margin-top: var(--sp-3); align-items: center; }
+.mk-fx-calc input { flex: 1; min-width: 0; padding: 10px 12px; border: 1.5px solid var(--border-strong); border-radius: var(--radius-md); font: inherit; font-size: 14px; font-weight: 700; color: var(--text); background: var(--bg-main); font-variant-numeric: tabular-nums; }
+.mk-fx-calc input:focus { outline: none; border-color: var(--accent); }
+.mk-fx-swap { flex: none; width: 40px; height: 40px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-card2); color: var(--text-secondary); font-size: 16px; cursor: pointer; }
+.mk-fx-swap:active { transform: scale(.95); }
+.mk-fx-unit { flex: none; font-size: 13px; font-weight: 800; color: var(--text-secondary); min-width: 36px; text-align: center; }
+.mk-fx-out { margin-top: var(--sp-2); font-size: 13px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.mk-fx-out span { color: var(--text-dim); font-weight: 600; }
 .mk-link { border: 0; background: transparent; color: var(--accent); font: inherit; font-size: 11px; font-weight: 800; cursor: pointer; padding: 4px 6px; }
 
 .mk-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; text-align: left; max-height: 300px; overflow-y: auto; }
@@ -8736,7 +8762,7 @@ function renderChart() {
 
 // ====== PWA: SERVICE WORKER ======
 // Регистрируем только по http/https — с file:// браузер ругается.
-const APP_VERSION = 'v8.0.1';
+const APP_VERSION = 'v8.1.0';
 
 // v7.2.0 — политика обновлений «страница никогда не стартует старой»:
 //   Воркер (sw.js) перед отдачей index.html сверяет ETag с сервером и при
@@ -11519,6 +11545,146 @@ const MARKET = (() => {
     svg.addEventListener('touchend', leave);
   }
 
+  // ===== Валюты ЦБ РФ (USD / EUR / BYN / CNY) =====
+  const FX_KEY = 'v8_fx_last';
+  const FX_STATE = 'v8_fx_state';
+  const FX_API = 'https://www.cbr-xml-daily.ru';
+  const FX_LIST = [
+    { code: 'USD', flag: '🇺🇸', name: 'Доллар США' },
+    { code: 'EUR', flag: '🇪🇺', name: 'Евро' },
+    { code: 'BYN', flag: '🇧🇾', name: 'Белорусский рубль' },
+    { code: 'CNY', flag: '🇨🇳', name: 'Юань' },
+  ];
+  let _fx = null, _fxErr = null, _fxHist = null, _fxLoading = null;
+
+  function fxState() {
+    const s = uGet(FX_STATE, null) || {};
+    return { code: FX_LIST.some(f => f.code === s.code) ? s.code : 'USD', amount: isFinite(+s.amount) && +s.amount > 0 ? +s.amount : 100, dir: s.dir === 'to' ? 'to' : 'from' };
+  }
+  function fxSet(p) { const s = Object.assign(fxState(), p); uSet(FX_STATE, s); return s; }
+
+  async function fxFetchJSON(url) {
+    const r = await fetch(url, { headers: { accept: 'application/json' } });
+    if (!r.ok) throw new Error('http ' + r.status);
+    return r.json();
+  }
+  function fxNorm(d) {
+    const out = { date: d.Date, prev: d.PreviousDate, rates: {} };
+    for (const f of FX_LIST) {
+      const v = d.Valute && d.Valute[f.code];
+      if (v) out.rates[f.code] = { value: v.Value / v.Nominal, previous: v.Previous / v.Nominal };
+    }
+    return out;
+  }
+  // Сегодняшний курс: кэш 2 часа (ЦБ обновляет раз в день)
+  async function fxFetch() {
+    const c = cached('fx:today', 2 * 3600e3);
+    if (c) return c;
+    const d = fxNorm(await fxFetchJSON(FX_API + '/daily_json.js'));
+    remember('fx:today', d);
+    uSet(FX_KEY, Object.assign({}, d, { _ts: Date.now() }));
+    return d;
+  }
+  // История ~10 дат (спарклайн): archive/YYYY/MM/DD. Нет публикации — 404, пропускаем.
+  async function fxFetchHist() {
+    const c = cached('fx:hist', 6 * 3600e3);
+    if (c) return c;
+    const days = [];
+    for (let i = 1; i <= 12 && days.length < 10; i++) {
+      const d = new Date(Date.now() - i * 864e5);
+      if (d.getDay() === 0) continue;
+      days.push(d);
+    }
+    const res = await Promise.all(days.map(d => {
+      const u = FX_API + '/archive/' + d.getFullYear() + '/' + pad(d.getMonth() + 1) + '/' + pad(d.getDate()) + '/daily_json.js';
+      return fxFetchJSON(u).then(fxNorm).catch(() => null);
+    }));
+    const hist = res.filter(Boolean).reverse(); // старые -> новые
+    remember('fx:hist', hist);
+    return hist;
+  }
+  async function fxLoad() {
+    if (_fxLoading) return _fxLoading;
+    _fxLoading = (async () => {
+      try { _fx = await fxFetch(); _fxErr = null; }
+      catch (e) { _fxErr = e; _fx = _fx || uGet(FX_KEY, null); }
+      try { _fxHist = await fxFetchHist(); } catch (e) { _fxHist = _fxHist || []; }
+    })().finally(() => { _fxLoading = null; });
+    return _fxLoading;
+  }
+
+  const fmtRub = (v, d = 2) => v == null || !isFinite(v) ? '—' : v.toLocaleString('ru-RU', { minimumFractionDigits: d, maximumFractionDigits: d }) + ' ₽';
+  function fxSpark(code) {
+    if (!_fx || !_fx.rates[code]) return '';
+    const pts = (_fxHist || []).map(h => h.rates[code] && h.rates[code].value).filter(v => v != null);
+    pts.push(_fx.rates[code].value);
+    if (pts.length < 2) return '';
+    const W = 52, H = 18, min = Math.min(...pts), max = Math.max(...pts), span = max - min || 1;
+    const poly = pts.map((v, i) => (i / (pts.length - 1) * (W - 2) + 1).toFixed(1) + ',' + ((1 - (v - min) / span) * (H - 4) + 2).toFixed(1)).join(' ');
+    const cls = pts[pts.length - 1] > pts[0] ? 'up' : pts[pts.length - 1] < pts[0] ? 'down' : 'flat';
+    return '<svg class="mk-fx-spark ' + cls + '" viewBox="0 0 ' + W + ' ' + H + '"><polyline points="' + poly + '"/></svg>';
+  }
+  function fxDateLabel() {
+    if (!_fx || !_fx.date) return '';
+    const d = new Date(_fx.date);
+    return 'ЦБ РФ на ' + pad(d.getDate()) + '.' + pad(d.getMonth() + 1);
+  }
+  function fxOutText(st, r, n) {
+    const fromRub = st.dir === 'to', res = fromRub ? n / r.value : n * r.value;
+    return '= ' + (fromRub ? res.toLocaleString('ru-RU', { maximumFractionDigits: 2 }) + ' ' + st.code : fmtRub(res)) + ' <span>· 1 ' + st.code + ' = ' + fmtRub(r.value, 4) + '</span>';
+  }
+  function fxCalcHTML(st) {
+    const r = _fx && _fx.rates[st.code];
+    if (!r) return '';
+    const fromRub = st.dir === 'to';
+    return '<div class="mk-fx-calc">' +
+        '<input type="number" inputmode="decimal" min="0" step="any" id="mkFxAmt" value="' + st.amount + '" oninput="MARKET.fxAmount(this.value)">' +
+        '<span class="mk-fx-unit">' + (fromRub ? '₽' : st.code) + '</span>' +
+        '<button class="mk-fx-swap" onclick="MARKET.fxSwap()" title="Поменять направление">⇄</button>' +
+      '</div>' +
+      '<div class="mk-fx-out" id="mkFxOut">' + fxOutText(st, r, st.amount) + '</div>';
+  }
+  function fxHTML() {
+    const st = fxState();
+    if (!_fx) {
+      return '<div class="mk-section" id="mkFx"><div class="mk-fx-head"><div class="mk-section-title">💱 Валюты</div></div>' +
+        '<div class="mk-section-sub">' + (_fxErr ? '⚠️ Нет связи с ЦБ РФ' : '<span class="mk-skel">загрузка курсов…</span>') + '</div></div>';
+    }
+    return '<div class="mk-section" id="mkFx">' +
+      '<div class="mk-fx-head"><div class="mk-section-title">💱 Валюты</div><div class="mk-fx-date">' + fxDateLabel() + (_fxErr ? ' · кэш' : '') + '</div></div>' +
+      '<div class="mk-fx-grid">' + FX_LIST.map(f => {
+        const r = _fx.rates[f.code];
+        if (!r) return '';
+        const d = r.value - r.previous, p = r.previous ? d / r.previous * 100 : 0;
+        const cls = Math.abs(d) < 0.00005 ? 'flat' : d > 0 ? 'up' : 'down';
+        const chTxt = cls === 'flat' ? '0,00' : (d > 0 ? '▲ +' : '▼ ') + d.toFixed(2).replace('.', ',') + ' (' + (p > 0 ? '+' : '') + p.toFixed(2).replace('.', ',') + '%)';
+        return '<button class="mk-fx' + (f.code === st.code ? ' on' : '') + '" onclick="MARKET.fxPick(\'' + f.code + '\')">' +
+          '<div class="mk-fx-top"><span class="mk-fx-flag">' + f.flag + '</span><span class="mk-fx-code">' + f.code + '</span></div>' +
+          '<div class="mk-fx-name">' + f.name + '</div>' +
+          '<div class="mk-fx-val">' + fmtRub(r.value) + '</div>' +
+          '<div class="mk-fx-row"><span class="mk-fx-ch ' + cls + '">' + chTxt + '</span>' + fxSpark(f.code) + '</div>' +
+        '</button>';
+      }).join('') + '</div>' +
+      fxCalcHTML(st) +
+    '</div>';
+  }
+  function fxRepaint() {
+    const old = document.getElementById('mkFx');
+    if (!old) return;
+    const focus = document.activeElement && document.activeElement.id === 'mkFxAmt';
+    old.outerHTML = fxHTML();
+    if (focus) { const i = document.getElementById('mkFxAmt'); if (i) i.focus(); }
+  }
+  function fxPick(code) { fxSet({ code }); fxRepaint(); }
+  function fxSwap() { fxSet({ dir: fxState().dir === 'to' ? 'from' : 'to' }); fxRepaint(); }
+  function fxAmount(v) {
+    const n = parseFloat(String(v).replace(',', '.'));
+    if (!isFinite(n) || n < 0) return;
+    const st = fxSet({ amount: n });
+    const r = _fx && _fx.rates[st.code], out = document.getElementById('mkFxOut');
+    if (r && out) out.innerHTML = fxOutText(st, r, n);
+  }
+
   // --- render ---
   let _rendering = false, _timer = null, _lastTicker = null, _lastErr = null;
   function el() { return document.getElementById('marketContent'); }
@@ -11549,6 +11715,7 @@ const MARKET = (() => {
     }
     renderFull(root, st, coin, ticker || {}, pts, err);
     _rendering = false;
+    fxLoad().then(() => { if (el()) fxRepaint(); });
     ensureTimer();
   }
 
@@ -11634,8 +11801,9 @@ const MARKET = (() => {
         statsHTML(pts, st) +
       '</div>' +
       lookupHTML(st, coin) +
+      fxHTML() +
       '<div class="mk-foot">' +
-        (err ? '<span class="mk-err">' + (err.message === 'rate' ? '⏳ Лимит запросов — показываю кэш, повтор через минуту' : '⚠️ Нет связи с биржей — показываю кэш') + '</span>' : '<span>Обновляется каждую минуту · CoinGecko</span>') +
+        (err ? '<span class="mk-err">' + (err.message === 'rate' ? '⏳ Лимит запросов — показываю кэш, повтор через минуту' : '⚠️ Нет связи с биржей — показываю кэш') + '</span>' : '<span>Крипта: CoinGecko, раз в минуту · Валюты: ЦБ РФ, раз в день</span>') +
         '<button class="mk-link" onclick="MARKET.refresh()">Обновить</button>' +
       '</div>';
     bindCrosshair();
@@ -11709,7 +11877,7 @@ const MARKET = (() => {
     window.addEventListener('resize', () => { if (isVisible()) render({ silent: true }); });
   }
 
-  return { render, setCoin, setRange, setCur, refresh, editWatch, lookup, quick, rerun, COINS };
+  return { render, setCoin, setRange, setCur, refresh, editWatch, lookup, quick, rerun, COINS, fxPick, fxSwap, fxAmount };
 })();
 
 
