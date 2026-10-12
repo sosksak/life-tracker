@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="app-version" content="v9.9.6">
+<meta name="app-version" content="v9.9.7">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#1B3A5C">
 <meta name="description" content="Трекер смен, заработка и квестов">
@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" onload="this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"></noscript>
-<title>Life Tracker v9.9.6</title>
+<title>Life Tracker v9.9.7</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="config.js?v=7"></script>
@@ -3975,6 +3975,14 @@ body.lt-edit .lsub-bar { display: none !important; }
 .onb-grid .wt-card { padding: 8px 4px; } .onb-grid .wt-card .wt-ico { width: 34px; height: 34px; font-size: 17px; } .onb-grid .wt-card .wt-ico .ico { width: 18px; height: 18px; } .onb-grid .wt-card .wt-sub { display: none; }
 .onb-h { font-size: 20px; }
 body:has(#onbModal.show) .ui-hint, body:has(#onbModal.show) .toast, body:has(#onbModal.show) #toast { display: none !important; }
+/* ===== v9.9.7 — режим приложения ===== */
+.onb-sub { font-size: 11px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase; color: var(--text-dim); margin: 2px 0 6px; }
+.onb-modes { display: flex; gap: 6px; margin-bottom: 6px; } .onb-modes .onb-chip { font-size: 12.5px; padding: 10px 4px; }
+.v997-list { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 12px; }
+.v997-opt { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text); font-family: inherit; cursor: pointer; transition: border-color .15s, transform .15s; }
+.v997-opt .ic { font-size: 22px; width: 28px; text-align: center; } .v997-opt .t { flex: 1; font-size: 14px; font-weight: 800; display: flex; flex-direction: column; gap: 2px; } .v997-opt .t .s { font-size: 11.5px; font-weight: 500; color: var(--text-dim); }
+.v997-opt .ck { font-weight: 900; color: var(--primary); width: 18px; text-align: center; }
+.v997-opt.on { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent); } .v997-opt:active { transform: scale(.98); }
 /* --- v9.7 goal impact + FX --- */
 .gi { margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 6px; }
 .gi summary { cursor: pointer; font-size: 12px; font-weight: 700; color: var(--accent); list-style: none; display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
@@ -4661,7 +4669,7 @@ html[data-theme="dark"] input, html[data-theme="dark"] select, html[data-theme="
   </div>
 </div>
 <div class="sync-status ok mini" id="syncStatus">☁️ Облако</div>
-<script src="app/bundle.js?v=v9.9.6"></script>
+<script src="app/bundle.js?v=v9.9.7"></script>
 <script>
 /* v9.1.1: ozon_* → lt_* — одноразовый перенос ключей localStorage */
 (function(){try{if(localStorage.getItem('lt_keys_migrated_v911'))return;
@@ -8690,7 +8698,7 @@ function renderChart() {
 }
 // ====== PWA: SERVICE WORKER ======
 // Регистрируем только по http/https — с file:// браузер ругается.
-const APP_VERSION = 'v9.9.6';
+const APP_VERSION = 'v9.9.7';
 // v7.2.0 — политика обновлений «страница никогда не стартует старой»:
 //   Воркер (sw.js) перед отдачей index.html сверяет ETag с сервером и при
 //   отличии отдаёт СРАЗУ новую сборку. Поэтому на старте нет ни проверок,
@@ -13959,6 +13967,7 @@ const V95 = (() => {
       + `<div class="v95-grp">Инструменты</div>`
       + tile('🎯', 'Цель и копилка', 'Сумма, срок, ежедневный план', "setupKopilka()")
       + tile('🎡', 'Колесо бонусов', 'Крутить за выполненные квесты', "openWheelModal()")
+      + tile('🧭', 'Режим приложения', (() => { try { return 'Сейчас: ' + V997.label() + ' · Минимум / Рабочий / Всё'; } catch (e) { return 'Минимум / Рабочий / Всё'; } })(), "V997.open()")
       + tile(wt ? wt.icon : '💼', 'Тип работы', wt ? `Сейчас: ${wt.name}${wt.goal ? ' · цель ' + wt.goal + ' ₽/ч' : ''}` : 'Курьер, фриланс, разработчик', "openWorkTypePicker()")
       + `<div class="v95-grp">Профиль</div>`
       + tile('🏪', 'Магазин', 'Бусты, темы, награды за XP', "switchTab('shop')")
@@ -14227,7 +14236,7 @@ const V995 = (() => {
   'use strict';
   const KEY = 'v995_onb';
   const GOALS = [50000, 100000, 150000];
-  let step = 0, wt = null, goal = 100000;
+  let step = 0, wt = null, goal = 100000, mode = null;
   const fmt = n => n.toLocaleString('ru-RU');
   function el() {
     let m = document.getElementById('onbModal');
@@ -14280,14 +14289,18 @@ const V995 = (() => {
     step = 2;
     let w = null; try { w = V7.getWorkType(); } catch (e) {}
     const noun = (w && w.noun) || 'shift';
+    if (!mode) mode = V997.suggest();
     const act = { shift: 'Начать смену', day: 'Начать день', session: 'Начать сессию', trading: 'Открыть торговый день', lesson: 'Начать занятие', workout: 'Начать тренировку' }[noun] || 'Начать смену';
     body('<div class="onb-h">' + (w ? w.icon : '🚀') + ' Готово</div><div class="onb-p"><b>' + (w ? w.name : '') + '</b> · цель <b>' + fmt(goal) + ' ₽</b> в месяц.</div>' +
+      '<div class="onb-sub">Вид приложения</div><div class="onb-modes">' + V997.ORDER.map(id => { const p = V997.PRESETS[id]; return '<button class="onb-chip ' + (mode === id ? 'on' : '') + '" data-m="' + id + '">' + p.icon + ' ' + p.name + '</button>'; }).join('') + '</div><div class="onb-p" id="onbModeSub">' + V997.PRESETS[mode].sub + '</div>' +
       '<div class="onb-list"><div><span>🏠</span>Главная — кошелёк, план месяца, привычки</div><div><span>💼</span>Работа — таймер смены, доход в реальном времени</div><div><span>💰</span>Деньги — расходы и баланс</div><div><span>⋯</span>Ещё — Жизнь, Стата и скрытые карточки · свайп влево</div></div>' +
       '<div class="onb-foot col"><button class="modal-btn primary onb-start">🚀 ' + act + '</button><button class="modal-btn secondary onb-skip">Сначала осмотреться</button></div>');
+    el().querySelectorAll('.onb-modes .onb-chip').forEach(b => b.onclick = () => { mode = b.dataset.m; el().querySelectorAll('.onb-modes .onb-chip').forEach(x => x.classList.toggle('on', x.dataset.m === mode)); el().querySelector('#onbModeSub').textContent = V997.PRESETS[mode].sub; try { haptic('light'); } catch (e) {} });
     el().querySelector('.onb-start').onclick = () => { finish(); try { switchTab('live'); setTimeout(() => { if (typeof activeShift !== 'undefined' && !activeShift) startShift(); }, 350); } catch (e) {} };
     el().querySelector('.onb-skip').onclick = () => { finish(); try { switchTab('dashboard'); } catch (e) {} };
   }
   function finish() {
+    try { V997.apply(mode || V997.suggest(), { silent: true }); } catch (e) {}
     try { uSet(KEY, 1); markLocalChange(); schedulePushProgress(); } catch (e) {}
     const m = el(); m.classList.remove('show'); document.body.classList.remove('modal-open');
     try { haptic('medium'); } catch (e) {}
@@ -14316,6 +14329,92 @@ const V995 = (() => {
   return { open, maybe, needed };
 })();
 window.V995 = V995;
+// ====== v9.9.7 — РЕЖИМ ПРИЛОЖЕНИЯ: три пресета раскладки ======
+// Минимум — только главное (смена, кошелёк, задачи). Рабочий — + аналитика смен,
+// челлендж, цели. Всё — все карточки. Пресет = набор скрытых карточек V93 на каждой
+// вкладке; поверх него работает ручная настройка (долгое нажатие). Выбор хранится
+// в v93_layout._mode, уезжает в облако вместе с раскладкой.
+const V997 = (() => {
+  'use strict';
+  const PRESETS = {
+    min: {
+      icon: '🪶', name: 'Минимум', sub: 'Смена, кошелёк, задачи дня — и всё',
+      hidden: {
+        dashboardContent: ['v7-reward-strip', 'lr-days', 'v7-score', 'v7-brief', 'jr-cta', '#v8Goals', 'dash-alerts', 'dash-cards'],
+        contentLive: ['#v9Trader', '#effCard', '#waCard', '#millionPath', '#kopilkaCard', '#weeklyChallenge', '#insightCard'],
+        moneyContent: ['fin-section', 'fin-section:2', 'crypto-summary', 'crypto-section', 'crypto-refresh', 'mk-title', 'mk-hero', 'mk-watch', 'mk-card', 'mk-foot', 'mk-section', '#mkFx'],
+        lifeContent: ['hab-inactive-section', 'hab-analytics', 'health-section:4', 'health-section:5', 'health-section:6', '#motivationTip', '#v7Wheel'],
+        contentStats: ['#streakBar', 'chart-section:3', 'chart-section:4', '#weekCompare', '#heatmapSection', '#diarySection'],
+      },
+    },
+    work: {
+      icon: '💼', name: 'Рабочий', sub: 'Плюс аналитика смен, челлендж, цели',
+      hidden: {
+        dashboardContent: ['dash-alerts', 'dash-cards'],
+        contentLive: ['#v9Trader', '#millionPath', '#kopilkaCard', '#insightCard'],
+        moneyContent: ['crypto-summary', 'crypto-section', 'crypto-refresh', 'mk-title', 'mk-hero', 'mk-watch', 'mk-card', 'mk-foot', 'mk-section', '#mkFx'],
+        lifeContent: ['hab-inactive-section', 'hab-analytics', 'health-section:6', '#motivationTip'],
+        contentStats: ['#weekCompare', '#heatmapSection', '#diarySection'],
+      },
+    },
+    all: {
+      icon: '🧩', name: 'Всё', sub: 'Все карточки, биржа, портфель, трейдер',
+      hidden: { dashboardContent: [], contentLive: [], moneyContent: [], lifeContent: [], contentStats: [] },
+    },
+  };
+  const ORDER = ['min', 'work', 'all'];
+  const KEY = 'v93_layout';
+  function cfg() { try { const c = uGet(KEY, null); return (c && typeof c === 'object') ? c : {}; } catch (e) { return {}; } }
+  function current() { const m = cfg()._mode; return PRESETS[m] ? m : null; }
+  // Трейдеру биржа и панель трейдера нужны даже в «Рабочем»
+  function hiddenFor(id) {
+    const h = JSON.parse(JSON.stringify(PRESETS[id].hidden));
+    try { if (V7.getWorkType().id === 'trader' && id !== 'min') { h.contentLive = h.contentLive.filter(k => k !== '#v9Trader'); h.moneyContent = []; } } catch (e) {}
+    return h;
+  }
+  function apply(id, opts) {
+    if (!PRESETS[id]) return;
+    const c = cfg(); const h = hiddenFor(id);
+    for (const tab of Object.keys(h)) c[tab] = { hidden: h[tab].slice(), order: [] };
+    c._mode = id; c._d = c._d || 'd94';
+    uSet(KEY, c);
+    try { markLocalChange(); schedulePushProgress(); } catch (e) {}
+    try { for (const tab of Object.keys(h)) { V93.rerender(tab); V93.apply(tab); } } catch (e) {}
+    if (!(opts && opts.silent)) { try { haptic('medium'); } catch (e) {} try { showToast(PRESETS[id].icon + ' Режим «' + PRESETS[id].name + '»', 'success'); } catch (e) {} }
+  }
+  // Ручная настройка поверх пресета — режим становится «свой»
+  function markCustom() { try { const c = cfg(); if (c._mode && c._mode !== 'custom') { c._mode = 'custom'; uSet(KEY, c); } } catch (e) {}
+  }
+  function label() { const m = current(); if (m) return PRESETS[m].icon + ' ' + PRESETS[m].name; return cfg()._mode === 'custom' ? '🛠 Свой' : '— не выбран'; }
+  // Какой пресет предложить новичку по типу работы
+  function suggest() { try { const t = V7.getWorkType().id; if (t === 'trader' || t === 'business') return 'all'; if (['delivery', 'taxi', 'warehouse', 'fitness'].includes(t)) return 'work'; } catch (e) {} return 'min'; }
+  function sheetHtml(sel) {
+    return ORDER.map(id => { const p = PRESETS[id]; return `<button class="v997-opt ${sel === id ? 'on' : ''}" data-m="${id}"><span class="ic">${p.icon}</span><span class="t">${p.name}<span class="s">${p.sub}</span></span><span class="ck">${sel === id ? '✓' : ''}</span></button>`; }).join('');
+  }
+  function open() {
+    let m = document.getElementById('v997Modal');
+    if (!m) {
+      m = document.createElement('div'); m.id = 'v997Modal'; m.className = 'modal-overlay';
+      m.innerHTML = '<div class="modal-content" style="max-width:400px"><div class="modal-title">🧭 Режим приложения</div><div class="modal-info">Что показывать на экранах. Любую карточку потом можно вернуть или убрать долгим нажатием — режим станет «свой».</div><div class="v997-list"></div><button class="modal-close-btn" onclick="V997.close()">Закрыть</button></div>';
+      m.addEventListener('click', e => { if (e.target === m) close(); const b = e.target.closest('.v997-opt'); if (b) { apply(b.dataset.m); m.querySelector('.v997-list').innerHTML = sheetHtml(b.dataset.m); } });
+      document.body.appendChild(m);
+    }
+    m.querySelector('.v997-list').innerHTML = sheetHtml(current());
+    m.classList.add('show'); document.body.classList.add('modal-open');
+  }
+  function close() { const m = document.getElementById('v997Modal'); if (m) m.classList.remove('show'); document.body.classList.remove('modal-open'); }
+  (function hook() {
+    // Ручные hide/show/move → режим «свой»
+    try {
+      for (const fn of ['hide', 'show', 'move', 'resetTab', 'showAll']) {
+        const o = V93[fn]; if (typeof o !== 'function' || o._v997) continue;
+        V93[fn] = function () { const r = o.apply(this, arguments); markCustom(); return r; }; V93[fn]._v997 = 1;
+      }
+    } catch (e) {}
+  })();
+  return { PRESETS, ORDER, apply, current, label, suggest, open, close, sheetHtml };
+})();
+window.V997 = V997;
 // ====== START ======
 // v7.1: запуск перенесён В КОНЕЦ основного скрипта. Раньше bootAuth() стоял на
 // 5000 строк выше хуков v6/v7 над init()/bootV6(); при валидной сессии init()

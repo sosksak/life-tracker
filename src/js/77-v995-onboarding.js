@@ -7,7 +7,7 @@ const V995 = (() => {
   'use strict';
   const KEY = 'v995_onb';
   const GOALS = [50000, 100000, 150000];
-  let step = 0, wt = null, goal = 100000;
+  let step = 0, wt = null, goal = 100000, mode = null;
   const fmt = n => n.toLocaleString('ru-RU');
 
   function el() {
@@ -62,14 +62,18 @@ const V995 = (() => {
     step = 2;
     let w = null; try { w = V7.getWorkType(); } catch (e) {}
     const noun = (w && w.noun) || 'shift';
+    if (!mode) mode = V997.suggest();
     const act = { shift: 'Начать смену', day: 'Начать день', session: 'Начать сессию', trading: 'Открыть торговый день', lesson: 'Начать занятие', workout: 'Начать тренировку' }[noun] || 'Начать смену';
     body('<div class="onb-h">' + (w ? w.icon : '🚀') + ' Готово</div><div class="onb-p"><b>' + (w ? w.name : '') + '</b> · цель <b>' + fmt(goal) + ' ₽</b> в месяц.</div>' +
+      '<div class="onb-sub">Вид приложения</div><div class="onb-modes">' + V997.ORDER.map(id => { const p = V997.PRESETS[id]; return '<button class="onb-chip ' + (mode === id ? 'on' : '') + '" data-m="' + id + '">' + p.icon + ' ' + p.name + '</button>'; }).join('') + '</div><div class="onb-p" id="onbModeSub">' + V997.PRESETS[mode].sub + '</div>' +
       '<div class="onb-list"><div><span>🏠</span>Главная — кошелёк, план месяца, привычки</div><div><span>💼</span>Работа — таймер смены, доход в реальном времени</div><div><span>💰</span>Деньги — расходы и баланс</div><div><span>⋯</span>Ещё — Жизнь, Стата и скрытые карточки · свайп влево</div></div>' +
       '<div class="onb-foot col"><button class="modal-btn primary onb-start">🚀 ' + act + '</button><button class="modal-btn secondary onb-skip">Сначала осмотреться</button></div>');
+    el().querySelectorAll('.onb-modes .onb-chip').forEach(b => b.onclick = () => { mode = b.dataset.m; el().querySelectorAll('.onb-modes .onb-chip').forEach(x => x.classList.toggle('on', x.dataset.m === mode)); el().querySelector('#onbModeSub').textContent = V997.PRESETS[mode].sub; try { haptic('light'); } catch (e) {} });
     el().querySelector('.onb-start').onclick = () => { finish(); try { switchTab('live'); setTimeout(() => { if (typeof activeShift !== 'undefined' && !activeShift) startShift(); }, 350); } catch (e) {} };
     el().querySelector('.onb-skip').onclick = () => { finish(); try { switchTab('dashboard'); } catch (e) {} };
   }
   function finish() {
+    try { V997.apply(mode || V997.suggest(), { silent: true }); } catch (e) {}
     try { uSet(KEY, 1); markLocalChange(); schedulePushProgress(); } catch (e) {}
     const m = el(); m.classList.remove('show'); document.body.classList.remove('modal-open');
     try { haptic('medium'); } catch (e) {}

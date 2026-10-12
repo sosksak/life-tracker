@@ -98,3 +98,11 @@ body.lt-edit .lsub-bar { display: none !important; }
 .onb-grid .wt-card { padding: 8px 4px; } .onb-grid .wt-card .wt-ico { width: 34px; height: 34px; font-size: 17px; } .onb-grid .wt-card .wt-ico .ico { width: 18px; height: 18px; } .onb-grid .wt-card .wt-sub { display: none; }
 .onb-h { font-size: 20px; }
 body:has(#onbModal.show) .ui-hint, body:has(#onbModal.show) .toast, body:has(#onbModal.show) #toast { display: none !important; }
+/* ===== v9.9.7 — режим приложения ===== */
+.onb-sub { font-size: 11px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase; color: var(--text-dim); margin: 2px 0 6px; }
+.onb-modes { display: flex; gap: 6px; margin-bottom: 6px; } .onb-modes .onb-chip { font-size: 12.5px; padding: 10px 4px; }
+.v997-list { display: flex; flex-direction: column; gap: 8px; margin: 10px 0 12px; }
+.v997-opt { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text); font-family: inherit; cursor: pointer; transition: border-color .15s, transform .15s; }
+.v997-opt .ic { font-size: 22px; width: 28px; text-align: center; } .v997-opt .t { flex: 1; font-size: 14px; font-weight: 800; display: flex; flex-direction: column; gap: 2px; } .v997-opt .t .s { font-size: 11.5px; font-weight: 500; color: var(--text-dim); }
+.v997-opt .ck { font-weight: 900; color: var(--primary); width: 18px; text-align: center; }
+.v997-opt.on { border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent); } .v997-opt:active { transform: scale(.98); }
