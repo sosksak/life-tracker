@@ -1,0 +1,33 @@
+group"><label>💸 Расходы (₽)</label><input type="number" id="endShiftExpenses" placeholder="0" min="0" inputmode="numeric"></div>
+      <div class="form-group"><label>📦 Заказов / операций</label><input type="number" id="endShiftUnits" placeholder="0" min="0" inputmode="numeric"></div>
+    </div>
+    <div class="modal-buttons">
+      <button class="modal-btn secondary" onclick="cancelEndShift()">✕ Отмена</button>
+      <button class="modal-btn primary" id="btnSaveEndShift" onclick="saveEndShift()">✅ СОХРАНИТЬ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: EDIT SHIFT ============ -->
+<div class="modal-overlay" id="editShiftModal">
+  <div class="modal">
+    <h3>✏️ РЕДАКТИРОВАТЬ СМЕНУ</h3>
+    <input type="hidden" id="editShiftId">
+    <div class="form-group">
+      <label>📅 Дата</label>
+      <input type="date" id="editDate">
+    </div>
+    <div class="form-group">
+      <label>⏱ Чистые часы</label>
+      <input type="number" id="editHours" step="0.5" min="0.5" max="24">
+    </div>
+    <div class="form-group">
+      <label>₽ Доход</label>
+      <input type="number" id="editEarned" min="0">
+    </div>
+    <div class="form-group">
+      <label>📝 Комментарий</label>
+      <input type="text" id="editNote">
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>💸 Расходы (₽)</label><input type="num

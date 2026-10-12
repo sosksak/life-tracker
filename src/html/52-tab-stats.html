@@ -1,0 +1,107 @@
+AB: SHOP ============ -->
+<div class="tab-content" id="contentShop">
+
+<div class="shop-section">
+  <div class="shop-header">
+    <div class="shop-balance">
+      <div class="shop-balance-label">⭐ Баланс баллов</div>
+      <div class="shop-balance-val"><span id="shopXpBalance">0</span> <span class="xp-unit">XP</span></div>
+    </div>
+  </div>
+  <div class="shop-grid" id="shopGrid"></div>
+</div>
+
+</div>
+
+<!-- ============ TAB: STATS ============ -->
+<div class="tab-content" id="contentStats">
+
+<div class="streak-bar" id="streakBar" style="display:none;">
+  <div class="streak-icon">📈</div>
+  <div class="streak-text"><span id="streakCount">0</span> дней подряд в плане!</div>
+</div>
+
+<div class="level-section">
+  <div class="level-header">
+    <div class="level-badge">
+      <div class="icon" id="levelIcon">📈</div>
+      <div class="info">
+        <div class="lvl" id="levelName">LVL 1 — Стажёр</div>
+        <div class="title" id="levelTitle">Начало карьеры</div>
+      </div>
+    </div>
+    <div class="level-xp-text" id="xpText">0 / 50 000 XP</div>
+  </div>
+  <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+</div>
+
+<div class="chart-section">
+  <div class="chart-head">
+    <h3>📈 ДИНАМИКА</h3>
+    <div class="chart-switch">
+      <button id="chartMode7" class="active" onclick="setChartMode(7)">7 дней</button>
+      <button id="chartMode14" onclick="setChartMode(14)">14 дней</button>
+      <button id="chartMode30" onclick="setChartMode(30)">30 дней</button>
+    </div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-sub">
+      <div><div class="big" id="chartTotal">0 ₽</div><div class="lbl" id="chartPeriodLbl">за 7 дней</div></div>
+      <div style="text-align:right;"><div class="big" id="chartAvg">0 ₽</div><div class="lbl">в среднем за день</div></div>
+    </div>
+    <div id="chartBody"></div>
+  </div>
+</div>
+
+<div class="chart-section">
+  <div class="chart-head">
+    <h3>📌 ПЛАН МЕСЯЦА</h3>
+    <button class="data-tool-btn" style="padding:6px 12px" onclick="openMonthGoalPrompt()">✏️ Изменить</button>
+  </div>
+  <div class="chart-card" id="monthGoalCard"></div>
+</div>
+
+<div class="chart-section">
+  <div class="chart-head"><h3>📅 ПО ДНЯМ НЕДЕЛИ</h3></div>
+  <div class="chart-card" id="dowCard"></div>
+</div>
+
+<div class="chart-section">
+  <div class="chart-head"><h3>🏅 ЛУЧШИЕ ПОКАЗАТЕЛИ</h3></div>
+  <div class="chart-card" id="recordsCard"></div>
+</div>
+
+<!-- WEEK COMPARISON -->
+<div class="week-compare" id="weekCompare" style="display:none">
+  <div class="week-compare-title">📊 Текущая неделя vs предыдущая</div>
+  <div class="chart-card">
+    <div class="week-compare-grid" id="weekCompareGrid"></div>
+  </div>
+</div>
+
+<!-- HEATMAP -->
+<div class="heatmap-section" id="heatmapSection" style="display:none">
+  <div class="heatmap-title">📊 Карта активности (90 дней)</div>
+  <div class="chart-card">
+    <div class="heatmap-grid" id="heatmapGrid"></div>
+  </div>
+</div>
+
+<!-- SOCIAL DIARY -->
+<div class="diary-section" id="diarySection">
+  <div class="diary-title">📓 Дневник общения</div>
+  <div class="diary-stats-grid" id="diaryStatsGrid"></div>
+  <div id="diaryList"></div>
+  <button class="diary-add-btn" onclick="openDiaryModal()">+ Новая запись</button>
+</div>
+
+<div class="achievements">
+  <h3>🏅 ДОСТИЖЕНИЯ</h3>
+  <div class="ach-grid" id="achGrid"></div>
+</div>
+
+<div class="history">
+  <h3>📋 История смен</h3>
+  <div id="shiftList"></div>
+  <div class="data-tools">
+    <button class="data-tool-btn" onclick="exportDataCSV()">📤 Э

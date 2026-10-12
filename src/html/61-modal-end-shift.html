@@ -1,0 +1,35 @@
+
+  <div class="build-row">
+    <span class="build-ver">версия <b id="versionTag">—</b></span>
+    <span class="build-sync" id="cloudSyncTag"></span>
+  </div>
+</div>
+
+</div>
+
+<!-- ============ MODAL: ПРОФИЛЬ И ДОСТУП ============ -->
+<div class="modal-overlay" id="accountModal">
+  <div class="modal">
+    <h3>👤 ПРОФИЛЬ И ДОСТУП</h3>
+    <div id="accountBody"></div>
+    <div class="modal-buttons">
+      <button class="modal-btn secondary" onclick="closeAccountModal()">✕ Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: END SHIFT ============ -->
+<div class="modal-overlay" id="endShiftModal">
+  <div class="modal">
+    <h3>✅ СМЕНА ЗАВЕРШЕНА</h3>
+    <div class="modal-info" id="endShiftInfo"></div>
+    <div class="form-group">
+      <label>₽ Итоговый доход (₽)</label>
+      <input type="number" id="endShiftEarned" placeholder="8600" min="0" inputmode="numeric">
+    </div>
+    <div class="form-group">
+      <label>📝 Комментарий (необязательно)</label>
+      <input type="text" id="endShiftNote" placeholder="541 операция...">
+    </div>
+    <div class="form-row">
+      <div class="form-

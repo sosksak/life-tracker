@@ -1,0 +1,110 @@
+/* ================================================================
+   MARKET — Биржа (mk-*)
+   ================================================================ */
+.mk-title { font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); margin: 0 var(--sp-3) var(--sp-2); }
+.mk-hero { margin: 0 var(--sp-3); padding: var(--sp-4) var(--sp-4) var(--sp-3); background: var(--hero); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); color: #fff; }
+.mk-hero-top { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); }
+.mk-hero-coin { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.mk-coin-ico { width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,.14); display: grid; place-items: center; font-size: 18px; font-weight: 800; flex: none; }
+.mk-coin-sym { font-size: 15px; font-weight: 800; letter-spacing: .3px; }
+.mk-coin-name { font-size: 11px; color: rgba(255,255,255,.65); }
+.mk-cur { display: flex; background: rgba(255,255,255,.12); border-radius: 999px; padding: 2px; flex: none; }
+.mk-cur button { border: 0; background: transparent; color: rgba(255,255,255,.7); font: inherit; font-size: 11px; font-weight: 800; padding: 5px 10px; border-radius: 999px; cursor: pointer; }
+.mk-cur button.on { background: var(--bg-card); color: var(--primary-ink); }
+.mk-price { font-size: 32px; font-weight: 900; margin-top: var(--sp-3); line-height: 1.05; font-variant-numeric: tabular-nums; letter-spacing: -.5px; }
+.mk-hero-row { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); margin-top: var(--sp-2); flex-wrap: wrap; }
+.mk-chg { font-size: 12px; font-weight: 800; padding: 3px 9px; border-radius: 999px; background: rgba(255,255,255,.14); }
+.mk-chg.up { background: rgba(72,187,120,.28); } .mk-chg.down { background: rgba(245,101,101,.3); }
+.mk-upd { font-size: 10.5px; color: rgba(255,255,255,.6); }
+.mk-skel { opacity: .55; animation: mkPulse 1.2s ease-in-out infinite; }
+@keyframes mkPulse { 50% { opacity: .25; } }
+
+.mk-watch { display: flex; gap: 8px; overflow-x: auto; padding: var(--sp-3) var(--sp-3) 2px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.mk-watch::-webkit-scrollbar { display: none; }
+.mk-chip { flex: none; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-width: 92px; padding: 8px 10px; background: var(--bg-card); border: 1.5px solid var(--border); border-radius: var(--radius-md); font: inherit; text-align: left; cursor: pointer; transition: border-color var(--dur-fast), box-shadow var(--dur-fast); }
+.mk-chip.on { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft, var(--accent-soft)); }
+.mk-chip.add { min-width: 40px; align-items: center; justify-content: center; color: var(--text-dim); font-size: 18px; font-weight: 700; border-style: dashed; }
+.mk-chip-sym { font-size: 11px; font-weight: 800; color: var(--text-secondary); }
+.mk-chip-price { font-size: 12.5px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mk-chip-ch { font-size: 10.5px; font-weight: 700; }
+.up { color: var(--green); } .down { color: var(--red); }
+
+.mk-card { margin: var(--sp-3); padding: var(--sp-3) var(--sp-4) var(--sp-4); background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
+.mk-ranges { display: flex; gap: 4px; background: var(--bg-card2); border-radius: 999px; padding: 3px; }
+.mk-ranges button { flex: 1; border: 0; background: transparent; font: inherit; font-size: 11px; font-weight: 800; color: var(--text-dim); padding: 6px 0; border-radius: 999px; cursor: pointer; }
+.mk-ranges button.on { background: var(--bg-card); color: var(--primary-ink); box-shadow: var(--shadow-xs); }
+.mk-chart-wrap { position: relative; margin-top: var(--sp-3); touch-action: pan-y; }
+.mk-svg { display: block; width: 100%; height: auto; }
+.mk-ax { font-size: 9px; font-weight: 600; fill: var(--text-dim); font-family: inherit; }
+.mk-lbl { font-size: 9.5px; font-weight: 800; fill: var(--text-secondary); font-family: inherit; }
+.mk-base { stroke: var(--border); stroke-width: 1; }
+.mk-cross { stroke: var(--text-dim); stroke-width: 1; stroke-dasharray: 3 3; }
+.mk-tip { position: absolute; top: -4px; left: 50%; transform: translateX(-50%); padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 800; background: var(--primary); color: #fff; white-space: nowrap; pointer-events: none; box-shadow: var(--shadow-sm); }
+.mk-empty { padding: 36px 0; text-align: center; color: var(--text-dim); font-size: 12px; }
+.mk-stats { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin-top: var(--sp-3); }
+.mk-stats > div { background: var(--bg-card2); border-radius: var(--radius-sm); padding: 8px 10px; min-width: 0; }
+.mk-stats .k { font-size: 9.5px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: .4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mk-stats .v { font-size: 12.5px; font-weight: 800; color: var(--text); margin-top: 2px; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.mk-section { margin: var(--sp-3); padding: var(--sp-4); background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
+.mk-section-title { font-size: 13px; font-weight: 800; color: var(--text); }
+.mk-section-sub { font-size: 11.5px; color: var(--text-dim); margin-top: 3px; line-height: 1.4; }
+.mk-lookup-row { display: flex; gap: 8px; margin-top: var(--sp-3); }
+.mk-lookup-row input { flex: 1; min-width: 0; padding: 10px 12px; border: 1.5px solid var(--border-strong); border-radius: var(--radius-md); font: inherit; font-size: 13px; color: var(--text); background: var(--bg-main); }
+.mk-lookup-row input:focus { outline: none; border-color: var(--accent); }
+.mk-btn { flex: none; padding: 10px 16px; border: 0; border-radius: var(--radius-md); background: var(--primary); color: #fff; font: inherit; font-size: 12px; font-weight: 800; cursor: pointer; }
+.mk-btn:active { transform: scale(.97); }
+.mk-quick { display: flex; gap: 6px; flex-wrap: wrap; margin-top: var(--sp-2); }
+.mk-quick button { border: 1px solid var(--border); background: var(--bg-card2); color: var(--text-secondary); font: inherit; font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 999px; cursor: pointer; }
+.mk-quick button:active { background: var(--accent-soft, var(--accent-soft)); }
+.mk-result { margin-top: var(--sp-3); padding: var(--sp-3) var(--sp-4); background: var(--accent-soft, var(--accent-soft)); border: 1px solid var(--accent-soft-2, var(--accent-soft-2)); border-radius: var(--radius-md); }
+.mk-res-k { font-size: 11px; font-weight: 700; color: var(--text-secondary); }
+.mk-res-g { color: var(--text-dim); font-weight: 600; }
+.mk-res-v { font-size: 24px; font-weight: 900; color: var(--text); margin-top: 2px; font-variant-numeric: tabular-nums; }
+.mk-res-d { font-size: 12px; font-weight: 800; margin-top: 4px; }
+.mk-hist { margin-top: var(--sp-3); border-top: 1px solid var(--border); padding-top: var(--sp-2); }
+.mk-hist-title { font-size: 10px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 4px; }
+.mk-hist-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; font-size: 12px; cursor: pointer; border-bottom: 1px dashed var(--border); }
+.mk-hist-row:last-child { border-bottom: 0; }
+.mk-hist-coin { font-weight: 800; color: var(--primary-ink); min-width: 40px; }
+.mk-hist-when { color: var(--text-dim); flex: 1; }
+.mk-hist-price { font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.mk-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 var(--sp-3) var(--sp-3); font-size: 10.5px; color: var(--text-dim); }
+.mk-err { color: var(--orange); font-weight: 700; }
+
+/* — Валюты ЦБ РФ (fiat) — */
+.mk-fx-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.mk-fx-date { font-size: 10.5px; color: var(--text-dim); font-weight: 600; white-space: nowrap; }
+.mk-fx-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; margin-top: var(--sp-3); }
+.mk-fx { display: block; width: 100%; text-align: left; padding: 10px 12px; background: var(--bg-card2); border: 1.5px solid transparent; border-radius: var(--radius-md); font: inherit; cursor: pointer; min-width: 0; transition: border-color var(--dur-fast); }
+.mk-fx.on { border-color: var(--accent); background: var(--accent-soft, var(--bg-card2)); }
+.mk-fx-top { display: flex; align-items: center; gap: 6px; }
+.mk-fx-flag { font-size: 16px; line-height: 1; }
+.mk-fx-code { font-size: 11px; font-weight: 800; color: var(--text-secondary); }
+.mk-fx-name { font-size: 10px; color: var(--text-dim); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mk-fx-val { font-size: 17px; font-weight: 900; color: var(--text); margin-top: 4px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mk-fx-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 3px; }
+.mk-fx-ch { font-size: 10.5px; font-weight: 800; white-space: nowrap; }
+.mk-fx-ch.flat { color: var(--text-dim); }
+.mk-fx-spark { width: 52px; height: 18px; flex: none; }
+.mk-fx-spark polyline { fill: none; stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; }
+.mk-fx-spark.up polyline { stroke: var(--green); } .mk-fx-spark.down polyline { stroke: var(--red); } .mk-fx-spark.flat polyline { stroke: var(--text-dim); }
+.mk-fx-calc { display: flex; gap: 8px; margin-top: var(--sp-3); align-items: center; }
+.mk-fx-calc input { flex: 1; min-width: 0; padding: 10px 12px; border: 1.5px solid var(--border-strong); border-radius: var(--radius-md); font: inherit; font-size: 14px; font-weight: 700; color: var(--text); background: var(--bg-main); font-variant-numeric: tabular-nums; }
+.mk-fx-calc input:focus { outline: none; border-color: var(--accent); }
+.mk-fx-swap { flex: none; width: 40px; height: 40px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-card2); color: var(--text-secondary); font-size: 16px; cursor: pointer; }
+.mk-fx-swap:active { transform: scale(.95); }
+.mk-fx-unit { flex: none; font-size: 13px; font-weight: 800; color: var(--text-secondary); min-width: 36px; text-align: center; }
+.mk-fx-out { margin-top: var(--sp-2); font-size: 13px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.mk-fx-out span { color: var(--text-dim); font-weight: 600; }
+.mk-link { border: 0; background: transparent; color: var(--accent); font: inherit; font-size: 11px; font-weight: 800; cursor: pointer; padding: 4px 6px; }
+
+.mk-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; text-align: left; max-height: 300px; overflow-y: auto; }
+.mk-pick-row { display: flex; align-items: center; gap: 6px; padding: 6px 4px; font-size: 12px; color: var(--text); cursor: pointer; border-radius: 6px; }
+.mk-pick-row:active { background: var(--bg-card2); }
+.mk-pick-row input { accent-color: var(--accent); width: 15px; height: 15px; margin: 0; }
+.mk-pick-ico { width: 18px; text-align: center; font-weight: 800; color: var(--text-secondary); }
+.mk-pick-sym { font-weight: 800; }
+.mk-pick-name { color: var(--text-dim); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+

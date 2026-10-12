@@ -1,0 +1,40 @@
+/* ====== MISSING MODAL STYLES (wheel, diary, kopilka) ====== */
+.modal-content {
+  background: var(--bg-card); border-radius: var(--radius-lg); padding: 24px;
+  width: 100%; max-width: 380px; border: 1px solid var(--border);
+  transform: translateY(20px); transition: transform 0.2s;
+  box-shadow: var(--shadow-lg);
+}
+.modal-overlay.show .modal-content { transform: translateY(0); }
+.modal-title {
+  font-size: 17px; color: var(--primary-ink); text-align: center;
+  margin-bottom: 16px; font-weight: 800;
+}
+.modal-save-btn {
+  width: 100%; padding: 12px; border: none; border-radius: var(--radius-md);
+  background: var(--primary); color: #fff; font-family: 'Inter', sans-serif;
+  font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.15s;
+}
+.modal-save-btn:hover { background: var(--primary-light); }
+.modal-save-btn:active { transform: scale(0.98); }
+.modal-close-btn {
+  width: 100%; padding: 10px; border: none; border-radius: var(--radius-md);
+  background: var(--bg-card2); color: var(--text); font-family: 'Inter', sans-serif;
+  font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 8px;
+  transition: all 0.15s;
+}
+.modal-close-btn:hover { background: var(--border); }
+.manual-input {
+  width: 100%; padding: 10px 12px; background: var(--bg-main);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px;
+  font-weight: 600; outline: none; transition: border 0.2s;
+}
+.manual-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(49,130,206,0.1); }
+
+/* Respect reduce-motion for accessibility and battery */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+

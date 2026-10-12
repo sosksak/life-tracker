@@ -2,7 +2,7 @@
 """
 Life Tracker — сборка production-файлов.
 
-    src/app.html  ──►  index.html   (минифицированные CSS/JS, <meta app-version>)
+    src/head.html + src/css/*.css + src/html/*.html + src/js/*.js  ──►  index.html
     src/sw.js     ──►  sw.js        (VERSION = APP_VERSION из app.html)
 
 Запуск:  python build.py          (нужны node + npx; terser и csso ставятся сами)
@@ -10,21 +10,45 @@ Life Tracker — сборка production-файлов.
 
 Правила:
   • Правим ТОЛЬКО src/*. index.html и sw.js — артефакты, руками не трогать.
-  • Версия задаётся один раз: `const APP_VERSION = 'vX.Y.Z';` в src/app.html.
+  • Файлы внутри src/css, src/html, src/js склеиваются по алфавиту — префикс NN- задаёт порядок.
+    Новый модуль = новый файл с нужным номером, а не правка чужого.
+  • Версия задаётся один раз: `const APP_VERSION = 'vX.Y.Z';` в src/js/29-pwa.js.
     Сборщик прокидывает её в <title>, <meta name="app-version"> и sw.js —
     именно по этой мете service worker понимает, что вышла новая сборка.
   • После сборки каждый inline-скрипт прогоняется через `node --check`:
     один лишний backtick ломает весь 350 KB скрипт, а в браузере это почти
     незаметно (см. историю v5.3.0).
 """
-import re, subprocess, sys, os, shutil, tempfile, gzip
+import re, subprocess, sys, os, shutil, tempfile, gzip, glob
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 os.chdir(ROOT)
 MINIFY = '--no-min' not in sys.argv
 NPX = shutil.which('npx') or 'npx'
 
-src = open('src/app.html', encoding='utf-8').read()
+
+def rd(p): return open(p, encoding='utf-8', newline='').read()
+def many(pattern): return ''.join(rd(p) for p in sorted(glob.glob(pattern)))
+
+# ── сборка страницы из модулей (v9.8: монолит src/app.html разложен по папкам) ──
+#   src/head.html            <!DOCTYPE> … <head> до <style>
+#   src/css/*.css            стили, в алфавитном порядке → один <style>
+#   src/html/[0-6]*.html     разметка body (вход, навигация, вкладки, модалки)
+#   src/js/[1-9]*.js         основной скрипт, в алфавитном порядке → один <script>
+#   src/js/95-failsafe.js    страховка от зависшего сплэша
+#   src/html/70-*.html       оверлеи и модалки после основного скрипта
+#   src/js/96-icon-engine.js движок иконок (MutationObserver)
+#   src/tail.html            </body></html>
+src = (rd('src/head.html')
+       + '<style>' + many('src/css/*.css') + '</style>'
+       + many('src/html/[0-6]*.html')
+       + '<script>' + ''.join(rd(p) for p in sorted(glob.glob('src/js/[1-8]*.js')) + sorted(glob.glob('src/js/90-*.js'))) + '</script>'
+       + '\n\n<!-- FAILSAFE: если основной скрипт завис, через 6с показать UI -->\n'
+       + '<script>' + rd('src/js/95-failsafe.js') + '</script>'
+       + many('src/html/7*.html')
+       + '<script>' + rd('src/js/96-icon-engine.js') + '</script>'
+       + rd('src/tail.html'))
+src = src.replace('\r\n', '\n')
 
 # ── версия ────────────────────────────────────────────────────────────────
 m = re.search(r"const APP_VERSION = '([^']+)';", src)

@@ -1,0 +1,82 @@
+
+
+<!-- FOCUS MODE OVERLAY -->
+<div class="focus-overlay hidden" id="focusOverlay">
+  <div class="focus-sub">⚡ РЕЖИМ ФОКУСА</div>
+  <div class="focus-timer" id="focusTimer">00:00:00</div>
+  <div class="focus-earn" id="focusEarn">~0 ₽</div>
+  <div class="focus-sub" id="focusSub">работаю</div>
+  <div class="focus-btns">
+    <button class="focus-btn brk" onclick="focusBreak()">☕ Перерыв</button>
+    <button class="focus-btn end" onclick="focusEnd()">⏹ Завершить</button>
+  </div>
+  <button class="focus-btn exit" onclick="closeFocusMode()">← Вернуться</button>
+</div>
+
+<!-- DAILY SUMMARY (after shift end) -->
+<div class="summary-overlay" id="summaryOverlay" style="display:none">
+  <div class="summary-card">
+    <div class="summary-title">🏁 ИТОГИ СМЕНЫ</div>
+    <div class="summary-grid" id="summaryGrid"></div>
+    <div class="summary-streak" id="summaryStreak"></div>
+    <button class="summary-close-btn" onclick="closeSummary()">Отличная работа! ✅</button>
+  </div>
+</div>
+
+<!-- FORTUNE WHEEL MODAL -->
+<div class="modal-overlay" id="wheelModal">
+  <div class="modal-content" style="max-width:340px">
+    <div class="modal-title">🎡 Колесо бонусов</div>
+    <div class="wheel-modal-inner">
+      <div class="wheel-canvas-wrap">
+        <div class="wheel-pointer">▼</div>
+        <canvas id="wheelCanvas" width="280" height="280"></canvas>
+      </div>
+      <button class="wheel-spin-btn" id="wheelSpinBtn" onclick="spinWheel()">🎰 КРУТИТЬ (120 XP)</button>
+      <div class="wheel-result" id="wheelResult"></div>
+    </div>
+    <button class="modal-close-btn" onclick="closeWheelModal()">Закрыть</button>
+  </div>
+</div>
+
+<!-- ============ TAB: STATS — extra sections (injected by JS) ============ -->
+
+<!-- DIARY MODAL -->
+<div class="modal-overlay" id="diaryModal">
+  <div class="modal-content" style="max-width:340px">
+    <div class="modal-title">📓 Новая запись</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <input type="text" id="diaryPlace" placeholder="Место/ситуация" class="manual-input" style="width:100%">
+      <textarea id="diaryDesc" placeholder="Что произошло?" class="manual-input" rows="3" style="width:100%;resize:vertical;"></textarea>
+      <div style="text-align:center;">
+        <span style="font-size:12px;color:var(--text-dim);">Оценка:</span>
+        <span id="diaryStars" class="rate-stars rate-stars-lg no-ico">
+                  <span class="rs" onclick="setDiaryStar(1)"></span><span class="rs" onclick="setDiaryStar(2)"></span><span class="rs" onclick="setDiaryStar(3)"></span><span class="rs" onclick="setDiaryStar(4)"></span><span class="rs" onclick="setDiaryStar(5)"></span>
+        </span>
+      </div>
+      <input type="text" id="diaryLesson" placeholder="Чему научился?" class="manual-input" style="width:100%">
+      <button class="modal-save-btn" onclick="saveDiaryEntry()">💾 Сохранить</button>
+    </div>
+    <button class="modal-close-btn" onclick="closeDiaryModal()">Отмена</button>
+  </div>
+</div>
+
+<!-- ============ MODAL: KOPILKA SETUP ============ -->
+<div class="modal-overlay" id="kopilkaModal">
+  <div class="modal-content" style="max-width:320px">
+    <div class="modal-title">🎯 Настрой копилку</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <input type="text" id="kopilkaNameInput" placeholder="На что копишь? (напр. Квартира)" class="manual-input" style="width:100%">
+      <input type="number" id="kopilkaGoalInput" placeholder="Сколько нужно ₽?" class="manual-input" style="width:100%">
+      <button class="modal-save-btn" onclick="saveKopilka()">💾 Сохранить</button>
+    </div>
+    <button class="modal-close-btn" onclick="closeKopilkaModal()">Отмена</button>
+  </div>
+</div>
+
+<div class="update-banner" id="updateBanner">
+  <div class="txt">🚀 Доступна новая версия</div>
+  <button id="updateBtn">Обновить</button>
+</div>
+
+

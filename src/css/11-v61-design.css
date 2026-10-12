@@ -1,0 +1,243 @@
+/* ================================================================
+   V6.1 — DESIGN REFRESH: tokens, icon set, bottom nav, surfaces
+   ================================================================ */
+:root {
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 20px; --sp-6: 28px;
+  --dur-fast: .16s; --dur-normal: .28s; --ease-out: cubic-bezier(.22,.61,.36,1);
+  --radius-xs: 4px; --radius-sm: 8px; --radius-md: 14px; --radius-lg: 18px; --radius-pill: 999px;
+  --accent-soft: #EBF4FF; --accent-soft-2: #DBEAFE;
+  --green-border: #C6F6D5; --red-border: #FED7D7; --orange-border: #FEEBC8;
+  --bg-input: #F7F8FA; --border-focus: var(--accent); --text-placeholder: #A0AEC0;
+  --focus-ring: 0 0 0 3px rgba(49,130,206,.18);
+  --shadow-xs: 0 1px 2px rgba(27,58,92,.05);
+  --shadow-sm: 0 1px 2px rgba(27,58,92,.05), 0 2px 8px rgba(27,58,92,.05);
+  --shadow-md: 0 2px 6px rgba(27,58,92,.06), 0 10px 24px -8px rgba(27,58,92,.14);
+  --shadow-lg: 0 6px 16px rgba(27,58,92,.10), 0 24px 48px -16px rgba(27,58,92,.22);
+  --hero: linear-gradient(135deg, #1B3A5C 0%, #24507F 60%, #2A5B8F 100%);
+  --nav-h: 62px;
+}
+body { background: var(--bg-main); }
+
+/* — Icon set — */
+.ico {
+  width: 1.15em; height: 1.15em; display: inline-block; vertical-align: -.22em;
+  flex-shrink: 0; overflow: visible;
+}
+.ico .f  { fill: currentColor; fill-opacity: .16; stroke: none; }
+.ico .h  { fill: var(--ico-bg, #fff); }
+.ico .hs { stroke: var(--ico-bg, #fff); }
+.header, .wallet-top, .dash-greeting, .loading-overlay, .fab-toggle, .shift-ctrl-btn,
+.modal-btn.primary, .modal-btn.danger, .btn-add, .auth-btn, .toast, .diary-add-btn,
+.summary-card, .focus-overlay, .ach-unlock-overlay, .hab-add-btn, .fin-action-btn, .crypto-add-btn,
+.role-badge, .lq-badge { --ico-bg: transparent; }
+/* semantic colours */
+.ico-check, .ico-tick, .ico-leaf, .ico-tree, .ico-muscle, .ico-run { color: var(--green); }
+.ico-x, .ico-trash, .ico-heart, .ico-warning, .ico-fire { color: var(--red); }
+.ico-fire { color: #DD6B20; }
+.ico-star, .ico-crown, .ico-trophy, .ico-medal, .ico-coin, .ico-cash, .ico-money, .ico-sun, .ico-bolt, .ico-badge { color: #C08A1E; }
+.ico-drop, .ico-wave, .ico-rocket, .ico-cloud, .ico-sync, .ico-refresh { color: var(--accent); }
+.ico-diamond, .ico-moon, .ico-sparkles, .ico-palette, .ico-zzz { color: #6B46C1; }
+.ico-party, .ico-gift, .ico-flower { color: #D53F8C; }
+.ico-target, .ico-pin, .ico-flag { color: #DD6B20; }
+.ico-coffee, .ico-pizza, .ico-cup { color: #975A16; }
+.ico-cloud-off { color: var(--text-dim); }
+/* inside solid buttons and dark surfaces icons inherit text colour */
+.shift-ctrl-btn .ico, .modal-btn.primary .ico, .modal-btn.danger .ico, .btn-add .ico,
+.auth-btn .ico, .fab-toggle .ico, .toast .ico, .header .ico, .wallet-top .ico,
+.dash-greeting .ico, .loading-overlay .ico, .diary-add-btn .ico, .hab-add-btn .ico,
+.fin-action-btn .ico, .crypto-add-btn .ico, .summary-card .ico, .focus-overlay .ico,
+.tab-btn .ico, .role-badge .ico, .dash-action-btn .ico, .data-tool-btn .ico, .ask-btn .ico,
+.modal-btn.secondary .ico, .acc-mini .ico, .cal-action-btn .ico, .fab-item .ico { color: inherit; }
+.fab-item .ico { color: var(--accent); }
+
+/* — Header — */
+.header {
+  background: var(--hero);
+  border-bottom: none;
+  padding: calc(14px + env(safe-area-inset-top, 0px)) 16px 14px;
+  text-align: left;
+}
+.header h1 {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 17px; font-weight: 800; letter-spacing: .2px;
+}
+.header h1 .ico {
+  width: 36px; height: 36px; padding: 7px; vertical-align: middle;
+  background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.18);
+  border-radius: 11px; box-sizing: border-box;
+}
+.header .subtitle { margin-top: 4px; margin-left: 46px; font-size: 11.5px; color: rgba(255,255,255,.62); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.header-ident { justify-content: flex-start; margin-left: 46px; margin-top: 8px; }
+.role-badge { border-radius: var(--radius-pill); }
+
+/* — Bottom navigation — */
+.tab-nav {
+  position: fixed; top: auto; bottom: 0; left: 0; right: 0; z-index: 900;
+  background: var(--nav-bg);
+  /* v9.6 perf: blur(18px)+saturate на фиксированном таб-баре — дорогой слой на каждом кадре; фон делаем плотнее вместо блюра */
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  border-top: 1px solid var(--border); border-bottom: none;
+  padding: 4px 6px calc(4px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -6px 24px rgba(27,58,92,.06);
+  overflow: visible;
+}
+.tab-btn {
+  gap: 4px; padding: 6px 2px 5px; min-height: 54px;
+  font-size: 9.5px; letter-spacing: .4px; border-radius: 12px;
+  color: var(--text-dim);
+}
+.tab-btn.active { color: var(--primary-ink); }
+.tab-btn.active::after { display: none; }
+.tab-btn .tab-ico {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 26px; border-radius: 13px;
+  font-size: 20px; filter: none; color: var(--text-dim);
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+.tab-btn .tab-ico .ico { width: 21px; height: 21px; vertical-align: middle; }
+.tab-btn.active .tab-ico { background: var(--accent-soft-2); color: var(--primary-ink); transform: none; }
+.tab-btn:active .tab-ico { transform: scale(.92); }
+body { padding-bottom: calc(var(--nav-h) + 72px + env(safe-area-inset-bottom, 0px)); }
+.fab-container { bottom: calc(var(--nav-h) + 14px + env(safe-area-inset-bottom, 0px)); }
+.sync-status { bottom: calc(var(--nav-h) + 12px + env(safe-area-inset-bottom, 0px)); border-radius: var(--radius-pill); padding: 6px 12px 6px 10px; }
+.v6-tab-content { padding-bottom: 24px; }
+
+/* — Surfaces — */
+.wallet, .active-shift, .quests, .life-quests, .motivation-tip, .level-section, .chart-card,
+.achievements, .shop-section, .million-path, .kopilka-card, .weekly-challenge, .insight-card,
+.diary-card, .diary-stat-card, .dash-card, .dash-quick-actions, .health-section, .fin-section,
+.crypto-section, .hab-analytics, .auth-card, .ask-box, .modal, .cal-sum-card, .shift-card,
+.ach-item, .shop-item, .summary-card, .fab-item, .hab-item, .fin-card, .crypto-holding {
+  border-radius: var(--radius-md);
+  border-color: rgba(203,213,224,.55);
+}
+.wallet, .auth-card, .modal, .dash-greeting, .summary-card { border-radius: var(--radius-lg); }
+.wallet { box-shadow: var(--shadow-md); border: none; }
+.wallet-top { background: var(--hero); padding: 20px 20px 16px; }
+.wallet-label { font-size: 10.5px; letter-spacing: 1.2px; color: rgba(255,255,255,.62); }
+.wallet-total { font-size: 34px; letter-spacing: -.5px; }
+.wallet-badge { border-radius: 14px; padding: 8px 12px; background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.22); }
+.wallet-badge .wb-icon { font-size: 22px; line-height: 1; }
+.wallet-stats { gap: 0; background: var(--bg-card); border-top: 1px solid var(--border); }
+.wallet-stat { padding: 14px 6px 12px; }
+.wallet-stat + .wallet-stat { border-left: 1px solid var(--border); }
+.wallet-stat .ws-icon { color: var(--accent); margin-bottom: 4px; font-size: 15px; }
+.wallet-stat .ws-val { font-size: 18px; letter-spacing: -.3px; }
+.wallet-trend-tag { border-radius: var(--radius-pill); padding: 4px 10px; }
+
+.active-shift { padding: 20px 18px; }
+.active-shift h3 { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11.5px; }
+.timer-display { font-size: 46px; letter-spacing: -1px; font-weight: 800; }
+.shift-ctrl-btn { padding: 14px 10px; border-radius: 12px; font-size: 13.5px; letter-spacing: .3px; box-shadow: var(--shadow-sm); }
+.btn-start { background: linear-gradient(135deg, #38A169, #2F855A); }
+.btn-end { background: linear-gradient(135deg, #E53E3E, #C53030); }
+.btn-resume { background: linear-gradient(135deg, #3182CE, #2B6CB0); }
+.btn-break { background: linear-gradient(135deg, #DD6B20, #C05621); }
+
+/* section headings: left-aligned, icon tinted */
+.quests h3, .life-quests h3, .achievements h3, .history h3, .chart-head h3,
+.million-path-title, .week-compare-title, .heatmap-title, .diary-title,
+.dash-section-title, .hab-section-title, .health-section-title, .fin-section-title, .crypto-section-title {
+  display: flex; align-items: center; gap: 8px; text-align: left;
+  font-size: 12.5px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase; color: var(--primary-ink);
+}
+.quests h3 > .ico:first-child, .life-quests h3 > .ico:first-child, .achievements h3 > .ico:first-child,
+.history h3 > .ico:first-child, .chart-head h3 > .ico:first-child, .million-path-title > .ico:first-child,
+.week-compare-title > .ico:first-child, .heatmap-title > .ico:first-child, .diary-title > .ico:first-child,
+.modal h3 > .ico:first-child, .auth-title > .ico:first-child {
+  width: 28px; height: 28px; padding: 5px; box-sizing: border-box;
+  background: var(--accent-soft); color: var(--accent); border-radius: 9px; vertical-align: middle;
+}
+.modal h3 { display: flex; align-items: center; gap: 10px; text-align: left; font-size: 16px; }
+.quest-item, .life-quest-item { border-radius: 12px; background: var(--bg-card-alt, #FAFBFC); border: 1px solid var(--border); border-left-width: 3px; }
+.quest-item.completed { opacity: .55; }
+.life-stats-panel, .lq-hero { border-radius: var(--radius-md); }
+
+/* — Dashboard — */
+.dash-greeting { background: var(--hero); padding: 18px 20px; gap: 14px; border-radius: var(--radius-lg); }
+.dash-greeting-icon {
+  width: 46px; height: 46px; display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.18); border-radius: 14px; font-size: 24px;
+}
+.dash-greeting-text { font-size: 17px; }
+.dash-greeting-date { font-size: 12px; margin-top: 3px; }
+.dash-alerts { gap: 8px; }
+.dash-alert { border-radius: 12px; border-left-width: 1px; padding: 11px 14px; font-weight: 600; }
+.dash-alert-icon { width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(255,255,255,.7); font-size: 14px; }
+.dash-alert--info { background: var(--accent-soft); color: var(--primary-ink); }
+.dash-alert--warn { background: #FFF7ED; border-color: #FED7AA; color: #9A3412; }
+.dash-alert--error { background: var(--red-bg); border-color: #FEB2B2; color: #9B2C2C; }
+.dash-cards { gap: 10px; }
+.dash-card { padding: 16px; box-shadow: var(--shadow-sm); }
+.dash-card-header { gap: 8px; margin-bottom: 10px; }
+.dash-card-icon {
+  width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 9px; background: var(--accent-soft); color: var(--accent); font-size: 15px;
+}
+.dash-card-icon .ico { color: inherit; }
+.dash-card-value { font-size: 24px; letter-spacing: -.5px; }
+.dash-card-status { border-radius: var(--radius-pill); padding: 4px 9px; }
+.dash-quick-actions { padding: 16px; }
+.dash-actions-grid { gap: 8px; }
+.dash-action-btn {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 13px 10px; border-radius: 12px; background: var(--bg-card); box-shadow: var(--shadow-xs);
+}
+.dash-action-btn .ico { color: var(--accent); }
+
+/* — Shop / achievements / history — */
+.shop-item, .ach-item, .shift-card { box-shadow: var(--shadow-xs); }
+.shop-balance-val { letter-spacing: -.5px; }
+.data-tool-btn { border-radius: var(--radius-pill); }
+
+/* — Modals as bottom sheets on phones — */
+.modal { padding: 22px 20px calc(22px + env(safe-area-inset-bottom, 0px)); box-shadow: var(--shadow-lg); border: none; }
+.modal .form-group input, .modal .form-group select, .auth-input { border-radius: 12px; padding: 13px 14px; background: var(--bg-input); }
+.modal-btn, .ask-btn, .btn-add, .auth-btn { border-radius: 12px; padding: 13px; }
+.modal-btn.primary { background: var(--hero); }
+@media (max-width: 600px) {
+  .modal-overlay { align-items: flex-end; padding: 0; }
+  .modal-overlay .modal {
+    max-width: 100% !important; width: 100%;
+    border-radius: 22px 22px 0 0;
+    max-height: 92vh !important; max-height: 92dvh !important; overflow-y: auto;
+    transform: translateY(40px);
+  }
+  .modal-overlay .modal::before {
+    content: ''; display: block; width: 40px; height: 4px; border-radius: 2px;
+    background: var(--border-strong); margin: -6px auto 14px;
+  }
+  .modal-overlay.show .modal { transform: translateY(0); }
+}
+.modal-overlay { background: rgba(15,36,64,.45); }
+/* v9.6 perf: 10 скрытых модалок висели в DOM как display:flex + opacity:0 + backdrop-filter —
+   на iOS каждая = полноэкранный композитный слой с блюром на каждом кадре скролла.
+   Невидимые — visibility:hidden и без блюра; слой появляется только при .show. */
+.modal-overlay { visibility: hidden; -webkit-backdrop-filter: none; backdrop-filter: none; transition: opacity .2s, visibility 0s linear .2s; }
+.modal-overlay.show { visibility: visible; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); transition: opacity .2s, visibility 0s; }
+.ask-box { border-radius: var(--radius-lg); }
+
+/* — FAB — */
+.fab-toggle { width: 54px; height: 54px; border-radius: 17px; background: var(--hero); }
+.fab-toggle .ico { width: 24px; height: 24px; }
+.fab-item { border-radius: 14px; }
+
+/* — Auth / splash — */
+.auth-card { padding: 30px 24px; border: none; }
+.auth-logo .ico { width: 1.2em; height: 1.2em; }
+.loading-overlay { background: var(--hero); }
+.splash-logo .ico { width: 64px; height: 64px; padding: 14px; box-sizing: border-box; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18); border-radius: 20px; }
+
+/* — Misc polish — */
+.sync-status .ico { color: inherit; }
+.toast { border-radius: var(--radius-pill); padding: 11px 20px; }
+.shift-action-btn, .acc-mini, .cal-action-btn, .chart-switch button { border-radius: var(--radius-pill); }
+.xp-bar, .quest-progress, .dash-card-bar, .kopilka-bar, .wchallenge-bar, .million-bar-wrap, .lq-stat-bar { border-radius: 99px; overflow: hidden; }
+.xp-fill, .quest-fill, .dash-card-fill, .kopilka-fill, .wchallenge-fill, .million-bar-fill, .lq-stat-fill { border-radius: 99px; }
+::selection { background: var(--accent-soft-2); }
+@media (prefers-reduced-motion: no-preference) {
+  .tab-content.active { animation: v61-in .26s var(--ease-out) both; }
+  @keyframes v61-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+}
+
+

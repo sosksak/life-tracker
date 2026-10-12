@@ -1,0 +1,19 @@
+/* --- v9.7 goal impact + FX --- */
+.gi { margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 6px; }
+.gi summary { cursor: pointer; font-size: 12px; font-weight: 700; color: var(--accent); list-style: none; display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
+.gi summary::-webkit-details-marker { display: none; }
+.gi-net { color: var(--text); font-weight: 800; }
+.gi-body { padding: 4px 0 2px; }
+.gi-row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; font-variant-numeric: tabular-nums; }
+.gi-row.plus b { color: var(--green); } .gi-row.minus b { color: var(--red, #E53E3E); }
+.gi-opt { display: flex; gap: 6px; align-items: center; font-size: 11px; margin: 6px 0; color: var(--text-muted); }
+.gi-no { font-size: 11px; color: var(--text-muted); margin-top: 4px; line-height: 1.4; }
+.fx-layer { position: fixed; inset: 0; pointer-events: none; z-index: 10000; overflow: hidden; }
+.fx-star { position: absolute; left: 0; top: 0; width: 10px; height: 10px; font-size: 12px; line-height: 1; will-change: transform, opacity; animation: fxStar .55s cubic-bezier(.2,.8,.3,1) forwards; }
+@keyframes fxStar { 0% { transform: translate(var(--x0), var(--y0)) scale(.4); opacity: 1; } 100% { transform: translate(var(--x1), var(--y1)) scale(1.1); opacity: 0; } }
+.fx-press { transform: scale(.96) !important; transition: transform .08s !important; }
+.fx-pulse { animation: fxPulse .5s ease-out; }
+@keyframes fxPulse { 0% { transform: scale(1); } 35% { transform: scale(1.12); color: var(--green); } 100% { transform: scale(1); } }
+.fx-flash { position: fixed; inset: 0; pointer-events: none; z-index: 9999; background: radial-gradient(circle at 50% 40%, rgba(72,187,120,.28), transparent 60%); animation: fxFlash .7s ease-out forwards; }
+@keyframes fxFlash { from { opacity: 1; } to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .fx-star, .fx-flash, .fx-pulse { animation: none !important; display: none; } }
