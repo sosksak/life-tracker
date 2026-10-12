@@ -148,6 +148,9 @@ const XP_RESTORE_VALUE = 200;
 function restoreLostXPOnce() {
   try {
     if (uGetRaw('lt_xp_restored_v42')) return;
+    // v9.9: «ремонт» касался только исторических данных разработчика.
+    // Новый профиль должен стартовать с честного нуля.
+    if (!currentUser || currentUser.role !== 'dev') { uSetRaw('lt_xp_restored_v42', '1'); return; }
     const raw = uGetRaw('lt_life_xp');
     let cur = null;
     try { cur = raw ? JSON.parse(raw) : null; } catch (e) { cur = null; }

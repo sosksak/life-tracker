@@ -221,11 +221,15 @@ const PROGRESS_UNION_KEYS = ['lt_shop_purchases', 'lt_shift_meta'];
 // Когда локальное значение последний раз менялось (на этом устройстве).
 // Без этого облако умеет только «залить, если локально пусто», и любое
 // изменение на втором устройстве молча терялось.
+// v9.9: штамп свой у каждого профиля (строка прогресса в облаке тоже
+// per-profile). Старый общий ключ остаётся как запасной, чтобы на уже
+// работающих устройствах облако не сочли «свежее» и не затёрли локальное.
 function markLocalChange() {
-  try { localStorage.setItem('lt_progress_ts', String(Date.now())); } catch (e) {}
+  const ts = String(Date.now());
+  try { localStorage.setItem('lt_progress_ts', ts); localStorage.setItem(uKey('lt_progress_ts'), ts); } catch (e) {}
 }
 function getLocalTs() {
-  return parseInt(localStorage.getItem('lt_progress_ts') || '0', 10) || 0;
+  return parseInt(localStorage.getItem(uKey('lt_progress_ts')) || localStorage.getItem('lt_progress_ts') || '0', 10) || 0;
 }
 
 // Где хранится прогресс в облаке:
@@ -248,10 +252,16 @@ function isProgressRow(s) {
                  (typeof s.note === 'string' && s.note.startsWith(PROGRESS_ROW_TAG)));
 }
 
+// v9.9: ключ прогресса в localStorage. Данные профиля лежат с префиксом логина
+// (uKey), а список аккаунтов — общий для устройства. Раньше здесь читался
+// голый ключ, поэтому у обычных профилей в облако уезжали одни null, а стата
+// жила только на том устройстве, где была набита.
+function pKey(k) { return k === AUTH_KEYS.accounts ? k : uKey(k); }
+
 function collectProgress() {
   const out = {};
   for (const k of PROGRESS_KEYS) {
-    const v = localStorage.getItem(k);
+    const v = localStorage.getItem(pKey(k));
     // null отправляем ЯВНО — это значит «ключ удалён». Иначе облако хранило бы
     // старое значение и, например, завершённая смена возвращалась бы из облака.
     out[k] = v;
@@ -330,13 +340,20 @@ function applyProgress(cloud) {
 
   // Кто свежее: это устройство или облако. PROGRESS_KEYS без своей стратегии
   // слияния разруливаются по времени последнего изменения.
+  // v9.9: устройство, которое этот профиль ещё НИ РАЗУ не синхронизировало,
+  // не авторитетно — пока шёл init, оно успело записать дефолты (сложность,
+  // привычки, стартовый XP) и поставить штамп «свежее облака». Из-за этого
+  // пустой браузер однажды затёр XP в облаке. Первый синк — облако главнее.
+  const syncedFlag = uKey('lt_progress_synced');
+  const firstSync = !localStorage.getItem(syncedFlag);
   const cloudTs = parseInt(cloud.__ts || 0, 10) || 0;
-  const cloudIsNewer = cloudTs > getLocalTs();
+  const cloudIsNewer = firstSync || cloudTs > getLocalTs();
 
   for (const k of PROGRESS_KEYS) {
     const cloudVal = cloud[k];
     if (cloudVal === undefined) continue;
-    const localVal = localStorage.getItem(k);
+    const lk = pKey(k);
+    const localVal = localStorage.getItem(lk);
 
     // Облако говорит «удалено» и оно свежее — убираем и у себя.
     if (cloudVal === null) {
@@ -344,7 +361,9 @@ function applyProgress(cloud) {
       // Иначе старый клиент без профилей мог бы снести список аккаунтов и
       // запереть вход на всех устройствах.
       if (k === AUTH_KEYS.accounts) continue;
-      if (cloudIsNewer && localVal !== null) { localStorage.removeItem(k); changed = true; }
+      // На первом синке ничего не стираем: активная смена на этом устройстве
+      // важнее, чем «в облаке её нет».
+      if (cloudIsNewer && !firstSync && localVal !== null) { localStorage.removeItem(lk); changed = true; }
       continue;
     }
 
@@ -352,33 +371,34 @@ function applyProgress(cloud) {
     // должен появиться здесь, а локальный (возможно со свежим паролем) — выжить.
     if (k === AUTH_KEYS.accounts) {
       const merged = mergeAccounts(localVal, cloudVal);
-      if (merged !== localVal) { localStorage.setItem(k, merged); changed = true; }
+      if (merged !== localVal) { localStorage.setItem(lk, merged); changed = true; }
       continue;
     }
 
     if (k === 'lt_life_xp') {
       // Локальное свежее облака → доверяем ему (снятие галочки = минус XP).
       const merged = mergeLifeXP(localVal, cloudVal, !cloudIsNewer);
-      if (merged !== localVal) { localStorage.setItem(k, merged); changed = true; }
+      if (merged !== localVal) { localStorage.setItem(lk, merged); changed = true; }
       continue;
     }
 
     if (PROGRESS_UNION_KEYS.includes(k)) {
       const merged = mergeUnion(localVal, cloudVal);
-      if (merged !== localVal) { localStorage.setItem(k, merged); changed = true; }
+      if (merged !== localVal) { localStorage.setItem(lk, merged); changed = true; }
       continue;
     }
 
     // Пусто локально — всегда берём облако. Иначе — только если облако свежее.
     if (localVal === null || (cloudIsNewer && cloudVal !== localVal)) {
-      localStorage.setItem(k, cloudVal);
+      localStorage.setItem(lk, cloudVal);
       changed = true;
     }
   }
 
   if (cloudIsNewer && cloudTs) {
-    try { localStorage.setItem('lt_progress_ts', String(cloudTs)); } catch (e) {}
+    try { localStorage.setItem('lt_progress_ts', String(cloudTs)); localStorage.setItem(uKey('lt_progress_ts'), String(cloudTs)); } catch (e) {}
   }
+  try { localStorage.setItem(syncedFlag, '1'); } catch (e) {}
   return changed;
 }
 

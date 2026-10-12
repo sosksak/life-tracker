@@ -74,20 +74,25 @@ function uSetRaw(k, v) { try { localStorage.setItem(uKey(k), v); } catch(e) {} }
 function uRemove(k) { try { localStorage.removeItem(uKey(k)); } catch(e) {} }
 
 // One-time migration: copy legacy (un-prefixed) localStorage data to namespaced keys
-function migrateUserData(login) {
+// v9.9: наследует старые данные ТОЛЬКО dev-профиль — они его (см. loadShifts:
+// смены без метки принадлежат разработчику). Иначе новый пустой профиль
+// получал бы чужой XP, покупки и смены вместо нулевой статистики.
+function migrateUserData(login, role) {
   const flag = login + '_lt_migrated';
   if (localStorage.getItem(flag)) return;
-  const keys = [
-    'lt_active_shift','lt_shift_meta','lt_life_xp','lt_life_quests',
-    'lt_shift_bonuses','lt_chosen_category','lt_weekly_cat',
-    'lt_shop_purchases','lt_shop_boosts','lt_active_theme',
-    'lt_tracker','lt_pending_shifts','lt_difficulty','lt_xp_restored_v42'
-  ];
-  for (const k of keys) {
-    const v = localStorage.getItem(k);
-    const nk = login + '_' + k;
-    if (v !== null && localStorage.getItem(nk) === null) {
-      localStorage.setItem(nk, v);
+  if (role === 'dev') {
+    const keys = [
+      'lt_active_shift','lt_shift_meta','lt_life_xp','lt_life_quests',
+      'lt_shift_bonuses','lt_chosen_category','lt_weekly_cat',
+      'lt_shop_purchases','lt_shop_boosts','lt_active_theme',
+      'lt_tracker','lt_pending_shifts','lt_difficulty','lt_xp_restored_v42'
+    ];
+    for (const k of keys) {
+      const v = localStorage.getItem(k);
+      const nk = login + '_' + k;
+      if (v !== null && localStorage.getItem(nk) === null) {
+        localStorage.setItem(nk, v);
+      }
     }
   }
   localStorage.setItem(flag, '1');
@@ -190,19 +195,21 @@ function findAccount(login) {
 }
 function hasDevAccount() { return getAccounts().some(a => a.role === 'dev'); }
 
-async function createAccount(login, password, role, name) {
+async function createAccount(login, password, role, name, opts = {}) {
   const l = String(login || '').trim();
   if (l.length < 3) throw new Error('Логин — минимум 3 символа');
-  if (String(password || '').length < 4) throw new Error('Пароль — минимум 4 символа');
+  // v9.9: открытый профиль — без пароля, вход одним тапом. Только role=user.
+  const open = !!opts.open && role !== 'dev';
+  if (!open && String(password || '').length < 4) throw new Error('Пароль — минимум 4 символа');
   if (findAccount(l)) throw new Error('Такой логин уже есть');
-  const { salt, hash, algo } = await hashPassword(password);
   const acc = {
     login: l,
     name: (name || l).trim(),
     role: role === 'dev' ? 'dev' : 'user',
-    salt, hash, algo,
     createdAt: nowMs()
   };
+  if (open) acc.open = true;
+  else Object.assign(acc, await hashPassword(password));
   // Пишем в полный список и убираем возможное надгробие с тем же логином,
   // иначе merge воскресил бы «удалённый» статус.
   const list = getAccountsRaw().filter(a => a.login.toLowerCase() !== l.toLowerCase());
@@ -230,6 +237,8 @@ function sessionValid(s) {
   if (!acc) return false;
   // Системное устройство не разлогинивается по времени — «один раз зайти».
   if (acc.role === 'dev' && isDevDevice()) return true;
+  // Открытый профиль и так без пароля — просить «перелогиниться» бессмысленно.
+  if (acc.open) return true;
   return (nowMs() - (s.at || 0)) < SESSION_TTL_DAYS * 86400000;
 }
 
@@ -454,7 +463,8 @@ function renderAuthGate() {
         <label class="auth-label">Имя</label>
         <input class="auth-input" id="nuName" placeholder="как показывать" spellcheck="false">
       </div>
-      <div class="auth-field">
+      <label class="auth-check"><input type="checkbox" id="nuOpen" onchange="document.getElementById('nuPassWrap').style.display=this.checked?'none':''"> Без пароля — вход одним тапом</label>
+      <div class="auth-field" id="nuPassWrap">
         <label class="auth-label">Пароль</label>
         <input class="auth-input" id="nuPass" type="password" placeholder="минимум 4 символа" autocomplete="new-password">
       </div>
@@ -469,13 +479,14 @@ function renderAuthGate() {
   const isDev = isDevDevice();
   const profHtml = accounts.map(a => {
     const canDel = isDev && a.role !== 'dev';
+    const role = a.role === 'dev' ? 'Разработчик · полный доступ' : (a.open ? 'Открытый · без пароля' : 'Обычный профиль');
     return `
     <div class="auth-prof-wrap">
-      <button class="auth-prof ${a.role === 'dev' ? 'dev' : ''}" data-action="auth-login" data-login="${escapeHtml(a.login)}">
-        <div class="ap-ava">${a.role === 'dev' ? '🛠️' : '👤'}</div>
+      <button class="auth-prof ${a.role === 'dev' ? 'dev' : ''}${a.open ? ' open' : ''}" data-action="auth-login" data-login="${escapeHtml(a.login)}">
+        <div class="ap-ava">${a.role === 'dev' ? '🛠️' : (a.open ? '🙂' : '👤')}</div>
         <div class="ap-meta">
           <div class="ap-name">${escapeHtml(a.name || a.login)}</div>
-          <div class="ap-role">${a.role === 'dev' ? 'Разработчик · полный доступ' : 'Обычный профиль'}</div>
+          <div class="ap-role">${role}</div>
         </div>
         <div class="ap-arrow">›</div>
       </button>
@@ -510,7 +521,12 @@ document.addEventListener('click', function(e) {
   if (!btn) return;
   const action = btn.dataset.action;
   const login = btn.dataset.login;
-  if (action === 'auth-login') { authSetView('password', login); }
+  if (action === 'auth-login') {
+    // Открытый профиль — сразу внутрь, без экрана пароля
+    const acc = findAccount(login);
+    if (acc && acc.open) { authEnter(acc); return; }
+    authSetView('password', login);
+  }
   else if (action === 'auth-delete') { e.stopPropagation(); authDeleteProfile(login); }
   else if (action === 'acc-delete') { accDelete(login); }
 });
@@ -559,9 +575,10 @@ async function authDoCreateUser() {
   const login = (document.getElementById('nuLogin') || {}).value || '';
   const name  = (document.getElementById('nuName')  || {}).value || '';
   const pass  = (document.getElementById('nuPass')  || {}).value || '';
+  const open  = !!((document.getElementById('nuOpen') || {}).checked);
 
   try {
-    const acc = await createAccount(login, pass, 'user', name);
+    const acc = await createAccount(login, pass, 'user', name, { open });
     await authEnter(acc);
   } catch (e) {
     authError = e.message || 'Не получилось';
@@ -585,11 +602,13 @@ async function authEnter(acc) {
   saveSession(acc.login, acc.role);
 
   // Migrate legacy data (no prefix) to namespaced keys for this user
-  migrateUserData(acc.login);
+  migrateUserData(acc.login, acc.role);
 
   // Reload per-user variables now that currentUser is set
   activeShift = uGet('lt_active_shift', null);
   difficulty = uGetRaw('lt_difficulty') || 'normal';
+  // v9.9: прогресс в облаке — per-profile, строка/штамп прошлого пользователя не наши
+  try { progressRowId = null; } catch (e) {}
 
   // Устройство ещё не представлено — регистрируем как обычное.
   if (!getDeviceInfo()) {
@@ -628,6 +647,9 @@ function applyRoleToUI() {
 function maybeOfferFaceId() {
   if (!webauthnSupported()) return;
   if (getWebauthn()) return;
+  // Открытому профилю биометрия не нужна — он и так без пароля.
+  const me = currentUser && findAccount(currentUser.login);
+  if (me && me.open) return;
   if (localStorage.getItem('lt_faceid_asked') === '1') return;
   setTimeout(async () => {
     // Падеж: «вход по Face ID», но «вход по отпечатку» — иначе кривая фраза.
@@ -884,7 +906,7 @@ function renderAccountModal() {
       <div class="acc-row ${isMe ? 'acc-this' : ''}">
         <div class="ar-main">
           <div class="ar-t">${a.role === 'dev' ? '🛠️' : '👤'} ${escapeHtml(a.name || a.login)}${isMe ? ' · это ты' : ''}</div>
-          <div class="ar-s">${escapeHtml(a.login)} · ${a.role === 'dev' ? 'разработчик' : 'обычный'}</div>
+          <div class="ar-s">${escapeHtml(a.login)} · ${a.role === 'dev' ? 'разработчик' : (a.open ? 'открытый, без пароля' : 'обычный')}</div>
         </div>
         ${(canManage && !(isMe && a.role === 'dev')) ? `<button class="acc-mini danger" data-action="acc-delete" data-login="${escapeHtml(a.login)}">Удалить</button>` : ''}
       </div>`;
@@ -987,13 +1009,17 @@ async function accAddUser() {
   const res = await askForm([
     { key: 'login', label: 'Логин',  placeholder: 'например, anna' },
     { key: 'name',  label: 'Имя',    placeholder: 'как показывать' },
-    { key: 'pass',  label: 'Пароль', type: 'password', placeholder: 'минимум 4 символа' }
+    { key: 'open',  label: 'Вход',   type: 'select', value: 'pass',
+      options: [{ value: 'pass', label: 'По паролю' }, { value: 'open', label: 'Без пароля — одним тапом' }] },
+    { key: 'pass',  label: 'Пароль (если по паролю)', type: 'password', placeholder: 'минимум 4 символа' }
   ], { icon: '✨', title: 'Новый профиль', okText: 'Создать' });
-  if (!res || !res.login || !res.pass) return;
+  if (!res || !res.login) return;
+  const open = res.open === 'open';
+  if (!open && !res.pass) return;
 
   // Новые профили ВСЕГДА обычные — права разработчика только у главного.
   try {
-    await createAccount(res.login, res.pass, 'user', res.name || res.login);
+    await createAccount(res.login, res.pass, 'user', res.name || res.login, { open });
     showToast('✅ Профиль создан', 'success');
     renderAccountModal();
   } catch (e) { showToast(e.message || 'Ошибка', 'error'); }
