@@ -408,18 +408,7 @@ saveEndShift = async function() {
 setTimeout(() => {
   const fabMenu = document.querySelector('.fab-menu');
   if (fabMenu) {
-    const kopilkaBtn = document.createElement('button');
-    kopilkaBtn.className = 'fab-item';
-    kopilkaBtn.onclick = setupKopilka;
-    kopilkaBtn.innerHTML = '<span class="fab-icon">🎯</span><span class="fab-label">Цель</span>';
-    fabMenu.appendChild(kopilkaBtn);
-
-    const wheelBtn = document.createElement('button');
-    wheelBtn.className = 'fab-item';
-    wheelBtn.onclick = openWheelModal;
-    wheelBtn.innerHTML = '<span class="fab-icon">🎡</span><span class="fab-label">Колесо бонусов</span>';
-    fabMenu.appendChild(wheelBtn);
-
+    // v9.9.2: «Цель» и «Колесо» переехали в меню «Ещё»
     const focusBtn = document.createElement('button');
     focusBtn.className = 'fab-item';
     focusBtn.onclick = openFocusMode;

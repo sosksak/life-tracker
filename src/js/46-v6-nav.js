@@ -92,6 +92,7 @@ function buildV6FabItems() {
   const fab = document.getElementById('fabMenu');
   if (!fab || fab.dataset.v6 === '1') return;
   fab.dataset.v6 = '1';
+  return; // v9.9.2: разделы живут в меню «Ещё», шестерёнка — только быстрые действия
 
   const items = [
     { icon: '🏪', label: 'Магазин',  fn: () => switchTab('shop') },

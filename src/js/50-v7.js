@@ -746,6 +746,7 @@ function extendKeys() {
   try { for (const k of ['v7_work_type', 'v7_wheel', 'v7_login_reward', 'v7_pomo', 'v7_life_wheel', 'v7_journal']) if (!PROGRESS_KEYS.includes(k)) PROGRESS_KEYS.push(k); } catch (e) {}
 }
 function addFabItem() {
+  return; // v9.9.2: «Тип работы» — в меню «Ещё»
   const fab = document.getElementById('fabMenu'); if (!fab || fab.querySelector('[data-v7wt]')) return;
   const b = document.createElement('button'); b.className = 'fab-item'; b.dataset.v7wt = '1';
   b.innerHTML = '<span class="fab-icon">💼</span><span class="fab-label">Тип работы</span>';
