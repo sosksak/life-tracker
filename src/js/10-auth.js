@@ -715,11 +715,14 @@ async function pullAccountsOnly() {
   } catch (e) {}
 
   try {
-    const userDiff = currentUser ? currentUser.login : 'dev';
-    const { data } = await sb.from('shifts').select('note').eq('date', PROGRESS_ROW_DATE).eq('difficulty', userDiff).limit(1);
-    if (data && data.length) {
-      const raw = String(data[0].note || '');
-      if (raw.startsWith(PROGRESS_ROW_TAG)) apply(JSON.parse(raw.slice(PROGRESS_ROW_TAG.length)));
+    // БАГ: до входа currentUser пуст, и читалась только строка 'dev', где
+    // список профилей давно устарел (тестовый qatest). Настоящий dev-профиль
+    // лежит в строке своего логина. Берём ВСЕ строки прогресса и сливаем
+    // их списки профилей — экран входа покажет каждого, кто есть в облаке.
+    const { data } = await sb.from('shifts').select('note').eq('date', PROGRESS_ROW_DATE);
+    for (const row of (data || [])) {
+      const raw = String(row.note || '');
+      if (raw.startsWith(PROGRESS_ROW_TAG)) { try { apply(JSON.parse(raw.slice(PROGRESS_ROW_TAG.length))); } catch (e) {} }
     }
   } catch (e) {}
 }

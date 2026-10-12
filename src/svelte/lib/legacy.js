@@ -8,6 +8,9 @@ export const legacy = {
   // хранилище с префиксом профиля (uGet/uSet в 10-auth.js)
   get: (k, fallback) => (typeof g().uGet === 'function' ? g().uGet(k, fallback) : fallback),
   set: (k, v) => { if (typeof g().uSet === 'function') g().uSet(k, v); },
+  // вошёл ли кто-то: `let currentUser` в легаси не виден через window,
+  // поэтому смотрим на префикс ключей — он пустой, пока профиля нет
+  hasUser: () => typeof g().uKey === 'function' && g().uKey('') !== '',
 
   // облачная синхронизация прогресса (25-sync.js)
   touch() {
