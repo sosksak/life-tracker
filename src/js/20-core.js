@@ -83,6 +83,16 @@ let pendingEndShift = null; // data for end-shift modal
 
 let timerInterval = null;
 
+// v9.10: мост состояния для Svelte-слоя (app/bundle.js — отдельный скрипт, `let` ему не виден).
+// Только чтение; реактивность — через DASHBOARD.render()/lt:data-changed, как и раньше.
+window.LT_STATE = {
+  get shifts() { return shifts; },
+  get activeShift() { return activeShift; },
+  get difficulty() { return difficulty; },
+  get currentUser() { return typeof currentUser !== 'undefined' ? currentUser : null; },
+  DIFFICULTIES,
+};
+
 // ====== TAB SWITCHING ======
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));

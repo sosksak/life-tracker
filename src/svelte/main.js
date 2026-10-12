@@ -1,6 +1,8 @@
-import { mount, unmount } from 'svelte';
+import { mount, unmount, flushSync } from 'svelte';
 import Finance from './finance/Finance.svelte';
 import * as F from './finance/store.svelte.js';
+import Dashboard from './dashboard/Dashboard.svelte';
+import * as D from './dashboard/store.svelte.js';
 import { legacy } from './lib/legacy.js';
 
 // ------------------------------------------------------------
@@ -54,6 +56,30 @@ window.FINANCE = {
   // служебное: смены изменились снаружи — пересчитать сводку
   refresh: () => { F.fin.shiftsVersion++; },
   _unmount() { if (financeApp) { unmount(financeApp); financeApp = null; } },
+};
+
+// ------------------------------------------------------------
+//  DASHBOARD — вкладка «Главная» (бывший src/js/40-v6-dashboard.js).
+//  API прежний: DASHBOARD.render() / collectMetrics() / getAlerts().
+//  Расширения v7/v8/v9/v92 оборачивают render() и сразу после него ищут
+//  .dash-greeting, чтобы вставить свои блоки, — поэтому flushSync(): DOM
+//  должен быть пересобран синхронно, как раньше при innerHTML.
+// ------------------------------------------------------------
+let dashApp = null;
+
+function renderDashboard() {
+  const el = document.getElementById('dashboardContent');
+  if (!el) return;
+  if (!dashApp) { el.innerHTML = ''; dashApp = mount(Dashboard, { target: el }); }
+  else D.dash.version++;
+  flushSync();
+}
+
+window.DASHBOARD = {
+  render: renderDashboard,
+  collectMetrics: D.collectMetrics,
+  getAlerts: D.getAlerts,
+  _unmount() { if (dashApp) { unmount(dashApp); dashApp = null; } },
 };
 
 // Смены / профиль поменялись снаружи (синк, смена аккаунта) → перечитать.

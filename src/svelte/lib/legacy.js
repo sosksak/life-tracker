@@ -18,8 +18,21 @@ export const legacy = {
     if (typeof g().schedulePushProgress === 'function') g().schedulePushProgress();
   },
 
-  // смены — глобальный массив `shifts`
-  shifts: () => (Array.isArray(g().shifts) ? g().shifts : []),
+  // смены — глобальный `let shifts` (не виден через window → читаем через мост LT_STATE в 20-core.js)
+  shifts: () => { const s = g().LT_STATE ? g().LT_STATE.shifts : g().shifts; return Array.isArray(s) ? s : []; },
+  activeShift: () => (g().LT_STATE ? g().LT_STATE.activeShift : null) || null,
+  currentUser: () => (g().LT_STATE ? g().LT_STATE.currentUser : null) || null,
+  // цель ₽/ч текущей сложности (для серии дней)
+  streakGoal: () => { try { const S = g().LT_STATE; return S.DIFFICULTIES[S.difficulty].goal; } catch { return 0; } },
+  shiftTotals: () => { try { return g().getShiftTotals(); } catch { return { totalEarned: 0, totalHours: 0, avgRate: 0 }; } },
+  calcStreak: (goal) => { try { return typeof g().calcStreak === 'function' ? g().calcStreak(goal) : 0; } catch { return 0; } },
+  escapeHtml: (t) => (typeof g().escapeHtml === 'function' ? g().escapeHtml(t) : String(t)),
+
+  // соседние модули (пока живут в легаси)
+  habitsToday: () => { try { return g().HABITS.getTodayProgress(); } catch { return { done: 0, total: 0 }; } },
+  healthToday: () => { try { return g().HEALTH.getTodayData(); } catch { return { water: 0, sleep: 0, mood: 0 }; } },
+  cryptoValue: () => { try { return g().CRYPTO.getPortfolioValue(); } catch { return { totalUSD: 0, assets: 0, changePct: 0 }; } },
+  financeMonth: () => { try { return g().FINANCE.getMonthSummary(); } catch { return { balance: 0, expenses: 0, budgetPct: 0 }; } },
 
   // UI-примитивы
   toast: (msg, type = 'success') => { if (typeof g().showToast === 'function') g().showToast(msg, type); },

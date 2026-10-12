@@ -247,7 +247,7 @@ function bootV6() {
 })();
 
 // Глобальные алиасы для onclick в разметке модулей
-window.DASHBOARD = DASHBOARD;
+// DASHBOARD живёт в Svelte-бандле (app/bundle.js) и сам регистрируется на window.
 window.HABITS = HABITS;
 window.HEALTH = HEALTH;
 // FINANCE живёт в Svelte-бандле (app/bundle.js) и сам регистрируется на window.
