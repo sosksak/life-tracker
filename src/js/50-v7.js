@@ -735,8 +735,8 @@ function renderLifeExtras() {
   let box = document.getElementById('v7LifeExtra');
   if (!box) { box = document.createElement('div'); box.id = 'v7LifeExtra'; root.appendChild(box); }
   box.innerHTML =
-    '<div class="v7-sec"><div class="v7-sec-head"><div class="v7-sec-title">🎯 Фокус-сессии</div></div><div id="v7Pomo" class="pomo-wrap"></div></div>' +
-    '<div class="v7-sec"><div class="v7-sec-head"><div class="v7-sec-title">🧭 Колесо жизни</div><span style="font-size:11px;color:var(--text-dim)">' + monthKey() + '</span></div>' + lwHtml() + '</div>' +
+    '<div class="v7-sec" id="v7Focus"><div class="v7-sec-head"><div class="v7-sec-title">🎯 Фокус-сессии</div></div><div id="v7Pomo" class="pomo-wrap"></div></div>' +
+    '<div class="v7-sec" id="v7Wheel"><div class="v7-sec-head"><div class="v7-sec-title">🧭 Колесо жизни</div><span style="font-size:11px;color:var(--text-dim)">' + monthKey() + '</span></div>' + lwHtml() + '</div>' +
     '<div class="v7-sec" id="v7Journal"><div class="v7-sec-head"><div class="v7-sec-title">📓 Вечерний дневник</div></div>' + jrHtml() + '</div>';
   pomoRender();
   const cv = document.getElementById('lwCanvas');
