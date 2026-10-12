@@ -78,6 +78,7 @@ async function syncCloud() {
         renderLifeQuests();
         renderLifeStats();
         renderCloudSyncTag();
+        window.dispatchEvent(new Event('lt:data-changed')); // Svelte-модули перечитают localStorage
         applyRoleToUI();
       }
     } catch(e) { console.error('Progress pull:', e); }
@@ -118,7 +119,7 @@ document.addEventListener('visibilitychange', () => {
     // Досинхронизируем прогресс: в установленной PWA страница живёт долго,
     // без этого XP, заработанный в браузере, тут бы не появился.
     pullProgress().then(changed => {
-      if (changed) { renderLifeQuests(); renderLifeStats(); render(); }
+      if (changed) { renderLifeQuests(); renderLifeStats(); render(); window.dispatchEvent(new Event('lt:data-changed')); }
       renderCloudSyncTag();
     }).catch(e => console.error(e));
     if (activeShift) { updateTimer(); renderQuests(); }

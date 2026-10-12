@@ -26,6 +26,7 @@ const NET_WAIT_MS = 1500;   // сколько ждём проверку верс
 const PRECACHE = [
   './index.html',
   './config.js',
+  './app/bundle.js?v=' + VERSION,   // Svelte-слой; версия в URL = свежая копия при обновлении
   './manifest.json',
   './icon-192.png',
   './icon-512.png',

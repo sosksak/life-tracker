@@ -31,6 +31,7 @@ def rd(p): return open(p, encoding='utf-8', newline='').read()
 def many(pattern): return ''.join(rd(p) for p in sorted(glob.glob(pattern)))
 
 # ── сборка страницы из модулей (v9.8: монолит src/app.html разложен по папкам) ──
+#   app/bundle.js            Svelte-слой (src/svelte/*, собирает vite → npm run build:svelte)
 #   src/head.html            <!DOCTYPE> … <head> до <style>
 #   src/css/*.css            стили, в алфавитном порядке → один <style>
 #   src/html/[0-6]*.html     разметка body (вход, навигация, вкладки, модалки)
@@ -42,6 +43,7 @@ def many(pattern): return ''.join(rd(p) for p in sorted(glob.glob(pattern)))
 src = (rd('src/head.html')
        + '<style>' + many('src/css/*.css') + '</style>'
        + many('src/html/[0-6]*.html')
+       + '<script src="app/bundle.js?v=__APP_VERSION__"></script>\n'  # Svelte-слой (npm run build:svelte)
        + '<script>' + ''.join(rd(p) for p in sorted(glob.glob('src/js/[1-8]*.js')) + sorted(glob.glob('src/js/90-*.js'))) + '</script>'
        + '\n\n<!-- FAILSAFE: если основной скрипт завис, через 6с показать UI -->\n'
        + '<script>' + rd('src/js/95-failsafe.js') + '</script>'
@@ -55,6 +57,8 @@ m = re.search(r"const APP_VERSION = '([^']+)';", src)
 assert m, 'APP_VERSION не найден в src/app.html'
 VER = m.group(1)
 print('version:', VER)
+src = src.replace('__APP_VERSION__', VER)
+assert os.path.exists('app/bundle.js'), 'нет app/bundle.js — сначала npm run build:svelte'
 
 src = re.sub(r'<title>[^<]*</title>', f'<title>Life Tracker {VER}</title>', src, count=1)
 if '<meta name="app-version"' not in src:

@@ -247,7 +247,7 @@ function bootV6() {
 window.DASHBOARD = DASHBOARD;
 window.HABITS = HABITS;
 window.HEALTH = HEALTH;
-window.FINANCE = FINANCE;
+// FINANCE живёт в Svelte-бандле (app/bundle.js) и сам регистрируется на window.
 window.CRYPTO = CRYPTO;
 window.switchV6Tab = switchV6Tab;
 window.bootV6 = bootV6;

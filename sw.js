@@ -17,7 +17,7 @@
 // VERSION подставляется сборщиком (build.py) из src/app.html — одна версия
 // у страницы, воркера и имени кэша.
 
-const VERSION = 'v9.7.0';
+const VERSION = 'v9.8.0';
 const CACHE = 'life-tracker-' + VERSION;
 const INDEX_KEY = './index.html';
 const CFG_KEY = './config.js';
@@ -26,6 +26,7 @@ const NET_WAIT_MS = 1500;   // сколько ждём проверку верс
 const PRECACHE = [
   './index.html',
   './config.js',
+  './app/bundle.js?v=' + VERSION,   // Svelte-слой; версия в URL = свежая копия при обновлении
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
