@@ -23,6 +23,7 @@ function applyTheme(themeId) {
   r.setProperty('--primary-dark', t.dark);
   r.setProperty('--bg-sidebar', t.primary);
   r.setProperty('--accent', t.accent);
+  r.setProperty('--wt-c', t.accent);
   r.setProperty('--accent-hover', t.light);
   r.setProperty('--accent-soft', t.soft);
   r.setProperty('--accent-soft-2', t.soft2);

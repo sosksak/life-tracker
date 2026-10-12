@@ -1,0 +1,149 @@
+/* ================================================================
+   v9.9.1 — ATMO: атмосферный визуальный слой
+   Живой фон в цвете типа работы, стеклянные карточки, глубокая ночь,
+   свечение акцентов, шиммер прогресса. Без backdrop-filter/blur на
+   больших слоях — iOS WebKit рисует всё одним градиентом за кадр.
+   ================================================================ */
+:root {
+  --atmo: var(--wt-c, var(--accent));
+  --atmo-glow-a: .34;  /* сила свечения фона (light) */
+  --atmo-glow-b: .20;
+  --atmo-card: rgba(255,255,255,.88);
+  --atmo-card-line: rgba(255,255,255,.9);   /* верхняя световая кромка */
+  --atmo-card-border: rgba(27,58,92,.10);
+  --atmo-shadow: 0 1px 2px rgba(27,58,92,.05), 0 12px 32px -12px rgba(27,58,92,.22);
+  --atmo-glass-nav: rgba(255,255,255,.78);
+}
+html[data-theme="dark"] {
+  --bg-main: #0A0E13; --bg-card: #121820; --bg-card2: #1A222C; --bg-input: #0D1218;
+  --border: #212B37; --border-strong: #324050;
+  --atmo-glow-a: .42; --atmo-glow-b: .24;
+  --atmo-card: rgba(20,27,36,.78);
+  --atmo-card-line: rgba(255,255,255,.06);
+  --atmo-card-border: rgba(255,255,255,.07);
+  --atmo-shadow: 0 1px 0 rgba(255,255,255,.03) inset, 0 14px 36px -14px rgba(0,0,0,.7);
+  --atmo-glass-nav: rgba(12,17,23,.82);
+  --nav-bg: rgba(12,17,23,.82);
+}
+
+/* — Живой фон: два пятна света в цвете типа работы + едва заметное зерно — */
+body { background: color-mix(in srgb, var(--atmo) 5%, var(--bg-main)); position: relative; isolation: isolate; }
+html[data-theme="dark"] body { background: color-mix(in srgb, var(--atmo) 7%, var(--bg-main)); }
+.atmo-bg {
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(75% 48% at 8% 0%, color-mix(in srgb, var(--atmo) calc(var(--atmo-glow-a) * 100%), transparent), transparent 72%),
+    radial-gradient(60% 40% at 100% 32%, color-mix(in srgb, var(--primary-light, var(--primary)) calc(var(--atmo-glow-b) * 100%), transparent), transparent 72%),
+    radial-gradient(80% 45% at 50% 108%, color-mix(in srgb, var(--atmo) calc(var(--atmo-glow-b) * 100%), transparent), transparent 72%);
+  transition: background .6s ease;
+}
+.atmo-bg::after {
+  content: ""; position: absolute; inset: 0; opacity: .035; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 160px 160px;
+}
+html[data-theme="dark"] .atmo-bg::after { opacity: .06; mix-blend-mode: screen; }
+
+/* — Шапка: градиент + световой блик + мягкое пятно в углу — */
+.header { overflow: hidden; isolation: isolate; }
+.header::before {
+  display: block; content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(70% 90% at 85% 10%, rgba(255,255,255,.14), transparent 60%),
+    radial-gradient(40% 60% at 0% 100%, color-mix(in srgb, var(--atmo) 55%, transparent), transparent 70%),
+    linear-gradient(110deg, transparent 40%, rgba(255,255,255,.06) 50%, transparent 60%);
+}
+.header::after {
+  display: block; content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
+}
+.header h1 { font-weight: 800; letter-spacing: -.3px; text-shadow: 0 1px 12px rgba(0,0,0,.25); }
+.header .subtitle { color: rgba(255,255,255,.66); }
+
+/* — Карточки: стекло со световой кромкой — */
+.wallet, .active-shift, .quests, .life-quests, .motivation-tip, .level-section, .chart-card,
+.achievements, .shop-section, .million-path, .kopilka-card, .weekly-challenge, .insight-card,
+.diary-card, .diary-stat-card, .dash-card, .dash-quick-actions, .health-section, .fin-section,
+.crypto-section, .hab-analytics, .auth-card, .ask-box, .cal-sum-card, .shift-card,
+.ach-item, .shop-item, .summary-card, .hab-item, .fin-card, .crypto-holding,
+.g8-card, .rep-card, .wg, .lt-widget, .eff-card, .v8-goals, .tb-card {
+  background: var(--atmo-card);
+  border: 1px solid var(--atmo-card-border);
+  box-shadow: 0 1px 0 var(--atmo-card-line) inset, var(--atmo-shadow);
+  border-radius: 18px;
+}
+.wallet { border: none; }
+.dash-card:active, .summary-card:active, .wg:active { box-shadow: 0 1px 0 var(--atmo-card-line) inset, 0 4px 14px -8px rgba(27,58,92,.2); }
+
+/* — Главные цифры: крупнее, плотнее, табличные — */
+.dash-card-value, .wallet-total, .ws-val, .summary-value, .wg-val, .g8-val, .rep-kpi-val, .di-val, .lq-stat-val {
+  font-variant-numeric: tabular-nums; letter-spacing: -.02em; font-weight: 800;
+}
+.wallet-total { font-size: 36px; text-shadow: 0 2px 18px rgba(0,0,0,.2); }
+.dash-card-value { font-size: 26px; }
+
+/* — Приветствие/герой-карточки: лёгкое сияние акцентом — */
+.dash-greeting, .wallet-top, .lq-hero {
+  position: relative; overflow: hidden; isolation: isolate;
+}
+.dash-greeting::before, .wallet-top::before, .lq-hero::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(60% 80% at 100% 0%, rgba(255,255,255,.16), transparent 60%),
+    radial-gradient(50% 70% at 0% 100%, color-mix(in srgb, var(--atmo) 45%, transparent), transparent 65%);
+}
+.dash-greeting { box-shadow: 0 10px 30px -12px color-mix(in srgb, var(--primary) 55%, transparent); }
+
+/* — Кнопки-акценты: свечение — */
+.modal-btn.primary, .shift-ctrl-btn.start, .fab-toggle, .auth-btn, .uc-btn.primary, .hab-add-btn, .fin-action-btn.primary {
+  box-shadow: 0 1px 0 rgba(255,255,255,.18) inset, 0 8px 22px -8px color-mix(in srgb, var(--atmo) 70%, transparent);
+}
+.fab-toggle { box-shadow: 0 1px 0 rgba(255,255,255,.2) inset, 0 10px 26px -8px color-mix(in srgb, var(--atmo) 85%, transparent); }
+
+/* — Прогресс-бары: градиент + редкий шиммер — */
+.xp-fill, .quest-fill, .dash-card-fill, .kopilka-fill, .wchallenge-fill, .million-bar-fill, .lq-stat-fill, .fin-goal-fill, .g8-fill, .wg-fill {
+  background-image: linear-gradient(90deg, var(--atmo), color-mix(in srgb, var(--atmo) 70%, white));
+  position: relative; overflow: hidden;
+}
+.xp-fill::after, .dash-card-fill::after, .million-bar-fill::after, .kopilka-fill::after, .g8-fill::after, .wg-fill::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: -40%; width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.45), transparent);
+  animation: atmoShimmer 4.5s ease-in-out infinite; animation-delay: 1.2s;
+}
+@keyframes atmoShimmer { 0%, 70% { left: -40%; } 100% { left: 110%; } }
+
+/* — Нижняя навигация: стекло, активная вкладка светится — */
+.tab-nav {
+  background: var(--atmo-glass-nav);
+  border-top: 1px solid var(--atmo-card-border);
+  box-shadow: 0 1px 0 var(--atmo-card-line) inset, 0 -10px 30px -12px rgba(27,58,92,.12);
+}
+.tab-btn.active .tab-ico {
+  background: color-mix(in srgb, var(--atmo) 16%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--atmo) 22%, transparent), 0 6px 16px -6px color-mix(in srgb, var(--atmo) 70%, transparent);
+}
+.tab-btn.active { color: var(--primary-ink); font-weight: 700; }
+
+/* — Чипы, бейджи, подсказки — */
+.role-badge, .wallet-badge, .dash-card-status { box-shadow: 0 1px 0 rgba(255,255,255,.12) inset; }
+.toast { box-shadow: 0 1px 0 rgba(255,255,255,.1) inset, 0 12px 30px -10px rgba(0,0,0,.45); }
+
+/* — Модалки: мягкое стекло, не блюр — */
+.modal, .modal-content { box-shadow: 0 1px 0 var(--atmo-card-line) inset, 0 30px 60px -20px rgba(0,0,0,.45); }
+
+/* — Тёмная тема: ночь курьера — */
+html[data-theme="dark"] .header { box-shadow: 0 10px 40px -10px color-mix(in srgb, var(--atmo) 35%, transparent); }
+html[data-theme="dark"] .dash-card-value, html[data-theme="dark"] .wg-val, html[data-theme="dark"] .ws-val { text-shadow: 0 0 18px color-mix(in srgb, var(--atmo) 35%, transparent); }
+html[data-theme="dark"] .tab-btn.active .tab-ico { color: color-mix(in srgb, var(--atmo) 80%, white); }
+html[data-theme="dark"] input, html[data-theme="dark"] select, html[data-theme="dark"] textarea { box-shadow: 0 1px 0 rgba(255,255,255,.03) inset; }
+
+/* — Вход: чуть больше воздуха и света — */
+.auth-card { box-shadow: 0 1px 0 var(--atmo-card-line) inset, 0 30px 60px -24px rgba(0,0,0,.35); }
+
+/* — Браузеры без color-mix (iOS < 16.2): простое, но тоже живое — */
+@supports not (color: color-mix(in srgb, red 10%, blue)) {
+  .atmo-bg { background: radial-gradient(60% 42% at 12% -4%, rgba(49,130,206,.14), transparent 70%); }
+  .header::before, .dash-greeting::before, .wallet-top::before, .lq-hero::before { background: radial-gradient(70% 90% at 85% 10%, rgba(255,255,255,.14), transparent 60%); }
+  .tab-btn.active .tab-ico { background: var(--accent-soft-2); }
+}
+@media (prefers-reduced-motion: reduce) { .xp-fill::after, .dash-card-fill::after, .million-bar-fill::after, .kopilka-fill::after, .g8-fill::after, .wg-fill::after { animation: none; display: none; } }
