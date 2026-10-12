@@ -148,7 +148,7 @@ const V92 = (() => {
       const v = d.earned + (d.live || 0), h = Math.max(3, Math.round(v / w.max * 56));
       const cls = (d.today ? ' today' : '') + (d.future ? ' future' : '') + (d.future && d.plan ? ' plan' : '');
       const lbl = v > 0 ? (v >= 1000 ? (v / 1000).toFixed(v >= 10000 ? 0 : 1) + 'к' : fmt(v)) : (d.future && d.plan ? '📅' : '');
-      return `<div class="d${cls}" onclick="switchTab('stats')"><div class="v">${lbl}</div><div class="c" style="height:${d.future ? 3 : h}px"></div><div class="l">${d.name}</div></div>`;
+      return `<div class="d${cls}" onclick="switchTab('stats');window.V994&&V994.set('contentStats','income',{silent:true})"><div class="v">${lbl}</div><div class="c" style="height:${d.future ? 3 : h}px"></div><div class="l">${d.name}</div></div>`;
     }).join('');
     return `<div class="w92-head"><span class="t">📅 Эта неделя · ${fmt(w.total)} ₽</span>${pill}</div><div class="w92-week">${bars}</div>`;
   }

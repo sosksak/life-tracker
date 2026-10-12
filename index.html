@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="app-version" content="v9.9.5">
+<meta name="app-version" content="v9.9.6">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#1B3A5C">
 <meta name="description" content="Трекер смен, заработка и квестов">
@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" onload="this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"></noscript>
-<title>Life Tracker v9.9.5</title>
+<title>Life Tracker v9.9.6</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="config.js?v=7"></script>
@@ -3944,15 +3944,16 @@ body.v95-more .v95-back { display: inline-flex; }
 /* ===== v9.9.4 — Жизнь: подвкладки ===== */
 .lsub-bar { display: none; gap: 6px; padding: 6px 0 8px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; position: sticky; top: 0; z-index: 21; background: var(--bg); margin: 0 -14px; padding-left: 14px; padding-right: 14px; }
 .lsub-bar::-webkit-scrollbar { display: none; }
-#lifeContent.active > .lsub-bar { display: flex; }
+#lifeContent.active > .lsub-bar, #contentStats.active > .lsub-bar { display: flex; }
 .lsub-chip { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 5px; padding: 8px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-dim); font-family: inherit; font-size: 12px; font-weight: 800; letter-spacing: .2px; cursor: pointer; transition: background var(--dur-fast), color var(--dur-fast), transform var(--dur-fast); }
 .lsub-chip .i { font-size: 14px; }
 .lsub-chip .n { font-size: 10.5px; font-weight: 800; padding: 1px 6px; border-radius: 999px; background: var(--accent-soft-2, rgba(255,255,255,.1)); color: inherit; }
 .lsub-chip.on { background: var(--primary); color: #fff; border-color: transparent; }
 .lsub-chip.on .n { background: rgba(255,255,255,.22); }
 .lsub-chip:active { transform: scale(.95); }
-#lifeContent .lsub-off { display: none !important; }
-body.lt-edit #lifeContent .lsub-bar { display: none; }
+#lifeContent .lsub-off, #contentStats .lsub-off { display: none !important; }
+body.lt-edit .lsub-bar { display: none !important; }
+#contentStats > .lsub-bar { margin: 0; padding-left: 0; padding-right: 0; }
 /* ===== v9.9.5 — онбординг ===== */
 .onb-box { max-width: 400px; max-height: 88vh; overflow-y: auto; }
 .onb-dots { display: flex; gap: 6px; justify-content: center; margin-bottom: 10px; }
@@ -4660,7 +4661,7 @@ html[data-theme="dark"] input, html[data-theme="dark"] select, html[data-theme="
   </div>
 </div>
 <div class="sync-status ok mini" id="syncStatus">☁️ Облако</div>
-<script src="app/bundle.js?v=v9.9.5"></script>
+<script src="app/bundle.js?v=v9.9.6"></script>
 <script>
 /* v9.1.1: ozon_* → lt_* — одноразовый перенос ключей localStorage */
 (function(){try{if(localStorage.getItem('lt_keys_migrated_v911'))return;
@@ -8689,7 +8690,7 @@ function renderChart() {
 }
 // ====== PWA: SERVICE WORKER ======
 // Регистрируем только по http/https — с file:// браузер ругается.
-const APP_VERSION = 'v9.9.5';
+const APP_VERSION = 'v9.9.6';
 // v7.2.0 — политика обновлений «страница никогда не стартует старой»:
 //   Воркер (sw.js) перед отдачей index.html сверяет ETag с сервером и при
 //   отличии отдаёт СРАЗУ новую сборку. Поэтому на старте нет ни проверок,
@@ -13532,7 +13533,7 @@ const V92 = (() => {
       const v = d.earned + (d.live || 0), h = Math.max(3, Math.round(v / w.max * 56));
       const cls = (d.today ? ' today' : '') + (d.future ? ' future' : '') + (d.future && d.plan ? ' plan' : '');
       const lbl = v > 0 ? (v >= 1000 ? (v / 1000).toFixed(v >= 10000 ? 0 : 1) + 'к' : fmt(v)) : (d.future && d.plan ? '📅' : '');
-      return `<div class="d${cls}" onclick="switchTab('stats')"><div class="v">${lbl}</div><div class="c" style="height:${d.future ? 3 : h}px"></div><div class="l">${d.name}</div></div>`;
+      return `<div class="d${cls}" onclick="switchTab('stats');window.V994&&V994.set('contentStats','income',{silent:true})"><div class="v">${lbl}</div><div class="c" style="height:${d.future ? 3 : h}px"></div><div class="l">${d.name}</div></div>`;
     }).join('');
     return `<div class="w92-head"><span class="t">📅 Эта неделя · ${fmt(w.total)} ₽</span>${pill}</div><div class="w92-week">${bars}</div>`;
   }
@@ -14089,101 +14090,123 @@ const V95 = (() => {
   return { boot, open, go, more, SECTIONS };
 })();
 window.V95 = V95;
-// ====== v9.9.4 — ЖИЗНЬ: подвкладки вместо одной простыни на 12 000 px ======
-// Чипсы сверху: Задачи · Привычки · Здоровье · Фокус · Дневник. Каждая карточка
-// вкладки приписана к одной подвкладке, остальные прячутся классом .lsub-off.
-// Режим редактирования (lt-edit) показывает всё, чтобы можно было переставлять.
-// Выбор запоминается в v994_life_sub (локально, не синкается — это не данные).
+// ====== v9.9.4 — ПОДВКЛАДКИ: Жизнь и Стата вместо одной простыни на 10 000 px ======
+// Чипсы сверху. Каждая карточка вкладки приписана к одной подвкладке, остальные
+// прячутся классом .lsub-off. Режим редактирования (lt-edit) показывает всё.
+// Выбор запоминается локально (v994_sub_<tab>) — это не данные, синк не нужен.
+//   Жизнь: Задачи · Привычки · Здоровье · Фокус · Дневник
+//   Стата: Обзор · Доход · Смены · Достижения   (v9.9.6)
 const V994 = (() => {
   'use strict';
-  const KEY = 'v994_life_sub';
-  const SUBS = [
-    { id: 'tasks',   icon: '✅', label: 'Задачи' },
-    { id: 'habits',  icon: '📋', label: 'Привычки' },
-    { id: 'health',  icon: '❤️', label: 'Здоровье' },
-    { id: 'focus',   icon: '🎯', label: 'Фокус' },
-    { id: 'journal', icon: '📓', label: 'Дневник' },
-  ];
-  let cur = 'tasks';
-  try { const s = localStorage.getItem(KEY); if (s && SUBS.some(x => x.id === s)) cur = s; } catch (e) {}
-  // Какой подвкладке принадлежит карточка верхнего уровня
-  function subOf(el) {
-    if (el.dataset.ltUi || el.classList.contains('lt-foot') || el.classList.contains('v95-back')) return null; // служебное — всегда видно
-    const id = el.id || '', cls = el.className || '';
-    if (id === 'lifeQuestsPanel' || id === 'motivationTip' || id === 'catHub' || /\blq-|life-quests|lq-stats/.test(cls)) return 'tasks';
-    if (/\bhab-/.test(cls)) return 'habits';
-    if (/\bhealth-/.test(cls)) return 'health';
-    if (id === 'v7Journal' || el.querySelector(':scope > .v7-sec-head .v7-sec-title')?.textContent.includes('Дневник')) return 'journal';
-    if (/\bv7-sec\b/.test(cls)) return 'focus'; // Фокус-сессии + Колесо жизни
-    // Всё, что внутри слотов модулей, но без узнаваемых классов — по родителю
-    const p = el.parentElement;
-    if (p) { if (p.id === 'habitsContent') return 'habits'; if (p.id === 'healthContent') return 'health'; if (p.id === 'v7LifeExtra') return 'focus'; }
-    return 'tasks';
+  const CFG = {
+    lifeContent: {
+      subs: [
+        { id: 'tasks',   icon: '✅', label: 'Задачи' },
+        { id: 'habits',  icon: '📋', label: 'Привычки' },
+        { id: 'health',  icon: '❤️', label: 'Здоровье' },
+        { id: 'focus',   icon: '🎯', label: 'Фокус' },
+        { id: 'journal', icon: '📓', label: 'Дневник' },
+      ],
+      wrap: el => el.classList.contains('v6-module-slot') || el.id === 'v7LifeExtra',
+      subOf(el) {
+        const id = el.id || '', cls = el.className || '';
+        if (id === 'lifeQuestsPanel' || id === 'motivationTip' || id === 'catHub' || /\blq-|life-quests|lq-stats/.test(cls)) return 'tasks';
+        if (/\bhab-/.test(cls)) return 'habits';
+        if (/\bhealth-/.test(cls)) return 'health';
+        if (id === 'v7Journal') return 'journal';
+        if (/\bv7-sec\b/.test(cls)) return 'focus';
+        const p = el.parentElement;
+        if (p) { if (p.id === 'habitsContent') return 'habits'; if (p.id === 'healthContent') return 'health'; if (p.id === 'v7LifeExtra') return 'focus'; }
+        return 'tasks';
+      },
+      counts() {
+        const c = {};
+        try { const q = getResolvedLifeQuests(), st = getLifeQuestState(); c.tasks = q.filter(x => st.checked[x.id]).length + '/' + q.length; } catch (e) {}
+        try { const h = HABITS.getTodayProgress(); if (h.total) c.habits = h.done + '/' + h.total; } catch (e) {}
+        try { if (getJournal()[todayStr()]) c.journal = '✓'; } catch (e) {}
+        return c;
+      },
+      route: { v7Journal: 'journal', healthContent: 'health', habitsContent: 'habits', lifeQuestsPanel: 'tasks', catHub: 'tasks', v7Pomo: 'focus', lwCanvas: 'focus' },
+    },
+    contentStats: {
+      subs: [
+        { id: 'overview', icon: '📊', label: 'Обзор' },
+        { id: 'income',   icon: '📈', label: 'Доход' },
+        { id: 'shifts',   icon: '📋', label: 'Смены' },
+        { id: 'awards',   icon: '🏅', label: 'Достижения' },
+      ],
+      wrap: el => el.id === 'v7StatsExtra',
+      subOf(el) {
+        const id = el.id || '', cls = el.className || '';
+        if (/\bv7-sec\b/.test(cls) || id === 'v8Reports') return 'overview'; // итоги недели + отчёт месяца
+        if (id === 'streakBar' || /\blevel-section\b/.test(cls) || /\bachievements\b/.test(cls)) return 'awards';
+        if (/\bchart-section\b/.test(cls)) { const h = el.querySelector('h3')?.textContent || ''; return /ПЛАН МЕСЯЦА/.test(h) ? 'overview' : 'income'; }
+        if (id === 'weekCompare' || id === 'heatmapSection') return 'income';
+        if (id === 'diarySection' || /\bhistory\b/.test(cls)) return 'shifts';
+        return 'overview';
+      },
+      counts() {
+        const c = {};
+        try { const g = getMonthGoal(); const m = getMonthNet(); if (g) c.overview = Math.round(m.net / g * 100) + '%'; if (m.n) c.shifts = String(m.n); } catch (e) {}
+        return c;
+      },
+      route: { monthGoalCard: 'overview', v8Reports: 'overview', chartBody: 'income', shiftList: 'shifts', achGrid: 'awards', diarySection: 'shifts', history: 'shifts' },
+    },
+  };
+  const cur = {};
+  for (const t of Object.keys(CFG)) { cur[t] = CFG[t].subs[0].id; try { const s = localStorage.getItem('v994_sub_' + t); if (s && CFG[t].subs.some(x => x.id === s)) cur[t] = s; } catch (e) {} }
+  const skip = el => el.dataset.ltUi || el.classList.contains('lt-foot') || el.classList.contains('v95-back') || el.classList.contains('lsub-bar') || el.tagName === 'SCRIPT' || el.tagName === 'STYLE';
+  function* cards(tab, root) { for (const k of root.children) { if (CFG[tab].wrap(k)) { yield* cards(tab, k); continue; } if (!skip(k)) yield k; } }
+  let _raf = {};
+  function apply(tab) {
+    const cfg = CFG[tab], root = document.getElementById(tab); if (!cfg || !root) return;
+    const c = cur[tab]; root.dataset.lsub = c;
+    const edit = document.body.classList.contains('lt-edit');
+    for (const el of cards(tab, root)) { const s = cfg.subOf(el); el.classList.toggle('lsub-off', !edit && !!s && s !== c); }
+    const bar = chips(tab, root); const n = cfg.counts();
+    bar.querySelectorAll('.lsub-chip').forEach(b => { b.classList.toggle('on', b.dataset.sub === c); const e = b.querySelector('.n'); const v = n[b.dataset.sub]; e.textContent = v || ''; e.style.display = v ? '' : 'none'; });
   }
-  function* cards(root) {
-    for (const k of root.children) {
-      if (k.classList.contains('v6-module-slot') || k.id === 'v7LifeExtra') { yield* cards(k); continue; }
-      if (k.tagName === 'SCRIPT' || k.tagName === 'STYLE') continue;
-      yield k;
-    }
-  }
-  function counts() {
-    const c = {};
-    try { const q = getResolvedLifeQuests(), st = getLifeQuestState(); c.tasks = q.filter(x => st.checked[x.id]).length + '/' + q.length; } catch (e) {}
-    try { const h = HABITS.getTodayProgress(); if (h.total) c.habits = h.done + '/' + h.total; } catch (e) {}
-    try { if (getJournal()[todayStr()]) c.journal = '✓'; } catch (e) {}
-    return c;
-  }
-  let _raf = 0;
-  function apply() {
-    const root = document.getElementById('lifeContent'); if (!root) return;
-    root.dataset.lsub = cur;
-    const edit = document.body.classList.contains('lt-edit'); // в режиме редактирования — всё видно
-    for (const el of cards(root)) { const s = subOf(el); el.classList.toggle('lsub-off', !edit && !!s && s !== cur); }
-    const bar = chips(root); const c = counts();
-    bar.querySelectorAll('.lsub-chip').forEach(b => {
-      b.classList.toggle('on', b.dataset.sub === cur);
-      const n = b.querySelector('.n'); const v = c[b.dataset.sub]; n.textContent = v || ''; n.style.display = v ? '' : 'none';
-    });
-  }
-  function schedule() { if (_raf) return; _raf = requestAnimationFrame(() => { _raf = 0; apply(); }); }
-  function chips(root) {
+  function applyAll() { for (const t of Object.keys(CFG)) apply(t); }
+  function schedule(tab) { if (_raf[tab]) return; _raf[tab] = requestAnimationFrame(() => { _raf[tab] = 0; apply(tab); }); }
+  function chips(tab, root) {
     let bar = root.querySelector(':scope > .lsub-bar');
     if (!bar) {
       bar = document.createElement('div'); bar.className = 'lsub-bar'; bar.dataset.ltUi = '1';
-      bar.innerHTML = SUBS.map(s => `<button class="lsub-chip" data-sub="${s.id}"><span class="i">${s.icon}</span>${s.label}<span class="n"></span></button>`).join('');
-      bar.addEventListener('click', e => { const b = e.target.closest('.lsub-chip'); if (b) set(b.dataset.sub); });
+      bar.innerHTML = CFG[tab].subs.map(s => `<button class="lsub-chip" data-sub="${s.id}"><span class="i">${s.icon}</span>${s.label}<span class="n"></span></button>`).join('');
+      bar.addEventListener('click', e => { const b = e.target.closest('.lsub-chip'); if (b) set(tab, b.dataset.sub); });
       root.insertBefore(bar, root.firstChild);
     }
-    bar.style.order = '-900'; // после «‹ Меню», до карточек
+    bar.style.order = '-900';
     return bar;
   }
-  function set(id, opts) {
-    if (!SUBS.some(s => s.id === id)) return;
-    const changed = id !== cur; cur = id;
-    try { localStorage.setItem(KEY, id); } catch (e) {}
-    apply();
+  function set(tab, id, opts) {
+    const cfg = CFG[tab]; if (!cfg || !cfg.subs.some(s => s.id === id)) return;
+    const changed = id !== cur[tab]; cur[tab] = id;
+    try { localStorage.setItem('v994_sub_' + tab, id); } catch (e) {}
+    apply(tab);
     if (changed && !(opts && opts.silent)) { try { haptic('light'); } catch (e) {} window.scrollTo({ top: 0 }); }
   }
-  // Переходы извне (главная → «Вечерний дневник», шестерёнка → здоровье) должны открывать нужную подвкладку
-  function routeByTarget(id) {
-    const map = { v7Journal: 'journal', healthContent: 'health', habitsContent: 'habits', lifeQuestsPanel: 'tasks', catHub: 'tasks', v7Pomo: 'focus', lwCanvas: 'focus' };
-    if (map[id]) set(map[id], { silent: true });
+  // Переходы извне (главная → дневник, план месяца → Стата) открывают нужную подвкладку
+  function routeByTarget(tab, id) { const r = CFG[tab].route[id]; if (r) set(tab, r, { silent: true }); }
+  function tabOf(node) { for (const t of Object.keys(CFG)) if (node.closest && node.closest('#' + t)) return t; return null; }
+  function reveal(node) {
+    const t = tabOf(node); if (!t) return;
+    const card = node.closest('.lsub-off'); if (card) { const s = CFG[t].subOf(card); if (s) set(t, s, { silent: true }); } else routeByTarget(t, node.id);
   }
+  let _booted = false;
   function boot() {
-    const root = document.getElementById('lifeContent'); if (!root || root.dataset.v994) return;
-    root.dataset.v994 = '1';
-    apply();
-    // Любая перерисовка модулей (HABITS/HEALTH/V7) пересобирает карточки — перетегируем
-    new MutationObserver(() => schedule()).observe(root, { childList: true, subtree: true });
+    if (_booted) return; _booted = true;
+    for (const t of Object.keys(CFG)) {
+      const root = document.getElementById(t); if (!root) continue;
+      apply(t);
+      new MutationObserver(() => schedule(t)).observe(root, { childList: true, subtree: true });
+    }
     let _wasEdit = false;
-    new MutationObserver(() => { const e = document.body.classList.contains('lt-edit'); if (e !== _wasEdit) { _wasEdit = e; apply(); } }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    // scrollIntoView на скрытую карточку — сначала раскрыть её подвкладку
+    new MutationObserver(() => { const e = document.body.classList.contains('lt-edit'); if (e !== _wasEdit) { _wasEdit = e; applyAll(); } }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
     const o = Element.prototype.scrollIntoView;
-    Element.prototype.scrollIntoView = function () { try { if (this.closest && this.closest('#lifeContent')) { const card = this.closest('.lsub-off'); if (card) { const s = subOf(card); if (s) set(s, { silent: true }); } else routeByTarget(this.id); } } catch (e) {} return o.apply(this, arguments); };
-    // openCategoryHub / HEALTH.* из меню шестерёнки идут через switchTab('life') + scrollToModule
+    Element.prototype.scrollIntoView = function () { try { reveal(this); } catch (e) {} return o.apply(this, arguments); };
     const osm = window.scrollToModule;
-    if (typeof osm === 'function') window.scrollToModule = function (m) { routeByTarget(m + 'Content'); return osm.apply(this, arguments); };
+    if (typeof osm === 'function') window.scrollToModule = function (m) { try { const el = document.getElementById(m + 'Content'); if (el) reveal(el); } catch (e) {} return osm.apply(this, arguments); };
     document.body.classList.add('v994');
   }
   (function hook() {
@@ -14192,7 +14215,7 @@ const V994 = (() => {
     document.addEventListener('v7:login', () => setTimeout(boot, 400));
     setTimeout(() => { if (typeof currentUser !== 'undefined' && currentUser) boot(); }, 7800);
   })();
-  return { set, apply, SUBS, get current() { return cur; } };
+  return { set, apply, applyAll, reveal, CFG, current: tab => cur[tab] };
 })();
 window.V994 = V994;
 // ====== v9.9.5 — ОНБОРДИНГ: три шага при первом запуске ======
