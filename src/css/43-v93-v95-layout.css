@@ -76,3 +76,24 @@ body.v95-more .v95-back { display: inline-flex; }
 .lsub-chip:active { transform: scale(.95); }
 #lifeContent .lsub-off { display: none !important; }
 body.lt-edit #lifeContent .lsub-bar { display: none; }
+/* ===== v9.9.5 — онбординг ===== */
+.onb-box { max-width: 400px; max-height: 88vh; overflow-y: auto; }
+.onb-dots { display: flex; gap: 6px; justify-content: center; margin-bottom: 10px; }
+.onb-dots i { width: 22px; height: 4px; border-radius: 2px; background: var(--border); transition: background .2s, width .2s; }
+.onb-dots i.on { background: var(--primary); width: 34px; } .onb-dots i.done { background: var(--primary); opacity: .5; }
+.onb-h { font-size: 22px; font-weight: 900; letter-spacing: -.3px; margin: 2px 0 6px; }
+.onb-p { font-size: 13.5px; line-height: 1.5; color: var(--text-dim); margin-bottom: 12px; }
+.onb-p b { color: var(--text); }
+.onb-grid { margin: 6px 0 12px; }
+.onb-chips { display: flex; gap: 8px; margin: 2px 0 12px; }
+.onb-chip { flex: 1; padding: 11px 6px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text); font-family: inherit; font-size: 13px; font-weight: 800; cursor: pointer; transition: background .15s, transform .15s; }
+.onb-chip.on { background: var(--primary); color: #fff; border-color: transparent; } .onb-chip:active { transform: scale(.96); }
+.onb-list { display: flex; flex-direction: column; gap: 8px; margin: 4px 0 14px; font-size: 13px; line-height: 1.4; }
+.onb-list div { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 12px; background: var(--bg-card); border: 1px solid var(--border); }
+.onb-list span { font-size: 18px; width: 24px; text-align: center; }
+.onb-foot { display: flex; gap: 8px; margin-top: 8px; } .onb-foot .modal-btn { flex: 1; } .onb-foot.col { flex-direction: column; }
+.onb-foot .modal-btn:disabled { opacity: .45; }
+.onb-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.onb-grid .wt-card { padding: 8px 4px; } .onb-grid .wt-card .wt-ico { width: 34px; height: 34px; font-size: 17px; } .onb-grid .wt-card .wt-ico .ico { width: 18px; height: 18px; } .onb-grid .wt-card .wt-sub { display: none; }
+.onb-h { font-size: 20px; }
+body:has(#onbModal.show) .ui-hint, body:has(#onbModal.show) .toast, body:has(#onbModal.show) #toast { display: none !important; }

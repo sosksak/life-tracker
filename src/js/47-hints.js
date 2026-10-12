@@ -16,7 +16,8 @@ function scheduleHint(ms) { clearTimeout(_hintTimer); _hintTimer = setTimeout(()
 function showNextHint() {
   if (_hintOpen || !currentUser) return;
   if (document.querySelector('.ui-hint')) return;
-  if (document.querySelector('.modal-overlay.show, .ask-overlay.show')) return;
+  if (document.querySelector('.modal-overlay.show, .ask-overlay.show') || document.body.classList.contains('modal-open')) return;
+  if (window.V995 && V995.needed()) return; // онбординг ещё не пройден — подсказки потом
   const seen = getHintsSeen();
   const h = UI_HINTS.find(x => !seen[x.id] && x.when() && document.querySelector(x.target));
   if (!h) return;

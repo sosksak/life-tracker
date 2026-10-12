@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="app-version" content="v9.9.4">
+<meta name="app-version" content="v9.9.5">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#1B3A5C">
 <meta name="description" content="Трекер смен, заработка и квестов">
@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" onload="this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"></noscript>
-<title>Life Tracker v9.9.4</title>
+<title>Life Tracker v9.9.5</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="config.js?v=7"></script>
@@ -3953,6 +3953,27 @@ body.v95-more .v95-back { display: inline-flex; }
 .lsub-chip:active { transform: scale(.95); }
 #lifeContent .lsub-off { display: none !important; }
 body.lt-edit #lifeContent .lsub-bar { display: none; }
+/* ===== v9.9.5 — онбординг ===== */
+.onb-box { max-width: 400px; max-height: 88vh; overflow-y: auto; }
+.onb-dots { display: flex; gap: 6px; justify-content: center; margin-bottom: 10px; }
+.onb-dots i { width: 22px; height: 4px; border-radius: 2px; background: var(--border); transition: background .2s, width .2s; }
+.onb-dots i.on { background: var(--primary); width: 34px; } .onb-dots i.done { background: var(--primary); opacity: .5; }
+.onb-h { font-size: 22px; font-weight: 900; letter-spacing: -.3px; margin: 2px 0 6px; }
+.onb-p { font-size: 13.5px; line-height: 1.5; color: var(--text-dim); margin-bottom: 12px; }
+.onb-p b { color: var(--text); }
+.onb-grid { margin: 6px 0 12px; }
+.onb-chips { display: flex; gap: 8px; margin: 2px 0 12px; }
+.onb-chip { flex: 1; padding: 11px 6px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text); font-family: inherit; font-size: 13px; font-weight: 800; cursor: pointer; transition: background .15s, transform .15s; }
+.onb-chip.on { background: var(--primary); color: #fff; border-color: transparent; } .onb-chip:active { transform: scale(.96); }
+.onb-list { display: flex; flex-direction: column; gap: 8px; margin: 4px 0 14px; font-size: 13px; line-height: 1.4; }
+.onb-list div { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 12px; background: var(--bg-card); border: 1px solid var(--border); }
+.onb-list span { font-size: 18px; width: 24px; text-align: center; }
+.onb-foot { display: flex; gap: 8px; margin-top: 8px; } .onb-foot .modal-btn { flex: 1; } .onb-foot.col { flex-direction: column; }
+.onb-foot .modal-btn:disabled { opacity: .45; }
+.onb-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.onb-grid .wt-card { padding: 8px 4px; } .onb-grid .wt-card .wt-ico { width: 34px; height: 34px; font-size: 17px; } .onb-grid .wt-card .wt-ico .ico { width: 18px; height: 18px; } .onb-grid .wt-card .wt-sub { display: none; }
+.onb-h { font-size: 20px; }
+body:has(#onbModal.show) .ui-hint, body:has(#onbModal.show) .toast, body:has(#onbModal.show) #toast { display: none !important; }
 /* --- v9.7 goal impact + FX --- */
 .gi { margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 6px; }
 .gi summary { cursor: pointer; font-size: 12px; font-weight: 700; color: var(--accent); list-style: none; display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
@@ -4639,7 +4660,7 @@ html[data-theme="dark"] input, html[data-theme="dark"] select, html[data-theme="
   </div>
 </div>
 <div class="sync-status ok mini" id="syncStatus">☁️ Облако</div>
-<script src="app/bundle.js?v=v9.9.4"></script>
+<script src="app/bundle.js?v=v9.9.5"></script>
 <script>
 /* v9.1.1: ozon_* → lt_* — одноразовый перенос ключей localStorage */
 (function(){try{if(localStorage.getItem('lt_keys_migrated_v911'))return;
@@ -8014,7 +8035,7 @@ function checkWeeklyFreeChoice() {
   const wc = getWeeklyCategoryChoice();
   if (wc.used) return;
   try { if (uGet('lt_weekly_cat_hint', '') === wc.week) return; uSet('lt_weekly_cat_hint', wc.week); } catch (e) {}
-  setTimeout(() => showToast('🎁 ЖИЗНЬ → Направление заданий: бесплатный выбор на этой неделе', 'success'), 1800);
+  setTimeout(() => { if (window.V995 && V995.needed()) return; showToast('🎁 ЖИЗНЬ → Направление заданий: бесплатный выбор на этой неделе', 'success'); }, 1800);
 }
 // FIX: возврат в приложение после сна телефона — досинхронизируем и обновляем экран
 document.addEventListener('visibilitychange', () => {
@@ -8668,7 +8689,7 @@ function renderChart() {
 }
 // ====== PWA: SERVICE WORKER ======
 // Регистрируем только по http/https — с file:// браузер ругается.
-const APP_VERSION = 'v9.9.4';
+const APP_VERSION = 'v9.9.5';
 // v7.2.0 — политика обновлений «страница никогда не стартует старой»:
 //   Воркер (sw.js) перед отдачей index.html сверяет ETag с сервером и при
 //   отличии отдаёт СРАЗУ новую сборку. Поэтому на старте нет ни проверок,
@@ -11457,7 +11478,8 @@ function scheduleHint(ms) { clearTimeout(_hintTimer); _hintTimer = setTimeout(()
 function showNextHint() {
   if (_hintOpen || !currentUser) return;
   if (document.querySelector('.ui-hint')) return;
-  if (document.querySelector('.modal-overlay.show, .ask-overlay.show')) return;
+  if (document.querySelector('.modal-overlay.show, .ask-overlay.show') || document.body.classList.contains('modal-open')) return;
+  if (window.V995 && V995.needed()) return; // онбординг ещё не пройден — подсказки потом
   const seen = getHintsSeen();
   const h = UI_HINTS.find(x => !seen[x.id] && x.when() && document.querySelector(x.target));
   if (!h) return;
@@ -12251,7 +12273,7 @@ function hookRenders() {
       try {
         if (currentUser) {
           applyWorkType();
-          if (!uGet('v7_work_type', null) && !document.querySelector('#wtModal.show')) setTimeout(() => { if (!uGet('v7_work_type', null)) openWorkTypePicker(); }, 1500);
+          if (!uGet('v7_work_type', null) && !document.querySelector('#wtModal.show')) setTimeout(() => { if (!uGet('v7_work_type', null)) window.openWorkTypePicker(); }, 1500);
         }
       } catch (e) { console.error('[v7] role hook', e); }
       return r;
@@ -12287,7 +12309,7 @@ function boot() {
     installScrollBehaviour();
     const p = getPomo(); if (p.phase !== 'idle') pomoTick();
     // Первый запуск без выбранного типа — предложить выбрать
-    if (!uGet('v7_work_type', null) && currentUser) setTimeout(openWorkTypePicker, 900);
+    if (!uGet('v7_work_type', null) && currentUser) setTimeout(() => window.openWorkTypePicker(), 900);
     try { DASHBOARD.render(); } catch (e) {}
     // Обновляем индекс дня раз в минуту, если дашборд открыт
     setInterval(() => { if (document.getElementById('dashboardContent')?.classList.contains('active')) { try { renderDashExtras(); } catch (e) {} } }, 60000);
@@ -14173,6 +14195,104 @@ const V994 = (() => {
   return { set, apply, SUBS, get current() { return cur; } };
 })();
 window.V994 = V994;
+// ====== v9.9.5 — ОНБОРДИНГ: три шага при первом запуске ======
+// 1) чем занимаешься (тип работы) → 2) сколько хочешь в месяц → 3) «Начать смену».
+// Раньше новичка встречала голая модалка «Тип работы» без объяснений, а цель месяца
+// он находил сам (или не находил). Флаг v995_onb в профиле; «Профиль → Подсказки →
+// Показать» не трогает онбординг — он только для первого входа.
+const V995 = (() => {
+  'use strict';
+  const KEY = 'v995_onb';
+  const GOALS = [50000, 100000, 150000];
+  let step = 0, wt = null, goal = 100000;
+  const fmt = n => n.toLocaleString('ru-RU');
+  function el() {
+    let m = document.getElementById('onbModal');
+    if (m) return m;
+    m = document.createElement('div'); m.className = 'modal-overlay onb'; m.id = 'onbModal';
+    m.innerHTML = '<div class="modal-content onb-box"><div class="onb-dots"><i></i><i></i><i></i></div><div class="onb-body"></div></div>';
+    document.body.appendChild(m);
+    return m;
+  }
+  function dots() { el().querySelectorAll('.onb-dots i').forEach((d, i) => { d.classList.toggle('on', i === step); d.classList.toggle('done', i < step); }); }
+  function body(html) { el().querySelector('.onb-body').innerHTML = html; dots(); el().querySelector('.onb-box').scrollTop = 0; }
+  function s1() {
+    step = 0;
+    const cur = (typeof V7 !== 'undefined') ? V7.getWorkType() : null;
+    if (!wt) wt = cur && uGet('v7_work_type', null) ? cur.id : null;
+    const grid = V7.WORK_TYPES.map(w => { const t = V7.THEMES[w.theme] || V7.THEMES.blue; return '<button class="wt-card ' + (wt === w.id ? 'sel' : '') + '" style="--wt-c:' + t.accent + '" data-id="' + w.id + '"><div class="wt-ico" style="background:' + t.primary + '">' + w.icon + '</div><div class="wt-name">' + w.name + '</div><div class="wt-sub">' + w.sub + '</div></button>'; }).join('');
+    body('<div class="onb-h">👋 Привет!</div><div class="onb-p">Life Tracker считает смены, деньги и привычки. Чтобы всё было в твоих словах и цветах — скажи, чем занимаешься.</div>' +
+      '<div class="wt-grid onb-grid">' + grid + '</div>' +
+      '<div class="onb-foot"><button class="modal-btn primary onb-next" ' + (wt ? '' : 'disabled') + '>Дальше ›</button></div>');
+    el().querySelectorAll('.wt-card').forEach(b => b.onclick = () => { wt = b.dataset.id; el().querySelectorAll('.wt-card').forEach(x => x.classList.toggle('sel', x.dataset.id === wt)); el().querySelector('.onb-next').disabled = false; try { haptic('light'); } catch (e) {} });
+    el().querySelector('.onb-next').onclick = () => { applyWt(); s2(); };
+  }
+  function applyWt() {
+    try {
+      const base = V7.WORK_TYPES.find(w => w.id === wt) || V7.WORK_TYPES[0];
+      const prev = uGet('v7_work_type', null);
+      if (!prev || prev.id !== base.id) { uSet('v7_work_type', Object.assign({}, base)); V7.applyWorkType(); }
+    } catch (e) { console.warn('[onb] wt', e); }
+  }
+  function s2() {
+    step = 1;
+    try { const g = getMonthGoal(); if (g) goal = g; } catch (e) {}
+    const noun = (() => { try { return V7.getWorkType().noun; } catch (e) { return 'shift'; } })();
+    const unit = { shift: 'смен', day: 'дней', session: 'сессий', trading: 'торговых дней', lesson: 'занятий', workout: 'тренировок' }[noun] || 'смен';
+    const chips = GOALS.map(g => '<button class="onb-chip ' + (goal === g ? 'on' : '') + '" data-g="' + g + '">' + fmt(g) + ' ₽</button>').join('');
+    body('<div class="onb-h">🎯 Сколько хочешь в месяц?</div><div class="onb-p">Чистыми — после расходов. От этой цифры считаются прогноз, план и сколько ' + unit + ' осталось. Поменять можно в любой момент тапом по цели.</div>' +
+      '<div class="onb-chips">' + chips + '</div>' +
+      '<div class="form-group"><label>Своя сумма, ₽</label><input type="number" id="onbGoal" inputmode="numeric" min="0" step="5000" value="' + goal + '"></div>' +
+      '<div class="onb-foot"><button class="modal-btn secondary onb-back">‹ Назад</button><button class="modal-btn primary onb-next">Дальше ›</button></div>');
+    const inp = el().querySelector('#onbGoal');
+    el().querySelectorAll('.onb-chip').forEach(b => b.onclick = () => { goal = +b.dataset.g; inp.value = goal; el().querySelectorAll('.onb-chip').forEach(x => x.classList.toggle('on', +x.dataset.g === goal)); try { haptic('light'); } catch (e) {} });
+    inp.oninput = () => { goal = parseInt(inp.value, 10) || 0; el().querySelectorAll('.onb-chip').forEach(x => x.classList.toggle('on', +x.dataset.g === goal)); };
+    el().querySelector('.onb-back').onclick = s1;
+    el().querySelector('.onb-next').onclick = () => { if (!goal || goal <= 0) { showToast('❌ Введи сумму больше нуля', 'error'); return; } saveGoal(); s3(); };
+  }
+  function saveGoal() {
+    try { localStorage.setItem(uKey('lt_month_goal'), String(goal)); markLocalChange(); schedulePushProgress(); } catch (e) {}
+  }
+  function s3() {
+    step = 2;
+    let w = null; try { w = V7.getWorkType(); } catch (e) {}
+    const noun = (w && w.noun) || 'shift';
+    const act = { shift: 'Начать смену', day: 'Начать день', session: 'Начать сессию', trading: 'Открыть торговый день', lesson: 'Начать занятие', workout: 'Начать тренировку' }[noun] || 'Начать смену';
+    body('<div class="onb-h">' + (w ? w.icon : '🚀') + ' Готово</div><div class="onb-p"><b>' + (w ? w.name : '') + '</b> · цель <b>' + fmt(goal) + ' ₽</b> в месяц.</div>' +
+      '<div class="onb-list"><div><span>🏠</span>Главная — кошелёк, план месяца, привычки</div><div><span>💼</span>Работа — таймер смены, доход в реальном времени</div><div><span>💰</span>Деньги — расходы и баланс</div><div><span>⋯</span>Ещё — Жизнь, Стата и скрытые карточки · свайп влево</div></div>' +
+      '<div class="onb-foot col"><button class="modal-btn primary onb-start">🚀 ' + act + '</button><button class="modal-btn secondary onb-skip">Сначала осмотреться</button></div>');
+    el().querySelector('.onb-start').onclick = () => { finish(); try { switchTab('live'); setTimeout(() => { if (typeof activeShift !== 'undefined' && !activeShift) startShift(); }, 350); } catch (e) {} };
+    el().querySelector('.onb-skip').onclick = () => { finish(); try { switchTab('dashboard'); } catch (e) {} };
+  }
+  function finish() {
+    try { uSet(KEY, 1); markLocalChange(); schedulePushProgress(); } catch (e) {}
+    const m = el(); m.classList.remove('show'); document.body.classList.remove('modal-open');
+    try { haptic('medium'); } catch (e) {}
+    try { if (typeof scheduleHint === 'function') scheduleHint(1500); } catch (e) {}
+  }
+  function open() {
+    if (document.querySelector('#wtModal.show')) { try { closeWorkTypePicker(); } catch (e) {} }
+    const m = el(); s1(); m.classList.add('show'); document.body.classList.add('modal-open');
+  }
+  function needed() {
+    try { if (!currentUser) return false; if (uGet(KEY, 0)) return false; return !uGet('v7_work_type', null); } catch (e) { return false; }
+  }
+  function maybe() { if (needed() && !document.querySelector('#onbModal.show')) open(); }
+  // Перехват: автопоказ «Тип работы» при первом входе → онбординг. Ручной вызов из профиля не трогаем.
+  (function hook() {
+    try { if (typeof PROGRESS_KEYS !== 'undefined' && !PROGRESS_KEYS.includes(KEY)) PROGRESS_KEYS.push(KEY); } catch (e) {}
+    const o = window.openWorkTypePicker;
+    if (typeof o === 'function' && !o._onb) {
+      window.openWorkTypePicker = function () { if (needed()) { open(); return; } return o.apply(this, arguments); };
+      window.openWorkTypePicker._onb = 1;
+      if (window.V7) V7.openWorkTypePicker = window.openWorkTypePicker;
+    }
+    document.addEventListener('v7:login', () => setTimeout(maybe, 1200));
+    setTimeout(maybe, 7000);
+  })();
+  return { open, maybe, needed };
+})();
+window.V995 = V995;
 // ====== START ======
 // v7.1: запуск перенесён В КОНЕЦ основного скрипта. Раньше bootAuth() стоял на
 // 5000 строк выше хуков v6/v7 над init()/bootV6(); при валидной сессии init()

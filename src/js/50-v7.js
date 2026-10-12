@@ -775,7 +775,7 @@ function hookRenders() {
       try {
         if (currentUser) {
           applyWorkType();
-          if (!uGet('v7_work_type', null) && !document.querySelector('#wtModal.show')) setTimeout(() => { if (!uGet('v7_work_type', null)) openWorkTypePicker(); }, 1500);
+          if (!uGet('v7_work_type', null) && !document.querySelector('#wtModal.show')) setTimeout(() => { if (!uGet('v7_work_type', null)) window.openWorkTypePicker(); }, 1500);
         }
       } catch (e) { console.error('[v7] role hook', e); }
       return r;
@@ -813,7 +813,7 @@ function boot() {
     installScrollBehaviour();
     const p = getPomo(); if (p.phase !== 'idle') pomoTick();
     // Первый запуск без выбранного типа — предложить выбрать
-    if (!uGet('v7_work_type', null) && currentUser) setTimeout(openWorkTypePicker, 900);
+    if (!uGet('v7_work_type', null) && currentUser) setTimeout(() => window.openWorkTypePicker(), 900);
     try { DASHBOARD.render(); } catch (e) {}
     // Обновляем индекс дня раз в минуту, если дашборд открыт
     setInterval(() => { if (document.getElementById('dashboardContent')?.classList.contains('active')) { try { renderDashExtras(); } catch (e) {} } }, 60000);

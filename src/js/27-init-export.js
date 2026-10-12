@@ -110,7 +110,7 @@ function checkWeeklyFreeChoice() {
   const wc = getWeeklyCategoryChoice();
   if (wc.used) return;
   try { if (uGet('lt_weekly_cat_hint', '') === wc.week) return; uSet('lt_weekly_cat_hint', wc.week); } catch (e) {}
-  setTimeout(() => showToast('🎁 ЖИЗНЬ → Направление заданий: бесплатный выбор на этой неделе', 'success'), 1800);
+  setTimeout(() => { if (window.V995 && V995.needed()) return; showToast('🎁 ЖИЗНЬ → Направление заданий: бесплатный выбор на этой неделе', 'success'); }, 1800);
 }
 
 // FIX: возврат в приложение после сна телефона — досинхронизируем и обновляем экран
