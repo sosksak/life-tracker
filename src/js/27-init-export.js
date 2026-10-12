@@ -104,12 +104,13 @@ function renderCloudSyncTag() {
   }
 }
 
-// FIX: бесплатный выбор категории раз в неделю никто не показывал — теперь напоминаем
+// FIX: бесплатный выбор категории раз в неделю никто не показывал — теперь напоминаем.
+// v9.9.3: один раз за неделю, а не при каждом запуске — тост на каждом старте только раздражал.
 function checkWeeklyFreeChoice() {
   const wc = getWeeklyCategoryChoice();
-  if (!wc.used) {
-    setTimeout(() => showToast('🎁 ЖИЗНЬ → Направление заданий: бесплатный выбор на этой неделе', 'success'), 1800);
-  }
+  if (wc.used) return;
+  try { if (uGet('lt_weekly_cat_hint', '') === wc.week) return; uSet('lt_weekly_cat_hint', wc.week); } catch (e) {}
+  setTimeout(() => showToast('🎁 ЖИЗНЬ → Направление заданий: бесплатный выбор на этой неделе', 'success'), 1800);
 }
 
 // FIX: возврат в приложение после сна телефона — досинхронизируем и обновляем экран

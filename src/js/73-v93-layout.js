@@ -46,6 +46,15 @@ const V93 = (() => {
     c._d = DEFAULTS_FLAG; uSet(KEY, c);
     try { markLocalChange(); schedulePushProgress(); } catch (e) {}
   }
+  // v9.9.3: модули на «Деньгах» переставлены (финансы → портфель → биржа); ручной порядок
+  // старой раскладки сбрасываем один раз, иначе биржа останется сверху по сохранённым индексам.
+  function migrateMoneyOrder() {
+    try {
+      const c = getCfg(); if (c._mo === 1) return;
+      if (c.moneyContent && Array.isArray(c.moneyContent.order) && c.moneyContent.order.length) c.moneyContent.order = [];
+      c._mo = 1; uSet(KEY, c);
+    } catch (e) {}
+  }
   // v9.5: «инверсия» — на экране «Ещё» вкладка показывает ТОЛЬКО скрытые карточки (допы)
   let inverted = {};
   function setInverted(tabId, on) { inverted[tabId] = !!on; }
@@ -227,7 +236,7 @@ const V93 = (() => {
     if (_booted) return; _booted = true;
     try {
       try { if (!PROGRESS_KEYS.includes(KEY)) PROGRESS_KEYS.push(KEY); } catch (e) {}
-      applyDefaults();
+      applyDefaults(); migrateMoneyOrder();
       for (const t of Object.keys(TABS)) {
         const el = document.getElementById(t); if (!el) continue;
         // v9.5.1: правки внутри собственных элементов раскладки (подвал .lt-foot, кнопки .lt-ctl) не считаются —

@@ -122,7 +122,7 @@ const V92 = (() => {
     const pill = done ? '<span class="w92-pill g">✓ цель закрыта</span>' : ok ? `<span class="w92-pill g">прогноз ${fmt(m.forecast)} ₽</span>` : `<span class="w92-pill ${m.fpct >= 80 ? 'o' : 'r'}">прогноз ${fmt(m.forecast)} ₽</span>`;
     let hint;
     if (done) hint = `🏆 <b>${fmt(m.earned - m.goal)} ₽</b> сверх цели. Можно поднять планку — или заслуженно сбавить темп.`;
-    else if (m.needShifts === 0) hint = 'Введи хотя бы одну смену — посчитаю, сколько осталось.';
+    else if (m.needShifts === 0) hint = `До цели <b>${fmt(m.remain)} ₽</b>. Пока нет ни одной смены за месяц — после первой посчитаю, сколько их ещё нужно.`;
     else {
       const perDay = m.daysLeft > 0 ? (m.needShifts / m.daysLeft) : 99;
       const live = m.liveEarn > 0 ? ` (с учётом текущей смены ~${fmt(m.liveEarn)} ₽)` : '';

@@ -37,13 +37,14 @@ const V95 = (() => {
     const box = document.getElementById('v95Menu'); if (!box) return;
     const tile = (ic, t, s, on, badge) => `<button class="v95-tile" onclick="${on}"><span class="ic">${ic}</span><span><div class="tt">${t}</div><div class="ss">${s}</div></span>${badge ? `<span class="bd">${badge}</span>` : '<span class="ar">›</span>'}</button>`;
     const xs = SECTIONS.filter(s => s.inv).map(s => ({ s, n: hiddenCount(s) })).filter(x => x.n > 0);
+    const wt = (() => { try { return V7.getWorkType(); } catch (e) { return null; } })();
     box.innerHTML = `<div class="v95-h">Ещё</div>`
       + `<div class="v95-grp">Разделы</div>`
       + SECTIONS.filter(s => !s.inv).map(s => tile(s.icon, s.label, s.sub, `V95.open('${s.id}',1)`)).join('')
       + `<div class="v95-grp">Инструменты</div>`
       + tile('🎯', 'Цель и копилка', 'Сумма, срок, ежедневный план', "setupKopilka()")
       + tile('🎡', 'Колесо бонусов', 'Крутить за выполненные квесты', "openWheelModal()")
-      + tile('💼', 'Тип работы', 'Курьер, фриланс, разработчик', "openWorkTypePicker()")
+      + tile(wt ? wt.icon : '💼', 'Тип работы', wt ? `Сейчас: ${wt.name}${wt.goal ? ' · цель ' + wt.goal + ' ₽/ч' : ''}` : 'Курьер, фриланс, разработчик', "openWorkTypePicker()")
       + `<div class="v95-grp">Профиль</div>`
       + tile('🏪', 'Магазин', 'Бусты, темы, награды за XP', "switchTab('shop')")
       + tile('👤', 'Профиль и доступ', 'Оформление, подсказки, аккаунт', "openAccountModal()")

@@ -26,7 +26,9 @@ const V6_TABS = {
 const V6_COMPOSITE = {
   dashboard: ['dashboard'],
   life:      ['habits', 'health'],
-  money:     ['market', 'finance', 'crypto'],
+  // v9.9.3: сначала свои деньги (доход/расходы/баланс), биржа и портфель — ниже.
+  // Раньше вкладка открывалась красным графиком BTC, а ради чего она — было под ним.
+  money:     ['finance', 'crypto', 'market'],
 };
 
 const V5_TABS = ['live', 'shop', 'stats'];

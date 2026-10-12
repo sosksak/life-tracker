@@ -146,7 +146,8 @@ const V8 = (() => {
     const est = liveEst();
     const liveE = est ? est.earned : 0, liveH = est ? est.hours : 0;
     if (!g.day && !g.week && !g.rate) {
-      return `<div class="v8-goals-empty">Задайте <b>цель дня</b>, <b>недели</b> и <b>целевой ₽/ч</b> — на Главной появится прогресс, а во время смены ассистент подскажет, сколько осталось и когда можно закончить.</div>`;
+      // v9.9.3: пустое состояние — одна строка + крупная кнопка, а не абзац с «Изменить» в углу
+      return `<div class="v8-goals-empty">Цель дня, недели и ₽/ч — прогресс на Главной и подсказки ассистента во время смены.<button class="w92-btn g wide" style="margin-top:10px" onclick="V8.editGoals()">🎯 Задать цели</button></div>`;
     }
     const rows = [];
     const row = (ico, lbl, val, pct, sub, ok) => `<div class="v8-goal ${ok ? 'ok' : ''}"><span class="i">${ico}</span><span class="l">${lbl}</span><span class="v">${val}</span><div class="bar"><i style="width:${Math.min(100, pct)}%"></i></div><span class="s">${sub}</span></div>`;

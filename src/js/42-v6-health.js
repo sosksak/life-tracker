@@ -207,23 +207,23 @@ const HEALTH = (() => {
       <div class="health-section">
         <div class="health-section-title">😴 Сон</div>
         <div class="health-input-row">
-          <input type="number" class="health-input" id="healthSleepInput"
+          <input type="number" class="health-input" id="healthSleepInput" inputmode="decimal"
                  value="${d.sleep || ''}" min="0" max="24" step="0.5"
-                 placeholder="часов"
+                 placeholder="0"
                  onchange="HEALTH.setSleep(this.value)">
-          <span class="health-input-unit">часов</span>
-          ${d.sleep > 0 ? `<span class="health-sleep-quality">${d.sleep >= 7 ? '✅ Норма' : d.sleep >= 5 ? '⚠️ Мало' : '❌ Критично мало'}</span>` : ''}
+          <span class="health-input-unit">ч</span>
+          ${d.sleep > 0 ? `<span class="health-sleep-quality">${d.sleep >= 7 ? '✅ Норма' : d.sleep >= 5 ? '⚠️ Мало' : '❌ Критично мало'}</span>` : `<div class="health-exercise-btns"><button onclick="HEALTH.setSleep(6)">6</button><button onclick="HEALTH.setSleep(7)">7</button><button onclick="HEALTH.setSleep(8)">8</button></div>`}
         </div>
       </div>
 
       <div class="health-section">
         <div class="health-section-title">🏃 Активность</div>
         <div class="health-input-row">
-          <input type="number" class="health-input" id="healthExerciseInput"
+          <input type="number" class="health-input" id="healthExerciseInput" inputmode="numeric"
                  value="${d.exercise || ''}" min="0" max="600" step="5"
-                 placeholder="минут"
+                 placeholder="0"
                  onchange="HEALTH.setExercise(this.value)">
-          <span class="health-input-unit">минут</span>
+          <span class="health-input-unit">мин</span>
           <div class="health-exercise-btns">
             <button onclick="HEALTH.setExercise(${(d.exercise||0)+15})">+15</button>
             <button onclick="HEALTH.setExercise(${(d.exercise||0)+30})">+30</button>
@@ -235,16 +235,16 @@ const HEALTH = (() => {
       <div class="health-section">
         <div class="health-section-title">⚖️ Вес</div>
         <div class="health-input-row">
-          <input type="number" class="health-input" id="healthWeightInput"
+          <input type="number" class="health-input" id="healthWeightInput" inputmode="decimal"
                  value="${d.weight || ''}" min="30" max="300" step="0.1"
-                 placeholder="кг"
+                 placeholder="${weightHist.length ? weightHist[weightHist.length - 1].weight : '0'}"
                  onchange="HEALTH.setWeight(this.value)">
           <span class="health-input-unit">кг</span>
           ${weightHist.length >= 2 ? (() => {
             const diff = weightHist[weightHist.length - 1].weight - weightHist[0].weight;
             const sign = diff > 0 ? '+' : '';
             return `<span class="health-weight-trend">${sign}${diff.toFixed(1)} кг за ${weightHist.length} записей</span>`;
-          })() : ''}
+          })() : (weightHist.length === 1 && !d.weight ? `<span class="health-weight-trend">последний: ${weightHist[0].weight} кг</span>` : '')}
         </div>
       </div>
 

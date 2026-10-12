@@ -9,14 +9,30 @@
 // ------------------------------------------------------------
 //  1. WORK TYPES — catalogue, terminology, themes
 // ------------------------------------------------------------
+// gen — род. падеж ед.ч. («средний доход по смене» → «…по сессии»), prep — предл. мн.ч. («в сменах»), two — «2 смены»
 const NOUNS = {
-  shift:   { one: 'смена',      acc: 'смену',      plural: 'смен',       active: 'СМЕНА АКТИВНА',      inactive: 'СМЕНА НЕ АКТИВНА',      tasks: 'ЗАДАЧИ СМЕНЫ',       start: 'Начать смену',       end: 'Завершить смену',       add: 'Добавить смену',       tab: 'РАБОТА' },
-  session: { one: 'сессия',     acc: 'сессию',     plural: 'сессий',     active: 'СЕССИЯ АКТИВНА',     inactive: 'СЕССИЯ НЕ АКТИВНА',     tasks: 'ЗАДАЧИ СЕССИИ',      start: 'Начать сессию',      end: 'Завершить сессию',      add: 'Добавить сессию',      tab: 'РАБОТА' },
-  day:     { one: 'день',       acc: 'день',       plural: 'дней',       active: 'РАБОЧИЙ ДЕНЬ ИДЁТ',  inactive: 'ДЕНЬ НЕ НАЧАТ',         tasks: 'ЗАДАЧИ ДНЯ',         start: 'Начать день',        end: 'Завершить день',        add: 'Добавить день',        tab: 'РАБОТА' },
-  workout: { one: 'тренировка', acc: 'тренировку', plural: 'тренировок', active: 'ТРЕНИРОВКА ИДЁТ',    inactive: 'ТРЕНИРОВКА НЕ НАЧАТА',  tasks: 'ЗАДАЧИ ТРЕНИРОВКИ',  start: 'Начать тренировку',  end: 'Завершить тренировку',  add: 'Добавить тренировку',  tab: 'СПОРТ' },
-  trading: { one: 'торговая сессия', acc: 'торговую сессию', plural: 'сессий', active: 'ТОРГОВАЯ СЕССИЯ ИДЁТ', inactive: 'СЕССИЯ НЕ НАЧАТА', tasks: 'ЗАДАЧИ СЕССИИ', start: 'Начать торговлю', end: 'Завершить торговлю', add: 'Добавить сессию', tab: 'ТРЕЙДИНГ' },
-  lesson:  { one: 'занятие',    acc: 'занятие',    plural: 'занятий',    active: 'ЗАНЯТИЕ ИДЁТ',       inactive: 'ЗАНЯТИЕ НЕ НАЧАТО',     tasks: 'ЗАДАЧИ ЗАНЯТИЯ',     start: 'Начать занятие',     end: 'Завершить занятие',     add: 'Добавить занятие',     tab: 'УЧЁБА' },
+  shift:   { one: 'смена',      acc: 'смену',      plural: 'смен',       two: 'смены',      gen: 'смене',      prep: 'сменах',      active: 'СМЕНА АКТИВНА',      inactive: 'СМЕНА НЕ АКТИВНА',      tasks: 'ЗАДАЧИ СМЕНЫ',       start: 'Начать смену',       end: 'Завершить смену',       add: 'Добавить смену',       tab: 'РАБОТА' },
+  session: { one: 'сессия',     acc: 'сессию',     plural: 'сессий',     two: 'сессии',     gen: 'сессии',     prep: 'сессиях',     active: 'СЕССИЯ АКТИВНА',     inactive: 'СЕССИЯ НЕ АКТИВНА',     tasks: 'ЗАДАЧИ СЕССИИ',      start: 'Начать сессию',      end: 'Завершить сессию',      add: 'Добавить сессию',      tab: 'РАБОТА' },
+  day:     { one: 'день',       acc: 'день',       plural: 'дней',       two: 'дня',        gen: 'дню',        prep: 'днях',        active: 'РАБОЧИЙ ДЕНЬ ИДЁТ',  inactive: 'ДЕНЬ НЕ НАЧАТ',         tasks: 'ЗАДАЧИ ДНЯ',         start: 'Начать день',        end: 'Завершить день',        add: 'Добавить день',        tab: 'РАБОТА' },
+  workout: { one: 'тренировка', acc: 'тренировку', plural: 'тренировок', two: 'тренировки', gen: 'тренировке', prep: 'тренировках', active: 'ТРЕНИРОВКА ИДЁТ',    inactive: 'ТРЕНИРОВКА НЕ НАЧАТА',  tasks: 'ЗАДАЧИ ТРЕНИРОВКИ',  start: 'Начать тренировку',  end: 'Завершить тренировку',  add: 'Добавить тренировку',  tab: 'СПОРТ' },
+  trading: { one: 'торговая сессия', acc: 'торговую сессию', plural: 'сессий', two: 'сессии', gen: 'сессии', prep: 'сессиях', active: 'ТОРГОВАЯ СЕССИЯ ИДЁТ', inactive: 'СЕССИЯ НЕ НАЧАТА', tasks: 'ЗАДАЧИ СЕССИИ', start: 'Начать торговлю', end: 'Завершить торговлю', add: 'Добавить сессию', tab: 'ТРЕЙДИНГ' },
+  lesson:  { one: 'занятие',    acc: 'занятие',    plural: 'занятий',    two: 'занятия',    gen: 'занятии',    prep: 'занятиях',    active: 'ЗАНЯТИЕ ИДЁТ',       inactive: 'ЗАНЯТИЕ НЕ НАЧАТО',     tasks: 'ЗАДАЧИ ЗАНЯТИЯ',     start: 'Начать занятие',     end: 'Завершить занятие',     add: 'Добавить занятие',     tab: 'УЧЁБА' },
 };
+// Что считает кнопка «+1» в смене: у курьера — заказы, у фрилансера — задачи, у тренера — клиенты…
+// [им.ед, род.ед (2–4), род.мн (5+), вин.ед («за …»), им.мн, дат.мн («по …»)]
+const UNITS = {
+  delivery: ['заказ', 'заказа', 'заказов', 'заказ', 'Заказы', 'заказам'],
+  taxi:     ['рейс', 'рейса', 'рейсов', 'рейс', 'Рейсы', 'рейсам'],
+  warehouse:['операция', 'операции', 'операций', 'операцию', 'Операции', 'операциям'],
+  office:   ['задача', 'задачи', 'задач', 'задачу', 'Задачи', 'задачам'],
+  freelance:['задача', 'задачи', 'задач', 'задачу', 'Задачи', 'задачам'],
+  business: ['продажа', 'продажи', 'продаж', 'продажу', 'Продажи', 'продажам'],
+  trader:   ['сделка', 'сделки', 'сделок', 'сделку', 'Сделки', 'сделкам'],
+  study:    ['тема', 'темы', 'тем', 'тему', 'Темы', 'темам'],
+  creative: ['работа', 'работы', 'работ', 'работу', 'Работы', 'работам'],
+  fitness:  ['клиент', 'клиента', 'клиентов', 'клиента', 'Клиенты', 'клиентам'],
+};
+function wtUnit() { const wt = getWorkType(); return UNITS[wt.id] || UNITS.delivery; }
 const NOUN_LABELS = { shift: 'Смена', session: 'Сессия', day: 'Рабочий день', workout: 'Тренировка', lesson: 'Занятие', trading: 'Торговая сессия' };
 
 const THEMES = {
@@ -86,22 +102,45 @@ function applyWorkTheme(wt) {
 }
 
 // --- Terminology: text replacement scoped to work containers ---
-const LOCALIZE_ROOTS = ['contentLive', 'dashboardContent', 'tabLive', 'fabMenu', 'endShiftModal', 'manualAddModal', 'focusOverlay', 'summaryOverlay'];
+// v9.9.3: раньше подменялись только Главная и Работа — в Стате/Деньгах/меню «Ещё»/тостах
+// у фрилансера всё равно торчали «смены». Теперь — все экраны + body-уровень для тостов.
+const LOCALIZE_ROOTS = ['contentLive', 'dashboardContent', 'tabLive', 'fabMenu', 'endShiftModal', 'manualAddModal', 'focusOverlay', 'summaryOverlay',
+  'contentStats', 'moneyContent', 'lifeContent', 'contentMore', 'calendarModal', 'editShiftModal', 'accountModal', 'askOverlay'];
 let _localizeRules = [];
 function buildLocalizeRules() {
   const n = wtNoun(), b = NOUNS.shift;
-  if (n === b) { _localizeRules = []; return; }
+  if (n === b) { _localizeRules = buildUnitRules(); return; }
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
   const pairs = [
     [b.start.toUpperCase(), n.start.toUpperCase()],
     [b.end.toUpperCase(), n.end.toUpperCase()],
     [b.start, n.start], [b.end, n.end], [b.add, n.add],
     ['СМЕНА НЕ АКТИВНА', n.inactive], ['СМЕНА НЕ НАЧАТА', n.inactive], ['СМЕНА АКТИВНА', n.active],
-    ['ЗАДАЧИ СМЕНЫ', n.tasks], ['Задачи смены', n.tasks.charAt(0) + n.tasks.slice(1).toLowerCase()],
+    ['ЗАДАЧИ СМЕНЫ', n.tasks], ['Задачи смены', cap(n.tasks.toLowerCase())],
+    ['История смен', 'История ' + n.plural], ['ИСТОРИЯ СМЕН', ('История ' + n.plural).toUpperCase()],
+    ['Серия смен', 'Серия ' + n.plural], ['Отработано смен', 'Отработано ' + n.plural],
     ['Завершить смену', n.end], ['Текущая смена', 'Текущая ' + n.one], ['текущая смена', 'текущая ' + n.one],
-    ['смену', n.acc], ['Смена', n.one.charAt(0).toUpperCase() + n.one.slice(1)], ['смена', n.one],
-    ['смены', n.plural], ['смен', n.plural],
+    ['первую смену', 'первую ' + n.acc],
+    ['по смене', 'по ' + n.gen], ['в сменах', 'в ' + n.prep], ['за смену', 'за ' + n.acc], ['на смену', 'на ' + n.acc],
+    ['Нет смен', 'Нет ' + n.plural], ['нет смен', 'нет ' + n.plural],
+    ['смену', n.acc], ['Смена', cap(n.one)], ['смена', n.one],
+    ['Смены', cap(n.two)], ['смены', n.two], ['сменах', n.prep], ['смене', n.gen],
+    ['смен', n.plural],
   ];
-  _localizeRules = pairs.map(([a, c]) => [new RegExp(a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), c]);
+  _localizeRules = pairs.map(([a, c]) => [new RegExp(a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), c]).concat(buildUnitRules());
+}
+// «Заказы» → «задачи»/«рейсы»/«сделки» в зависимости от типа работы
+function buildUnitRules() {
+  const u = wtUnit(), d = UNITS.delivery;
+  if (u === d) return [];
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const pairs = [
+    ['+1 заказ', '+1 ' + u[0]], ['За заказ', 'За ' + u[3]], ['по заказам', 'по ' + u[5]],
+    ['₽/зак', '₽/' + u[0].slice(0, 3)], ['Заказов / операций', cap(u[2])],
+    ['Заказов/ч', cap(u[2]) + '/ч'], ['Заказов', cap(u[2])], ['заказов', u[2]], ['Заказы', u[4]], ['заказы', u[4].toLowerCase()],
+    ['заказа', u[1]], ['Заказ', cap(u[0])], ['заказ', u[0]],
+  ];
+  return pairs.map(([a, c]) => [new RegExp(a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), c]);
 }
 function localizeNode(root) {
   if (!_localizeRules.length || !root) return;
@@ -130,7 +169,7 @@ function restoreLocalized() {
   for (const [t, r] of _locTouched) { try { if (t.nodeValue === r.v) t.nodeValue = r.o; } catch (e) {} }
   _locTouched.clear();
 }
-let _locObserver = null;
+let _locObserver = null, _locBodyObserver = null;
 function installLocalizer() {
   if (_locObserver) { _locObserver.disconnect(); _locObserver = null; }
   restoreLocalized();
@@ -146,6 +185,14 @@ function installLocalizer() {
   for (const id of LOCALIZE_ROOTS) {
     const el = document.getElementById(id);
     if (el) _locObserver.observe(el, { childList: true, subtree: true, characterData: true });
+  }
+  // Тосты и ask-модалки живут прямо в body — ловим только прямых детей, без subtree (дёшево)
+  if (!_locBodyObserver) {
+    _locBodyObserver = new MutationObserver(muts => {
+      if (!_localizeRules.length) return;
+      for (const m of muts) for (const n of m.addedNodes) if (n.nodeType === 1 && (n.classList.contains('toast') || n.classList.contains('ask-overlay'))) localizeNode(n);
+    });
+    _locBodyObserver.observe(document.body, { childList: true });
   }
 }
 
@@ -789,7 +836,7 @@ window.drawWheel = drawWheel;
 window.openWorkTypePicker = openWorkTypePicker;
 window.closeWorkTypePicker = closeWorkTypePicker;
 window.saveWorkTypePicker = saveWorkTypePicker;
-window.V7 = { boot, getWorkType, applyWorkType, openWorkTypePicker, pickType, pickColor, claimLR, pomoStart, pomoStop, pomoSetMode, openLW, closeLW, saveLW, saveJournal, computeScore, renderDashExtras, renderLifeExtras, renderStatsExtras, PRIZES, WORK_TYPES, THEMES };
+window.V7 = { boot, getWorkType, wtUnit, applyWorkType, openWorkTypePicker, pickType, pickColor, claimLR, pomoStart, pomoStop, pomoSetMode, openLW, closeLW, saveLW, saveJournal, computeScore, renderDashExtras, renderLifeExtras, renderStatsExtras, PRIZES, WORK_TYPES, THEMES };
 })();
 
 
