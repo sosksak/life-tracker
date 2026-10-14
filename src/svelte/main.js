@@ -6,6 +6,9 @@ import * as D from './dashboard/store.svelte.js';
 import Wallet from './work/Wallet.svelte';
 import ActiveShift from './work/ActiveShift.svelte';
 import * as Wk from './work/store.svelte.js';
+import Habits from './life/Habits.svelte';
+import Health from './life/Health.svelte';
+import * as Lf from './life/store.svelte.js';
 import { legacy } from './lib/legacy.js';
 
 // ------------------------------------------------------------
@@ -127,6 +130,84 @@ window.WORK = {
   },
 };
 
+// ------------------------------------------------------------
+//  LIFE — вкладка «Жизнь»: привычки (бывший src/js/41-v6-habits.js)
+//  и здоровье (бывший src/js/42-v6-health.js).
+//  API прежний: HABITS.* и HEALTH.* — их зовут дашборд, v7-сводка,
+//  счётчики подвкладок V994 и кнопка «показать» из V93.
+//
+//  Два отдельных монтирования в #habitsContent / #healthContent: слоты
+//  создаёт buildV6Containers() (46-v6-nav.js), а V93 считает карточками
+//  не сами слоты, а их детей (.v6-module-slot — обёртка). Поэтому
+//  компоненты отдают те же корневые .hab-* / .health-section прямыми
+//  детьми слотов, иначе скрытие и перестановка карточек сломаются.
+//
+//  flushSync: сразу после HABITS.render() хук v7 зовёт moveLifePanels() и
+//  renderLifeExtras(), которые ищут узлы внутри #lifeContent, — DOM должен
+//  быть готов синхронно, как было при innerHTML.
+// ------------------------------------------------------------
+let habitsApp = null, healthApp = null;
+
+function renderHabits() {
+  const el = document.getElementById('habitsContent');
+  if (!el) return;
+  Lf.load();
+  if (!habitsApp) { el.innerHTML = ''; habitsApp = mount(Habits, { target: el }); }
+  else Lf.bump();   // повторный вызов (V93 вернул карточку, синк) — пересчитать
+  flushSync();
+}
+
+function renderHealth() {
+  const el = document.getElementById('healthContent');
+  if (!el) return;
+  Lf.load();
+  if (!healthApp) { el.innerHTML = ''; healthApp = mount(Health, { target: el }); }
+  else Lf.bump();
+  flushSync();
+}
+
+window.HABITS = {
+  render: renderHabits,
+  openPanel() { window.switchV6Tab?.('habits'); renderHabits(); },
+  // данные
+  getHabits: Lf.getHabits,
+  isChecked: Lf.isChecked,
+  getStreak: Lf.getStreak,
+  getCompletionRate: Lf.getCompletionRate,
+  getTodayProgress: Lf.getTodayProgress,
+  // операции
+  toggle: Lf.toggle,
+  addHabit: Lf.addHabit,
+  removeHabit: Lf.removeHabit,
+  toggleActive: Lf.toggleActive,
+  quickCheck: Lf.quickCheck,
+  saveHabits: (list) => { Lf.life.habits = list; legacy.set('v6_habits', list); legacy.touch(); },
+  _unmount() { if (habitsApp) { unmount(habitsApp); habitsApp = null; } },
+};
+
+window.HEALTH = {
+  render: renderHealth,
+  openPanel() { window.switchV6Tab?.('health'); renderHealth(); },
+  MOODS: Lf.MOODS,
+  // данные
+  getTodayData: Lf.getTodayData,
+  getDayData: Lf.getDayData,
+  getWeekStats: Lf.getWeekStats,
+  getWeightHistory: Lf.getWeightHistory,
+  // операции
+  quickWater: Lf.quickWater,
+  setWater: Lf.setWater,
+  setMood: Lf.setMood,
+  setSleep: Lf.setSleep,
+  setWeight: Lf.setWeight,
+  setExercise: Lf.setExercise,
+  _unmount() { if (healthApp) { unmount(healthApp); healthApp = null; } },
+};
+
 // Смены / профиль поменялись снаружи (синк, смена аккаунта) → перечитать.
 // Без профиля не грузим: uGet читал бы ключи без префикса и «запомнил» пустоту.
-window.addEventListener('lt:data-changed', () => { if (legacy.hasUser()) { F.load(); loaded = true; } });
+window.addEventListener('lt:data-changed', () => {
+  if (!legacy.hasUser()) return;
+  F.load(); loaded = true;
+  Lf.load();
+});

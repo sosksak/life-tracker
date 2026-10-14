@@ -248,8 +248,7 @@ function bootV6() {
 
 // Глобальные алиасы для onclick в разметке модулей
 // DASHBOARD живёт в Svelte-бандле (app/bundle.js) и сам регистрируется на window.
-window.HABITS = HABITS;
-window.HEALTH = HEALTH;
+// HABITS и HEALTH — тоже (v9.12: 41-v6-habits.js / 42-v6-health.js → _archive/).
 // FINANCE живёт в Svelte-бандле (app/bundle.js) и сам регистрируется на window.
 window.CRYPTO = CRYPTO;
 window.switchV6Tab = switchV6Tab;

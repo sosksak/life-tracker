@@ -49,6 +49,11 @@ export const legacy = {
   askForm: (fields, opts) => (typeof g().askForm === 'function' ? g().askForm(fields, opts) : Promise.resolve(null)),
   askConfirm: (msg, opts) => (typeof g().askConfirm === 'function' ? g().askConfirm(msg, opts) : Promise.resolve(window.confirm(msg))),
   todayStr: () => (typeof g().todayStr === 'function' ? g().todayStr() : new Date().toISOString().slice(0, 10)),
+  // дата в местной зоне (20-core.js) — НЕ toISOString: тот сдвигает день на UTC
+  dateStr: (d) => (typeof g().localDateStr === 'function' ? g().localDateStr(d) : (d || new Date()).toISOString().slice(0, 10)),
+
+  // карточка скрыта раскладкой V93 (73-v93-layout.js) — тяжёлые блоки не считаем
+  cardHidden: (tab, key) => { try { return !!(g().V93 && g().V93.isHidden(tab, key)); } catch { return false; } },
 
   // цель месяца (28-render-goal-chart.js)
   monthGoal: () => { try { return g().getMonthGoal ? g().getMonthGoal() : 0; } catch { return 0; } },
