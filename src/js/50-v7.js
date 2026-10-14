@@ -836,7 +836,19 @@ window.drawWheel = drawWheel;
 window.openWorkTypePicker = openWorkTypePicker;
 window.closeWorkTypePicker = closeWorkTypePicker;
 window.saveWorkTypePicker = saveWorkTypePicker;
-window.V7 = { boot, getWorkType, wtUnit, applyWorkType, openWorkTypePicker, pickType, pickColor, claimLR, pomoStart, pomoStop, pomoSetMode, openLW, closeLW, saveLW, saveJournal, computeScore, renderDashExtras, renderLifeExtras, renderStatsExtras, PRIZES, WORK_TYPES, THEMES };
+// v9.11: Svelte-компоненты «Работы» сами отдают локализованный текст.
+// MutationObserver не может править их реактивные узлы (Svelte перезаписывает
+// nodeValue целиком при каждом обновлении и правка терялась), поэтому строки
+// прогоняются через правила ДО вставки в DOM.
+function localizeText(s) {
+  if (!s) return s;
+  if (!_localizeRules.length) buildLocalizeRules();
+  let v = String(s);
+  for (const [re, rep] of _localizeRules) v = v.replace(re, rep);
+  return v;
+}
+
+window.V7 = { boot, getWorkType, wtUnit, wtNoun, localizeText, applyWorkType, openWorkTypePicker, pickType, pickColor, claimLR, pomoStart, pomoStop, pomoSetMode, openLW, closeLW, saveLW, saveJournal, computeScore, renderDashExtras, renderLifeExtras, renderStatsExtras, PRIZES, WORK_TYPES, THEMES };
 })();
 
 

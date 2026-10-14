@@ -91,6 +91,9 @@ window.LT_STATE = {
   get difficulty() { return difficulty; },
   get currentUser() { return typeof currentUser !== 'undefined' ? currentUser : null; },
   DIFFICULTIES,
+  // v9.11: кошелёк «Работы» живёт в Svelte — ему нужны таблица уровней и формула очков
+  LEVELS,
+  calcGrindXP,
 };
 
 // ====== TAB SWITCHING ======

@@ -349,7 +349,7 @@ const _origRender = render;
 render = function() {
   _origRender();
   try { EFF.render(); } catch (e) { console.warn('EFF', e); }
-  countUp(document.getElementById('totalEarned'), Math.round(getWalletBalance().balance));
+  // countUp баланса делает сам Wallet.svelte ($effect) — здесь повтор не нужен (v9.11)
   // Only render heavy stats widgets when stats tab is active
   const statsActive = document.getElementById('contentStats')?.classList.contains('active');
   const liveActive = document.getElementById('contentLive')?.classList.contains('active');

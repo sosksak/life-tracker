@@ -3,6 +3,9 @@ import Finance from './finance/Finance.svelte';
 import * as F from './finance/store.svelte.js';
 import Dashboard from './dashboard/Dashboard.svelte';
 import * as D from './dashboard/store.svelte.js';
+import Wallet from './work/Wallet.svelte';
+import ActiveShift from './work/ActiveShift.svelte';
+import * as Wk from './work/store.svelte.js';
 import { legacy } from './lib/legacy.js';
 
 // ------------------------------------------------------------
@@ -80,6 +83,48 @@ window.DASHBOARD = {
   collectMetrics: D.collectMetrics,
   getAlerts: D.getAlerts,
   _unmount() { if (dashApp) { unmount(dashApp); dashApp = null; } },
+};
+
+// ------------------------------------------------------------
+//  WORK — вкладка «Работа»: кошелёк (#wallet) и панель смены (#activeShiftPanel).
+//  Разметка жила в src/html/30-tab-live.html, обновлялась из render()
+//  (28-render-goal-chart.js) и renderActiveShift() (21-active-shift.js).
+//  Теперь это два Svelte-компонента, смонтированных в пустые хосты
+//  #wallet-host / #shift-host на том же месте вкладки.
+//
+//  Почему монтируем «в точку», а не перерисовываем вкладку целиком: карточками
+//  верхнего уровня владеет V93 (скрытие .lt-card-hidden + style.order), а внутрь
+//  панели смены дорисовывают узлы v8-ассистент и кнопка «Фокус». Поэтому компоненты
+//  отдают ровно те же корневые элементы с теми же id, и чужие вставки живут как раньше.
+// ------------------------------------------------------------
+let walletApp = null, shiftApp = null;
+
+function mountWork() {
+  const wh = document.getElementById('wallet-host');
+  if (wh && !walletApp) { wh.innerHTML = ''; walletApp = mount(Wallet, { target: wh }); }
+  const sh = document.getElementById('shift-host');
+  if (sh && !shiftApp) { sh.innerHTML = ''; shiftApp = mount(ActiveShift, { target: sh }); }
+}
+
+// Легаси зовёт WORK.render() там, где раньше правил DOM кошелька/панели.
+// flushSync: вызывающий код сразу после этого ищет #v8Assist, .shift-controls,
+// #totalEarned — DOM должен быть готов синхронно, как было при innerHTML.
+function renderWork() {
+  mountWork();
+  Wk.bump();
+  flushSync();
+}
+
+window.WORK = {
+  render: renderWork,
+  mount: mountWork,
+  // бывший breakTypeSelector.style.display — теперь состояние стора
+  showBreakPicker(on) { Wk.work.breakPicker = !!on; flushSync(); },
+  isBreakPickerOpen: () => Wk.work.breakPicker,
+  _unmount() {
+    if (walletApp) { unmount(walletApp); walletApp = null; }
+    if (shiftApp) { unmount(shiftApp); shiftApp = null; }
+  },
 };
 
 // Смены / профиль поменялись снаружи (синк, смена аккаунта) → перечитать.

@@ -9,6 +9,10 @@ input, textarea, select, [contenteditable], .lt-copy,
 /* ===== v9.3 — карточки экрана как виджеты iPhone ===== */
 .tab-content.active { display: flex; flex-direction: column; }
 .tab-content.active > .v6-module-slot, .tab-content.active > #v7DashExtra, .tab-content.active > #v7LifeExtra, .tab-content.active > #v7StatsExtra { display: contents; }
+/* v9.11: хост Svelte-компонента — прозрачная обёртка. Карточка внутри (#wallet,
+   #activeShiftPanel) должна остаться прямым ребёнком вкладки для flex-order
+   и скрытия V93, поэтому сам хост не образует бокса. */
+.lt-host { display: contents; }
 .lt-card-hidden { display: none !important; }
 .lt-edit .tab-content.active [data-lt-card] { animation: ltJiggle .32s ease-in-out infinite alternate; outline: 2px dashed var(--border-strong); outline-offset: 3px; border-radius: var(--radius-md); position: relative; }
 .lt-edit .tab-content.active [data-lt-card]:nth-child(odd) { animation-direction: alternate-reverse; }

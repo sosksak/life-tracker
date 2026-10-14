@@ -4,72 +4,13 @@
 <!-- ============ TAB: LIVE SHIFT ============ -->
 <div class="tab-content" id="contentLive">
 
-<!-- WALLET (redesigned) -->
-<div class="wallet" id="wallet">
-  <div class="wallet-top">
-    <div class="wallet-balance">
-      <div class="wallet-label">Баланс · <span class="wallet-edit-link" onclick="editWalletBalance()">изменить ✏️</span></div>
-      <div class="wallet-total" onclick="editWalletBalance()" style="cursor:pointer">
-        <span id="totalEarned">0</span> <span class="currency">₽</span>
-      </div>
-      <div class="wallet-sub" id="walletSub"></div>
-    </div>
-    <div class="wallet-badge">
-      <div class="wb-icon" id="walletBadgeIcon">📈</div>
-      <div class="wb-text" id="walletBadgeText">LVL 1</div>
-    </div>
-  </div>
-  <div class="wallet-trend" id="walletTrend"></div>
-  <div class="wallet-stats">
-    <div class="wallet-stat"><span class="ws-icon">📋</span><span class="ws-val" id="totalShifts">0</span><span class="ws-lbl">смен</span></div>
-    <div class="wallet-stat"><span class="ws-icon">⏱</span><span class="ws-val" id="totalHours">0</span><span class="ws-lbl">часов</span></div>
-    <div class="wallet-stat"><span class="ws-icon">📊</span><span class="ws-val" id="avgRate">0</span><span class="ws-lbl">₽/час</span></div>
-  </div>
-</div>
-
-<!-- ACTIVE SHIFT PANEL -->
-<div class="active-shift inactive" id="activeShiftPanel">
-  <h3 class="off" id="shiftStatusTitle">⏸ СМЕНА НЕ НАЧАТА</h3>
-
-  <div class="shift-timer">
-    <div class="timer-display" id="timerDisplay">00:00:00</div>
-    <div class="timer-sub" id="timerSub">Нажмите «Начать смену»</div>
-  </div>
-
-  <div class="live-rate-display" id="liveRateDisplay" style="display:none">
-    <div class="live-rate-amount earning" id="liveRateAmount">~0 ₽/час</div>
-    <div class="live-rate-label" id="liveRateLabel">текущая производительность</div>
-  </div>
-
-  <div class="shift-controls">
-    <button class="shift-ctrl-btn btn-start" id="btnStart" onclick="startShift()">▶ НАЧАТЬ СМЕНУ</button>
-    <button class="shift-ctrl-btn btn-break" id="btnBreak" onclick="startBreak()" style="display:none">⏸ ПЕРЕРЫВ</button>
-    <button class="shift-ctrl-btn btn-resume" id="btnResume" onclick="endBreak()" style="display:none">▶ ПРОДОЛЖИТЬ</button>
-    <button class="shift-ctrl-btn btn-end" id="btnEnd" onclick="endShift()" style="display:none">⏹ ЗАВЕРШИТЬ</button>
-  </div>
-
-  <!-- Live counter: orders during shift (v7.4) -->
-<div class="units-counter" id="unitsCounter" style="display:none">
-  <button class="uc-btn" onclick="bumpUnits(-1)" title="−1">−</button>
-  <div class="uc-mid"><div class="uc-val" id="ucVal">0</div><div class="uc-lbl" id="ucLbl">заказов · 0/ч</div></div>
-  <button class="uc-btn uc-plus" onclick="bumpUnits(1)" title="+1">+</button>
-  <button class="uc-btn uc-plus5" onclick="bumpUnits(5)" title="+5">+5</button>
-</div>
-<!-- Break type selector (hidden by default) -->
-  <div id="breakTypeSelector" style="display:none; margin-bottom: 12px;">
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
-      <button class="shift-ctrl-btn" style="background:rgba(255,171,64,0.15);color:var(--orange);font-size:12px;padding:10px" onclick="confirmBreak('🍽 Обед')">🍽 Обед</button>
-      <button class="shift-ctrl-btn" style="background:rgba(255,171,64,0.15);color:var(--orange);font-size:12px;padding:10px" onclick="confirmBreak('⏸ Личное')">⏸ Личное</button>
-      <button class="shift-ctrl-btn" style="background:rgba(255,171,64,0.15);color:var(--orange);font-size:12px;padding:10px" onclick="confirmBreak('📋 Другое')">📋 Другое</button>
-    </div>
-  </div>
-
-  <div class="break-log" id="breakLog" style="display:none">
-    <h4>⏸ Перерывы:</h4>
-    <div id="breakList"></div>
-    <div class="break-total" id="breakTotal"></div>
-  </div>
-</div>
+<!-- WALLET + ACTIVE SHIFT — v9.11: разметка переехала в src/svelte/work/*.svelte.
+     Svelte монтирует в эти хосты те же #wallet и #activeShiftPanel с теми же
+     классами и id, поэтому CSS, V93-раскладка, локализатор и движок иконок
+     ничего не замечают. Хосты — display:contents, чтобы карточки остались
+     прямыми детьми вкладки (V93 ищет их через children). -->
+<div id="wallet-host" class="lt-host"></div>
+<div id="shift-host" class="lt-host"></div>
 
 <!-- EFFICIENCY (work tab) -->
 <div class="eff-card" id="effCard">

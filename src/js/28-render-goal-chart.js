@@ -3,53 +3,15 @@ function render() {
   const goal = DIFFICULTIES[difficulty].goal;
   const { totalEarned, totalHours, avgRate } = getShiftTotals();
 
-  const wb = getWalletBalance();
-  document.getElementById('totalEarned').textContent = Math.round(wb.balance).toLocaleString('ru-RU');
-  const wsub = document.getElementById('walletSub');
-  if (wsub) {
-    const exp = wb.shiftExp + wb.txExp;
-    const parts = [`доход <b>${Math.round(wb.totalEarned + wb.txInc).toLocaleString('ru-RU')}</b>`];
-    if (exp) parts.push(`расходы <b>−${Math.round(exp).toLocaleString('ru-RU')}</b>`);
-    if (wb.adj) parts.push(`корр. <b>${wb.adj > 0 ? '+' : '−'}${Math.abs(Math.round(wb.adj)).toLocaleString('ru-RU')}</b>`);
-    wsub.innerHTML = parts.join(' · ');
-  }
-  document.getElementById('totalShifts').textContent = shifts.length;
-  document.getElementById('totalHours').textContent = totalHours.toFixed(1);
-  document.getElementById('avgRate').textContent = avgRate.toLocaleString('ru-RU');
+  // v9.11: кошелёк (#wallet) рисует src/svelte/work/Wallet.svelte —
+  // баланс, подпись, уровень, тренд и три счётчика считаются в его сторе.
+  if (window.WORK) WORK.render();
 
-  // Wallet badge — очки за смены и часы, а не за рубли (см. calcGrindXP).
+  // Уровень в разделе «Ещё» считается от тех же очков (смены + часы)
   const xp = calcGrindXP(shifts.length, totalHours);
   let currentLevel = LEVELS[0], nextLevel = LEVELS[1];
   for (let i = LEVELS.length - 1; i >= 0; i--) {
     if (xp >= LEVELS[i].xp) { currentLevel = LEVELS[i]; nextLevel = LEVELS[i + 1] || null; break; }
-  }
-
-  const walletBadgeIcon = document.getElementById('walletBadgeIcon');
-  const walletBadgeText = document.getElementById('walletBadgeText');
-  if (walletBadgeIcon) walletBadgeIcon.textContent = currentLevel.icon;
-  if (walletBadgeText) walletBadgeText.textContent = `LVL ${currentLevel.lvl}`;
-
-  // Wallet trend
-  const trendEl = document.getElementById('walletTrend');
-  if (trendEl && shifts.length >= 2) {
-    const lastShift = shifts[0];
-    const prevShift = shifts[1];
-    const diff = Math.round(lastShift.rate - prevShift.rate);
-    const trendClass = diff > 5 ? 'up' : (diff < -5 ? 'down' : 'neutral');
-    const trendSymbol = diff > 5 ? '↑' : (diff < -5 ? '↓' : '→');
-    trendEl.innerHTML = `
-      <span class="wallet-trend-tag ${trendClass}">${trendSymbol} ${Math.abs(diff)} ₽/час</span>
-      <span class="wallet-trend-text">vs прошлая смена</span>
-    `;
-  } else if (trendEl) {
-    trendEl.innerHTML = '';
-  }
-
-  // Golden border effect
-  const walletEl = document.getElementById('wallet');
-  if (walletEl && getShopOwned('golden_border')) {
-    walletEl.style.borderColor = 'rgba(255,215,0,0.4)';
-    walletEl.style.boxShadow = '0 0 25px rgba(255,215,0,0.1)';
   }
 
   // Title

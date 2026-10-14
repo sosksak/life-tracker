@@ -22,22 +22,12 @@ function bumpUnits(d) {
   if (typeof haptic === 'function') haptic('light');
 }
 function renderUnitsCounter() {
-  const uc = document.getElementById('unitsCounter');
-  if (!uc) return;
-  if (!activeShift) { uc.style.display = 'none'; return; }
-  uc.style.display = '';
-  const n = activeShift.units || 0;
-  const now = Date.now();
-  const breakMs = activeShift.breaks.reduce((s, b) => s + ((b.end || now) - b.start), 0)
-    + (activeShift.currentBreak ? (now - activeShift.currentBreak.start) : 0);
-  const workH = Math.max(0.1, (now - activeShift.startTime - breakMs) / 3600000);
-  document.getElementById('ucVal').textContent = n;
-  document.getElementById('ucLbl').textContent = `заказов · ${n ? (Math.round(n / workH * 10) / 10) : 0}/ч`;
+  // v9.11: счётчик рисует ActiveShift.svelte — здесь только толчок реактивности
+  if (window.WORK) WORK.render();
 }
 
 function startBreak() {
-  document.getElementById('breakTypeSelector').style.display = 'block';
-  document.getElementById('btnBreak').style.display = 'none';
+  if (window.WORK) WORK.showBreakPicker(true);
 }
 
 function confirmBreak(type) {
@@ -45,7 +35,6 @@ function confirmBreak(type) {
   activeShift.currentBreak = { type, start: Date.now(), end: null };
   activeShift.status = 'break';
   saveActiveShift();
-  document.getElementById('breakTypeSelector').style.display = 'none';
   renderActiveShift();
   showToast(`☕ Перерыв: ${type}`, 'warn');
 }
@@ -214,65 +203,19 @@ function updateTimer() {
   }
 }
 
+// v9.11: панель смены живёт в src/svelte/work/ActiveShift.svelte.
+// Здесь остались только побочные эффекты, которых у компонента нет:
+// WORK.render() обновляет классы/видимость/перерывы, а таймер и ассистент
+// по-прежнему пишут текст в #timerDisplay / #v8Assist (их хуки не тронуты).
 function renderActiveShift() {
-  const panel = document.getElementById('activeShiftPanel');
-  const titleEl = document.getElementById('shiftStatusTitle');
-  const btnStart = document.getElementById('btnStart');
-  const btnBreak = document.getElementById('btnBreak');
-  const btnResume = document.getElementById('btnResume');
-  const btnEnd = document.getElementById('btnEnd');
-  const breakLog = document.getElementById('breakLog');
-  const breakSelector = document.getElementById('breakTypeSelector');
-
+  if (!window.WORK) return;          // бандл ещё не загрузился
+  WORK.showBreakPicker(false);       // бывший breakTypeSelector.style.display = 'none'
+  WORK.render();
   if (!activeShift) {
-    panel.className = 'active-shift inactive';
-    titleEl.textContent = '🏠 СМЕНА НЕ АКТИВНА';
-    titleEl.className = 'off';
-    document.getElementById('timerDisplay').textContent = '00:00:00';
-    document.getElementById('timerSub').textContent = 'Нажмите «Начать смену»';
-    btnStart.style.display = '';
-    btnBreak.style.display = 'none';
-    btnResume.style.display = 'none';
-    btnEnd.style.display = 'none';
-    breakLog.style.display = 'none';
-    breakSelector.style.display = 'none';
-    const uc0 = document.getElementById('unitsCounter'); if (uc0) uc0.style.display = 'none';
-    return;
-  }
-
-  panel.className = 'active-shift';
-  renderUnitsCounter();
-  btnStart.style.display = 'none';
-  btnEnd.style.display = '';
-
-  if (activeShift.status === 'break') {
-    titleEl.textContent = '☕ ПЕРЕРЫВ';
-    titleEl.className = 'live';
-    titleEl.style.color = 'var(--orange)';
-    btnBreak.style.display = 'none';
-    btnResume.style.display = '';
-    document.getElementById('timerDisplay').style.color = 'var(--orange)';
-  } else {
-    titleEl.textContent = '🟢 СМЕНА АКТИВНА';
-    titleEl.className = 'live';
-    titleEl.style.color = '';
-    btnBreak.style.display = '';
-    btnResume.style.display = 'none';
-    document.getElementById('timerDisplay').style.color = '';
-  }
-
-  // Break log
-  if (activeShift.breaks.length > 0) {
-    breakLog.style.display = '';
-    const list = document.getElementById('breakList');
-    const totalBreak = activeShift.breaks.reduce((sum, b) => sum + ((b.end || Date.now()) - b.start), 0);
-    list.innerHTML = activeShift.breaks.map(b => {
-      const dur = (b.end || Date.now()) - b.start;
-      return `<div class="break-item"><span class="b-type">${escapeHtml(b.type)}</span><span class="b-dur">${formatShortDuration(dur)}</span></div>`;
-    }).join('');
-    document.getElementById('breakTotal').textContent = `Всего перерывов: ${formatShortDuration(totalBreak)}`;
-  } else {
-    breakLog.style.display = 'none';
+    const td = document.getElementById('timerDisplay');
+    const ts = document.getElementById('timerSub');
+    if (td) td.textContent = '00:00:00';
+    if (ts) ts.textContent = 'Нажмите «Начать смену»';
   }
 }
 

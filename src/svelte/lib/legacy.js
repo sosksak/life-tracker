@@ -25,6 +25,14 @@ export const legacy = {
   // цель ₽/ч текущей сложности (для серии дней)
   streakGoal: () => { try { const S = g().LT_STATE; return S.DIFFICULTIES[S.difficulty].goal; } catch { return 0; } },
   shiftTotals: () => { try { return g().getShiftTotals(); } catch { return { totalEarned: 0, totalHours: 0, avgRate: 0 }; } },
+  // кошелёк и уровни (31-efficiency-analytics.js / 20-core.js)
+  walletBalance: () => { try { return g().getWalletBalance(); } catch { return { balance: 0, totalEarned: 0, shiftExp: 0, txInc: 0, txExp: 0, adj: 0 }; } },
+  grindXP: (n, h) => { try { return g().LT_STATE.calcGrindXP(n, h); } catch { return 0; } },
+  levels: () => { try { return g().LT_STATE.LEVELS || []; } catch { return []; } },
+  shopOwned: (id) => { try { return !!g().getShopOwned(id); } catch { return false; } },
+  fmtShort: (ms) => { try { return g().formatShortDuration(ms); } catch { return ''; } },
+  // существительное единиц работы в род. мн.: заказов / рейсов / задач / сделок (50-v7.js)
+  unitWord: () => { try { return g().V7.wtUnit()[2]; } catch { return 'заказов'; } },
   calcStreak: (goal) => { try { return typeof g().calcStreak === 'function' ? g().calcStreak(goal) : 0; } catch { return 0; } },
   escapeHtml: (t) => (typeof g().escapeHtml === 'function' ? g().escapeHtml(t) : String(t)),
 

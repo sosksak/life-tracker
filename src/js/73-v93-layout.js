@@ -6,7 +6,7 @@ const V93 = (() => {
   'use strict';
   const KEY = 'v93_layout';
   const TABS = { dashboardContent: 'Главная', contentLive: 'Работа', lifeContent: 'Жизнь', moneyContent: 'Деньги', contentStats: 'Стата' };
-  const WRAP = el => el.classList.contains('v6-module-slot') || /^v7(Dash|Life|Stats)Extra$/.test(el.id);
+  const WRAP = el => el.classList.contains('v6-module-slot') || el.classList.contains('lt-host') || /^v7(Dash|Life|Stats)Extra$/.test(el.id);
   const NAMES = {
     'dash-greeting': 'Приветствие', 'v7-reward-strip': 'Награды дня', 'lr-days': 'Серия дней', 'v7-brief': 'Сводка дня',
     'dash-alerts': 'Уведомления', 'dash-cards': 'Плитки модулей', 'dash-quick-actions': 'Быстрые действия', 'v8Goals': 'Цели',
