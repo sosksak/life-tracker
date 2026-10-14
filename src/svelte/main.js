@@ -9,6 +9,8 @@ import * as Wk from './work/store.svelte.js';
 import Habits from './life/Habits.svelte';
 import Health from './life/Health.svelte';
 import * as Lf from './life/store.svelte.js';
+import Crypto from './money/Crypto.svelte';
+import * as Cr from './money/store.svelte.js';
 import { legacy } from './lib/legacy.js';
 
 // ------------------------------------------------------------
@@ -210,4 +212,36 @@ window.addEventListener('lt:data-changed', () => {
   if (!legacy.hasUser()) return;
   F.load(); loaded = true;
   Lf.load();
+  Cr.load();
 });
+
+// ------------------------------------------------------------
+//  CRYPTO — крипто-портфель (бывший src/js/44-v6-crypto.js).
+//  API прежний: CRYPTO.render() / getHoldings() / getPortfolioValue() и т.д.
+// ------------------------------------------------------------
+let cryptoApp = null;
+
+function renderCrypto() {
+  const el = document.getElementById('cryptoContent');
+  if (!el) return;
+  Cr.load();
+  if (!cryptoApp) { el.innerHTML = ''; cryptoApp = mount(Crypto, { target: el }); }
+  else Cr.crypto.now = Date.now();  // обновить возраст цен
+  flushSync();
+}
+
+window.CRYPTO = {
+  render: renderCrypto,
+  openPanel() { window.switchV6Tab?.('crypto'); renderCrypto(); },
+  // данные
+  getHoldings: Cr.getHoldings,
+  getPortfolioValue: Cr.getPortfolioValue,
+  POPULAR_COINS: Cr.POPULAR_COINS,
+  // операции
+  addHolding: Cr.addHolding,
+  editHolding: Cr.editHolding,
+  removeHolding: Cr.removeHolding,
+  fetchPrices: Cr.fetchPrices,
+  refreshPrices: Cr.refreshPrices,
+  _unmount() { if (cryptoApp) { unmount(cryptoApp); cryptoApp = null; } },
+};
