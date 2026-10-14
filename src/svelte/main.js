@@ -11,6 +11,8 @@ import Health from './life/Health.svelte';
 import * as Lf from './life/store.svelte.js';
 import Crypto from './money/Crypto.svelte';
 import * as Cr from './money/store.svelte.js';
+import Market from './market/Market.svelte';
+import * as Mk from './market/store.svelte.js';
 import { legacy } from './lib/legacy.js';
 
 // ------------------------------------------------------------
@@ -244,4 +246,40 @@ window.CRYPTO = {
   fetchPrices: Cr.fetchPrices,
   refreshPrices: Cr.refreshPrices,
   _unmount() { if (cryptoApp) { unmount(cryptoApp); cryptoApp = null; } },
+};
+
+// ------------------------------------------------------------
+//  MARKET — биржа крипты и валют ЦБ (бывший src/js/45-v6-market.js).
+//  API прежний: MARKET.render() / setCoin() / refresh() и т.д.
+// ------------------------------------------------------------
+let marketApp = null;
+
+function renderMarket() {
+  const el = document.getElementById('marketContent');
+  if (!el) return;
+  if (!marketApp) {
+    el.innerHTML = '';
+    marketApp = mount(Market, { target: el });
+  }
+  // flushSync убран — он вызывал зависание
+}
+
+window.MARKET = {
+  render: renderMarket,
+  openPanel() { window.switchV6Tab?.('market'); renderMarket(); },
+  // действия
+  setCoin: Mk.setCoin,
+  setRange: Mk.setRange,
+  setCur: Mk.setCur,
+  refresh: Mk.refresh,
+  editWatch() { window.askConfirm && renderMarket(); },  // откроет диалог из компонента
+  lookup: Mk.lookup,
+  quick(hoursAgo) { Mk.lookup(Date.now() - hoursAgo * 3600e3); },
+  rerun(coin, ts) { if (coin !== Mk.market.coin) Mk.setCoin(coin); Mk.lookup(ts); },
+  COINS: Mk.COINS,
+  // FX
+  fxPick: Mk.fxPick,
+  fxSwap: Mk.fxSwap,
+  fxAmount: Mk.fxSetAmount,
+  _unmount() { if (marketApp) { unmount(marketApp); marketApp = null; } },
 };
