@@ -203,25 +203,8 @@ function getWorkMs() {
   return totalMs - breakMs;
 }
 
-function renderQuests() {
-  const quests = generateQuests();
-  const container = document.getElementById('questList');
-  container.innerHTML = quests.map(q => {
-    const pct = Math.min((q.progress / q.target) * 100, 100);
-    const done = pct >= 100;
-    const progressText = q.target <= 1
-      ? (done ? '✅ Выполнено' : '⬜ В процессе')
-      : (q.target >= 1000 ? `${Math.floor(q.progress).toLocaleString('ru-RU')} / ${q.target.toLocaleString('ru-RU')}` : `${q.progress.toFixed(1)} / ${q.target}`);
-    return `<div class="quest-item ${done ? 'completed' : ''}">
-      <div class="quest-header">
-        <div class="quest-title">${q.icon} ${q.title}</div>
-        <div class="quest-reward">${q.reward}</div>
-      </div>
-      <div class="quest-progress"><div class="quest-fill ${done ? 'done' : 'active'}" style="width:${pct}%"></div></div>
-      <div class="quest-text">${q.desc} — ${progressText}</div>
-    </div>`;
-  }).join('');
-}
+// v9.17: список заданий смены (#questList) → Svelte (src/svelte/work/ShiftQuests.svelte).
+function renderQuests() { if (window.QUESTS) QUESTS.renderShift(); }
 
 // ====== SHOP SYSTEM ======
 function getShopPurchases() {

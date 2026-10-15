@@ -25,12 +25,8 @@
 <div id="weekly-host" class="lt-host"></div>
 <div id="insight-host" class="lt-host"></div>
 
-<!-- DAILY QUESTS -->
-<div class="quests" id="questsPanel">
-  <h3>📋 ЗАДАЧИ СМЕНЫ</h3>
-  <div id="questList"></div>
-</div>
-
-<!-- LIFE QUESTS -->
-<div class="life-quests" id="lifeQuestsPanel">
-  <h3>📌 ЛИЧНЫЕ ЗАДАЧИ</h3>
+<!-- DAILY QUESTS + LIFE QUESTS — v9.17: разметка переехала в src/svelte/work/ShiftQuests.svelte
+     и LifeQuests.svelte. Svelte монтирует в эти хосты те же #questsPanel/#lifeQuestsPanel (CSS, V93, V994);
+     #lifeQuestsPanel затем, как и раньше, переносит на вкладку «Жизнь» V7.moveLifePanels(). -->
+<div id="quests-host" class="lt-host"></div>
+<div id="life-quests-host" class="lt-host"></div>

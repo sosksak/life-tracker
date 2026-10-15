@@ -35,7 +35,7 @@ const FX = (() => {
   }
   // Тап по любому кликабельному — звёздочки + лёгкая вибрация (не чаще 1/80мс)
   document.addEventListener('pointerdown', e => {
-    const t = e.target.closest('button, [onclick], .hab-check, .tab-btn, .nav-item, .chip, summary, input[type=checkbox], .shop-item, .quest-item, a');
+    const t = e.target.closest('button, [onclick], .hab-check, .tab-btn, .nav-item, .chip, summary, input[type=checkbox], .shop-item, .quest-item, .life-quest-item, a');
     if (!t || e.pointerType === 'mouse' && e.button !== 0) return;
     const now = Date.now(); if (now - lastTap < 80) return; lastTap = now;
     t.classList.add('fx-press'); setTimeout(() => t.classList.remove('fx-press'), 120);

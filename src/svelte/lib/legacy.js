@@ -41,6 +41,26 @@ export const legacy = {
   calcStreak: (goal) => { try { return typeof g().calcStreak === 'function' ? g().calcStreak(goal) : 0; } catch { return 0; } },
   escapeHtml: (t) => (typeof g().escapeHtml === 'function' ? g().escapeHtml(t) : String(t)),
 
+  // v9.17: панели заданий (22-life-quests.js / 23-quests-shop.js) — данные остались в легаси
+  lq: {
+    generateQuests: () => { try { return g().generateQuests() || []; } catch { return []; } },
+    categories: () => g().LQ_CATEGORIES || {},
+    catTextColor: (k) => { try { return g().catTextColor(k); } catch { return 'var(--text)'; } },
+    chosenCategory: () => { try { return g().getChosenCategory(); } catch { return null; } },
+    chosenCategoryFor: (d) => { try { return g().getChosenCategoryFor(d); } catch { return null; } },
+    tomorrowStr: () => g().tomorrowStr(),
+    categoryChoiceSource: () => { try { return g().getCategoryChoiceSource(); } catch { return null; } },
+    lifeXP: () => { try { return g().getLifeXP(); } catch { return { total: 0, cats: {} }; } },
+    level: (xp) => g().getLQLevel(xp),
+    xpMultiplier: () => { try { return g().getXpMultiplier(); } catch { return 1; } },
+    resolvedLifeQuests: () => { try { return g().getResolvedLifeQuests() || []; } catch { return []; } },
+    lifeQuestState: () => { try { return g().getLifeQuestState(); } catch { return { checked: {}, rerolls: 0, replacements: {} }; } },
+    totalRerolls: () => { try { return g().getTotalRerolls(); } catch { return 3; } },
+    shiftBonuses: () => { try { return g().getShiftBonuses(); } catch { return {}; } },
+    shopExtraRerolls: () => { try { return g().getShopExtraRerolls(); } catch { return 0; } },
+    celebrateLevelUp: (lvl) => { try { g().celebrateLevelUp(lvl); } catch (e) {} },
+  },
+
   // соседние модули (пока живут в легаси)
   habitsToday: () => { try { return g().HABITS.getTodayProgress(); } catch { return { done: 0, total: 0 }; } },
   healthToday: () => { try { return g().HEALTH.getTodayData(); } catch { return { water: 0, sleep: 0, mood: 0 }; } },

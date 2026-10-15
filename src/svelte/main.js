@@ -14,6 +14,9 @@ import Kopilka from './work/Kopilka.svelte';
 import WeeklyChallenge from './work/WeeklyChallenge.svelte';
 import Insight from './work/Insight.svelte';
 import * as Cd from './work/cards.svelte.js';
+import ShiftQuests from './work/ShiftQuests.svelte';
+import LifeQuests from './work/LifeQuests.svelte';
+import * as Q from './work/quests.svelte.js';
 import Habits from './life/Habits.svelte';
 import Health from './life/Health.svelte';
 import * as Lf from './life/store.svelte.js';
@@ -243,6 +246,56 @@ window.CARDS = {
 window.setupKopilka = setupKopilka;
 window.closeKopilkaModal = closeKopilkaModal;
 window.saveKopilka = saveKopilka;
+
+// ------------------------------------------------------------
+//  QUESTS — «📋 ЗАДАЧИ СМЕНЫ» (#questsPanel) и «📌 ЛИЧНЫЕ ЗАДАЧИ» (#lifeQuestsPanel).
+//  Бывшие renderQuests() (23-quests-shop.js), renderLifeQuests()/renderLifeStats()
+//  (22-life-quests.js) → _archive/22-quests-legacy.js. Легаси-обёртки с теми же
+//  именами остались и зовут QUESTS.renderShift/renderLife/renderStats.
+//  Хосты #quests-host / #life-quests-host (display:contents) — панели остаются
+//  прямыми детьми вкладки для V93; #lifeQuestsPanel потом уносит в #lifeContent
+//  V7.moveLifePanels() — корень один, компонент не перемонтируется.
+//  Монтируем сразу при загрузке бандла (хосты уже в DOM): раньше панели были
+//  статической разметкой и существовали до init(), на это рассчитывает moveLifePanels().
+// ------------------------------------------------------------
+let shiftQApp = null, lifeQApp = null;
+
+function mountQuests() {
+  const qh = document.getElementById('quests-host');
+  if (qh && !shiftQApp) { qh.innerHTML = ''; shiftQApp = mount(ShiftQuests, { target: qh }); }
+  const lh = document.getElementById('life-quests-host');
+  if (lh && !lifeQApp) { lh.innerHTML = ''; lifeQApp = mount(LifeQuests, { target: lh }); }
+}
+
+function renderShiftQuests() {
+  mountQuests();
+  Q.quests.shift = Q.computeShift();
+  flushSync();
+}
+function renderLifeQuests() {
+  mountQuests();
+  Q.quests.life = Q.computeLife();
+  flushSync();
+}
+function renderLifeStats() {
+  mountQuests();
+  const st = Q.computeStats();
+  Q.quests.stats = st;
+  flushSync();
+  Q.afterStats(st); // level-up: бейдж #lqBadge уже в DOM
+}
+
+window.QUESTS = {
+  renderShift: renderShiftQuests,
+  renderLife: renderLifeQuests,
+  renderStats: renderLifeStats,
+  mount: mountQuests,
+  _unmount() {
+    if (shiftQApp) { unmount(shiftQApp); shiftQApp = null; }
+    if (lifeQApp) { unmount(lifeQApp); lifeQApp = null; }
+  },
+};
+mountQuests();
 
 // ------------------------------------------------------------
 //  LIFE — вкладка «Жизнь»: привычки (бывший src/js/41-v6-habits.js)
