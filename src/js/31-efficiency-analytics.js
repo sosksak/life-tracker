@@ -84,10 +84,7 @@ render = function() {
   const liveActive = document.getElementById('contentLive')?.classList.contains('active');
   // v9.4: скрытые пользователем карточки не считаем вовсе
   if (liveActive || statsActive) {
-    if (!_hid('contentLive', '#millionPath')) renderMillionPath();
-    if (!_hid('contentLive', '#kopilkaCard')) renderKopilka();
-    if (!_hid('contentLive', '#weeklyChallenge')) renderWeeklyChallenge();
-    if (!_hid('contentLive', '#insightCard')) renderInsight();
+    try { CARDS.render(); } catch (e) { console.warn('CARDS', e); }  // v9.16: Svelte; скрытые V93 карточки не считает сам
   }
   if (statsActive) {
     if (!_hid('contentStats', '#weekCompare')) renderWeekCompare();

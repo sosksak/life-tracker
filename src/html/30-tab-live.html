@@ -17,40 +17,13 @@
 <div id="eff-host" class="lt-host"></div>
 <div id="wa-host" class="lt-host"></div>
 
-<!-- MILLION PATH (on live tab) -->
-<div class="million-path" id="millionPath" style="display:none">
-  <div class="million-path-title">📈 ПЛАН ДОХОДА</div>
-  <div class="million-bar-wrap"><div class="million-bar-fill" id="millionFill" style="width:0%"></div></div>
-  <div class="million-milestones" id="millionMilestones"></div>
-  <div class="million-current" id="millionCurrent">0 ₽ / 1 000 000 ₽</div>
-</div>
-
-<!-- KOPILKA (wallet savings goal) -->
-<div class="kopilka-card" id="kopilkaCard" style="display:none;">
-  <button class="kopilka-edit" onclick="setupKopilka()">✏️</button>
-  <div class="kopilka-row"><span class="kopilka-name" id="kopilkaName">📌 Цель</span><span class="kopilka-amount" id="kopilkaAmount">0 / 0 ₽</span></div>
-  <div class="kopilka-bar"><div class="kopilka-fill" id="kopilkaFill" style="width:0%"></div></div>
-  <div class="kopilka-sub" id="kopilkaSub"></div>
-</div>
-
-<!-- WEEKLY CHALLENGE -->
-<div class="weekly-challenge" id="weeklyChallenge" style="display:none">
-  <div class="wchallenge-head">
-    <span class="wchallenge-title" id="wcTitle">📌 Задача недели</span>
-    <span class="wchallenge-timer" id="wcTimer"></span>
-  </div>
-  <div class="wchallenge-desc" id="wcDesc"></div>
-  <div class="wchallenge-bar"><div class="wchallenge-fill" id="wcFill" style="width:0%"></div></div>
-  <div class="wchallenge-progress" id="wcProgress"></div>
-  <div class="wchallenge-reward" id="wcReward"></div>
-</div>
-
-<!-- INSIGHT CARD -->
-<div class="insight-card" id="insightCard" style="display:none">
-  <span class="insight-icon" id="insightIcon">📋</span>
-  <div class="insight-text" id="insightText"></div>
-  <div class="insight-label">📋 Рекомендация</div>
-</div>
+<!-- MILLION PATH / KOPILKA / WEEKLY CHALLENGE / INSIGHT — v9.16: разметка переехала в
+     src/svelte/work/MillionPath.svelte, Kopilka.svelte, WeeklyChallenge.svelte, Insight.svelte.
+     Svelte монтирует в эти хосты те же #millionPath/#kopilkaCard/#weeklyChallenge/#insightCard (CSS, V93). -->
+<div id="million-host" class="lt-host"></div>
+<div id="kopilka-host" class="lt-host"></div>
+<div id="weekly-host" class="lt-host"></div>
+<div id="insight-host" class="lt-host"></div>
 
 <!-- DAILY QUESTS -->
 <div class="quests" id="questsPanel">

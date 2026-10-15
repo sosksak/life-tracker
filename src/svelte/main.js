@@ -9,6 +9,11 @@ import * as Wk from './work/store.svelte.js';
 import Efficiency from './work/Efficiency.svelte';
 import Analytics from './work/Analytics.svelte';
 import * as Ef from './work/eff.svelte.js';
+import MillionPath from './work/MillionPath.svelte';
+import Kopilka from './work/Kopilka.svelte';
+import WeeklyChallenge from './work/WeeklyChallenge.svelte';
+import Insight from './work/Insight.svelte';
+import * as Cd from './work/cards.svelte.js';
 import Habits from './life/Habits.svelte';
 import Health from './life/Health.svelte';
 import * as Lf from './life/store.svelte.js';
@@ -175,6 +180,69 @@ window.EFF = {
     if (waApp) { unmount(waApp); waApp = null; }
   },
 };
+
+// ------------------------------------------------------------
+//  CARDS — четыре карточки вкладки «Работа»: «📈 ПЛАН ДОХОДА» (#millionPath),
+//  «Копилка» (#kopilkaCard), «Задача недели» (#weeklyChallenge), «Рекомендация»
+//  (#insightCard). Бывшие renderMillionPath/renderKopilka/renderWeeklyChallenge/
+//  renderInsight из src/js/30-global-update-v5.js (→ _archive/30-cards-legacy.js).
+//  Ключи localStorage kopilka / weekly_challenge те же. Монтируются в хосты
+//  #million-host и т.д. (display:contents) — корни остаются прямыми детьми вкладки (V93).
+//  Скрытую V93 карточку не пересчитываем (как раньше через _hid()).
+//  Модалка копилки (#kopilkaModal) осталась в src/html/70-overlays-modals.html,
+//  её onclick-обработчики setupKopilka/saveKopilka/closeKopilkaModal — ниже, на window.
+// ------------------------------------------------------------
+const cardApps = {};
+const CARD_DEFS = [['million', 'million-host', MillionPath, '#millionPath'], ['kopilka', 'kopilka-host', Kopilka, '#kopilkaCard'],
+  ['weekly', 'weekly-host', WeeklyChallenge, '#weeklyChallenge'], ['insight', 'insight-host', Insight, '#insightCard']];
+
+function mountCards() {
+  for (const [k, host, Cmp] of CARD_DEFS) {
+    const h = document.getElementById(host);
+    if (h && !cardApps[k]) { h.innerHTML = ''; cardApps[k] = mount(Cmp, { target: h }); }
+  }
+}
+
+function renderCards() {
+  mountCards();
+  const which = {};
+  for (const [k, , , sel] of CARD_DEFS) which[k] = !legacy.cardHidden('contentLive', sel);
+  Cd.refresh(which);
+  flushSync();
+}
+
+function setupKopilka() {
+  const k = Cd.getKopilka() || {};
+  document.getElementById('kopilkaNameInput').value = k.name || '';
+  document.getElementById('kopilkaGoalInput').value = k.goal || '';
+  document.getElementById('kopilkaModal').classList.add('show');
+  document.body.classList.add('modal-open');
+}
+function closeKopilkaModal() {
+  document.getElementById('kopilkaModal').classList.remove('show');
+  document.body.classList.remove('modal-open');
+}
+function saveKopilka() {
+  const name = document.getElementById('kopilkaNameInput').value.trim();
+  const goal = parseInt(document.getElementById('kopilkaGoalInput').value) || 0;
+  if (goal <= 0) { legacy.toast('❌ Укажи сумму цели', 'error'); return; }
+  Cd.saveKopilkaData({ name: name || 'Цель', goal });
+  closeKopilkaModal();
+  mountCards(); Cd.refresh({ kopilka: true }); flushSync();
+  legacy.toast(`🎯 Цель «${name || 'Цель'}» установлена`, 'success');
+}
+
+window.CARDS = {
+  render: renderCards,
+  mount: mountCards,
+  getKopilka: Cd.getKopilka,
+  getWeeklyChallenge: Cd.getWeeklyChallenge,
+  WEEKLY_CHALLENGES: Cd.WEEKLY_CHALLENGES,
+  _unmount() { for (const k in cardApps) { unmount(cardApps[k]); delete cardApps[k]; } },
+};
+window.setupKopilka = setupKopilka;
+window.closeKopilkaModal = closeKopilkaModal;
+window.saveKopilka = saveKopilka;
 
 // ------------------------------------------------------------
 //  LIFE — вкладка «Жизнь»: привычки (бывший src/js/41-v6-habits.js)

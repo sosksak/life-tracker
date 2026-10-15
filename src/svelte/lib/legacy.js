@@ -36,6 +36,8 @@ export const legacy = {
   fmtShort: (ms) => { try { return g().formatShortDuration(ms); } catch { return ''; } },
   // существительное единиц работы в род. мн.: заказов / рейсов / задач / сделок (50-v7.js)
   unitWord: () => { try { return g().V7.wtUnit()[2]; } catch { return 'заказов'; } },
+  // Life XP за выполненный вызов недели (22-life-quests.js)
+  addLifeXP: (id, xp, cat) => { try { if (typeof g().addLifeXP === 'function') g().addLifeXP(id, xp, cat); } catch (e) {} },
   calcStreak: (goal) => { try { return typeof g().calcStreak === 'function' ? g().calcStreak(goal) : 0; } catch { return 0; } },
   escapeHtml: (t) => (typeof g().escapeHtml === 'function' ? g().escapeHtml(t) : String(t)),
 
