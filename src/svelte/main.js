@@ -6,6 +6,9 @@ import * as D from './dashboard/store.svelte.js';
 import Wallet from './work/Wallet.svelte';
 import ActiveShift from './work/ActiveShift.svelte';
 import * as Wk from './work/store.svelte.js';
+import Efficiency from './work/Efficiency.svelte';
+import Analytics from './work/Analytics.svelte';
+import * as Ef from './work/eff.svelte.js';
 import Habits from './life/Habits.svelte';
 import Health from './life/Health.svelte';
 import * as Lf from './life/store.svelte.js';
@@ -131,6 +134,45 @@ window.WORK = {
   _unmount() {
     if (walletApp) { unmount(walletApp); walletApp = null; }
     if (shiftApp) { unmount(shiftApp); shiftApp = null; }
+  },
+};
+
+// ------------------------------------------------------------
+//  EFF — карточки «⚡ ЭФФЕКТИВНОСТЬ» (#effCard) и «📈 АНАЛИТИКА» (#waCard)
+//  вкладки «Работа» (бывший IIFE EFF в src/js/31-efficiency-analytics.js).
+//  API прежний: EFF.render() / setPeriod(p) / setMetric(m); ключи
+//  localStorage v7_eff_period / v7_wa_metric те же.
+//  Монтируются в хосты #eff-host / #wa-host (display:contents) — корни
+//  #effCard/#waCard остаются прямыми детьми вкладки для V93-раскладки.
+//  Скрытую V93 карточку не пересчитываем (как раньше через _hid()).
+// ------------------------------------------------------------
+let effApp = null, waApp = null;
+
+function mountEff() {
+  const eh = document.getElementById('eff-host');
+  if (eh && !effApp) { eh.innerHTML = ''; effApp = mount(Efficiency, { target: eh }); }
+  const wh = document.getElementById('wa-host');
+  if (wh && !waApp) { wh.innerHTML = ''; waApp = mount(Analytics, { target: wh }); }
+}
+
+function renderEff() {
+  mountEff();
+  if (!legacy.cardHidden('contentLive', '#effCard')) Ef.eff.effV++;
+  if (!legacy.cardHidden('contentLive', '#waCard')) Ef.eff.waV++;
+  flushSync();
+}
+
+// Во время смены ₽/ч и заказы тикают — обновляем раз в 30с, только когда вкладка активна.
+setInterval(() => { if (legacy.activeShift() && document.getElementById('contentLive')?.classList.contains('active')) renderEff(); }, 30000);
+
+window.EFF = {
+  render: renderEff,
+  mount: mountEff,
+  setPeriod(p) { mountEff(); Ef.setPeriod(p); renderEff(); },
+  setMetric(m) { mountEff(); Ef.setMetric(m); Ef.eff.waV++; flushSync(); },
+  _unmount() {
+    if (effApp) { unmount(effApp); effApp = null; }
+    if (waApp) { unmount(waApp); waApp = null; }
   },
 };
 

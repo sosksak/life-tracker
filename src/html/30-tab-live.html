@@ -12,33 +12,10 @@
 <div id="wallet-host" class="lt-host"></div>
 <div id="shift-host" class="lt-host"></div>
 
-<!-- EFFICIENCY (work tab) -->
-<div class="eff-card" id="effCard">
-  <div class="eff-head">
-    <div class="eff-title">⚡ ЭФФЕКТИВНОСТЬ</div>
-    <div class="eff-seg" id="effSeg">
-      <button class="eff-seg-btn active" data-p="today" onclick="EFF.setPeriod('today')">Сегодня</button>
-      <button class="eff-seg-btn" data-p="7" onclick="EFF.setPeriod('7')">7 дн</button>
-      <button class="eff-seg-btn" data-p="30" onclick="EFF.setPeriod('30')">30 дн</button>
-      <button class="eff-seg-btn" data-p="90" onclick="EFF.setPeriod('90')">90 дн</button>
-    </div>
-  </div>
-  <div id="effBody"></div>
-</div>
-
-<!-- WORK ANALYTICS (work tab) -->
-<div class="eff-card" id="waCard">
-  <div class="eff-head">
-    <div class="eff-title">📈 АНАЛИТИКА</div>
-    <div class="eff-seg" id="waMetricSeg">
-      <button class="eff-seg-btn active" data-m="rate" onclick="EFF.setMetric('rate')">₽/ч</button>
-      <button class="eff-seg-btn" data-m="earned" onclick="EFF.setMetric('earned')">Доход</button>
-      <button class="eff-seg-btn" data-m="hours" onclick="EFF.setMetric('hours')">Часы</button>
-      <button class="eff-seg-btn" data-m="units" onclick="EFF.setMetric('units')">Заказы</button>
-    </div>
-  </div>
-  <div id="waBody"></div>
-</div>
+<!-- EFFICIENCY + WORK ANALYTICS — v9.15: разметка переехала в src/svelte/work/Efficiency.svelte
+     и Analytics.svelte. Svelte монтирует в эти хосты те же #effCard/#waCard (CSS eff-*/wa-*, V93). -->
+<div id="eff-host" class="lt-host"></div>
+<div id="wa-host" class="lt-host"></div>
 
 <!-- MILLION PATH (on live tab) -->
 <div class="million-path" id="millionPath" style="display:none">
@@ -83,4 +60,4 @@
 
 <!-- LIFE QUESTS -->
 <div class="life-quests" id="lifeQuestsPanel">
-  <h3>📌 ЛИЧНЫЕ ЗАДАЧИ</h3>
+  <h3>📌 ЛИЧНЫЕ ЗАДАЧИ</h3>

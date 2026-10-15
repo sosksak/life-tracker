@@ -24,6 +24,9 @@ export const legacy = {
   currentUser: () => (g().LT_STATE ? g().LT_STATE.currentUser : null) || null,
   // цель ₽/ч текущей сложности (для серии дней)
   streakGoal: () => { try { const S = g().LT_STATE; return S.DIFFICULTIES[S.difficulty].goal; } catch { return 0; } },
+  // метаданные смен (20-core.js): перерывы, заказы, расходы, startTime — ключ date|hours|earned
+  shiftMeta: () => { try { return g().getShiftMeta() || {}; } catch { return {}; } },
+  shiftMetaKey: (s) => (typeof g().shiftMetaKey === 'function' ? g().shiftMetaKey(s) : `${s.date}|${s.hours}|${s.earned}`),
   shiftTotals: () => { try { return g().getShiftTotals(); } catch { return { totalEarned: 0, totalHours: 0, avgRate: 0 }; } },
   // кошелёк и уровни (31-efficiency-analytics.js / 20-core.js)
   walletBalance: () => { try { return g().getWalletBalance(); } catch { return { balance: 0, totalEarned: 0, shiftExp: 0, txInc: 0, txExp: 0, adj: 0 }; } },
