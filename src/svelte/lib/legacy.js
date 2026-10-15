@@ -82,7 +82,9 @@ export const legacy = {
 
   // цель месяца (28-render-goal-chart.js)
   monthGoal: () => { try { return g().getMonthGoal ? g().getMonthGoal() : 0; } catch { return 0; } },
-  monthNet: () => { try { return g().getMonthNet ? g().getMonthNet() : null; } catch { return null; } },
+  monthNet: (prefix) => { try { return g().getMonthNet ? g().getMonthNet(prefix) : null; } catch { return null; } },
+  // план календаря (26-shift-modal-calendar.js): { 'YYYY-MM-DD': 'planned' | 'dayoff' }
+  calendarPlan: () => { try { return g().getCalendarPlan() || {}; } catch { return {}; } },
 
   // попросить остальные вкладки перерисоваться (кошелёк, прогноз, главная)
   rerenderOthers() {

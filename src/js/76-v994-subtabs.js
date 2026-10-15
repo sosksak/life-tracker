@@ -43,7 +43,7 @@ const V994 = (() => {
         { id: 'shifts',   icon: '📋', label: 'Смены' },
         { id: 'awards',   icon: '🏅', label: 'Достижения' },
       ],
-      wrap: el => el.id === 'v7StatsExtra',
+      wrap: el => el.id === 'v7StatsExtra' || el.classList.contains('lt-host'), // v9.18: хосты Svelte-карточек (display:contents)
       subOf(el) {
         const id = el.id || '', cls = el.className || '';
         if (/\bv7-sec\b/.test(cls) || id === 'v8Reports') return 'overview'; // итоги недели + отчёт месяца

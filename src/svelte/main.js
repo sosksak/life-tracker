@@ -24,6 +24,12 @@ import Crypto from './money/Crypto.svelte';
 import * as Cr from './money/store.svelte.js';
 import Market from './market/Market.svelte';
 import * as Mk from './market/store.svelte.js';
+import Level from './stats/Level.svelte';
+import Chart from './stats/Chart.svelte';
+import MonthGoal from './stats/MonthGoal.svelte';
+import Dow from './stats/Dow.svelte';
+import Records from './stats/Records.svelte';
+import * as St from './stats/store.svelte.js';
 import { legacy } from './lib/legacy.js';
 
 // ------------------------------------------------------------
@@ -296,6 +302,54 @@ window.QUESTS = {
   },
 };
 mountQuests();
+
+// ------------------------------------------------------------
+//  STATS — вкладка «Стата» (#contentStats): «Серия смен» (#streakBar) + «Уровень» (.level-section),
+//  «📈 ДИНАМИКА», «📌 ПЛАН МЕСЯЦА» (#monthGoalCard), «📅 ПО ДНЯМ НЕДЕЛИ» (#dowCard),
+//  «🏅 ЛУЧШИЕ ПОКАЗАТЕЛИ» (#recordsCard). Бывшие блоки render()/renderChart/renderMonthGoal/
+//  renderDowStats/renderRecords из src/js/28-render-goal-chart.js (→ _archive/28-stats-legacy.js).
+//  Легаси render() зовёт STATS.render(); обёртки renderChart()/renderMonthGoal()/setChartMode()
+//  остались с теми же именами. Ключ localStorage lt_chart_mode тот же.
+//  Хосты #stats-*-host (display:contents) — карточки остаются прямыми детьми вкладки,
+//  поэтому ключи V93 «chart-section:N» и маршрутизация подвкладок V994 не меняются.
+//  Монтируем при загрузке бандла: раньше это была статическая разметка, на неё
+//  рассчитывают V93/V994 при boot и V7.renderStatsExtras (insertBefore firstChild).
+//  Скрытую V93 карточку не пересчитываем (как раньше через _hid()).
+// ------------------------------------------------------------
+const statsApps = {};
+const STATS_DEFS = [['level', 'stats-level-host', Level], ['chart', 'stats-chart-host', Chart], ['goal', 'stats-goal-host', MonthGoal],
+  ['dow', 'stats-dow-host', Dow], ['rec', 'stats-rec-host', Records]];
+
+function mountStats() {
+  for (const [k, host, Cmp] of STATS_DEFS) {
+    const h = document.getElementById(host);
+    if (h && !statsApps[k]) { h.innerHTML = ''; statsApps[k] = mount(Cmp, { target: h }); }
+  }
+}
+
+function renderStats() {
+  mountStats();
+  St.loadChartMode();
+  const sk = St.computeStreak(); if (sk > 0) St.stats.lastStreak = sk;
+  St.stats.v++;
+  St.stats.chartV++;
+  St.stats.goalV++;
+  if (!legacy.cardHidden('contentStats', 'chart-section:3')) St.stats.dowV++;
+  if (!legacy.cardHidden('contentStats', 'chart-section:4')) St.stats.recV++;
+  flushSync();
+}
+
+window.STATS = {
+  render: renderStats,
+  mount: mountStats,
+  renderGoal() { mountStats(); St.stats.goalV++; flushSync(); },
+  renderChart() { mountStats(); St.loadChartMode(); St.stats.chartV++; flushSync(); },
+  setChartMode(d) { mountStats(); St.setChartMode(d); flushSync(); },
+  getChartMode: St.getChartMode,
+  calcBestStreak: St.calcBestStreak,
+  _unmount() { for (const k in statsApps) { unmount(statsApps[k]); delete statsApps[k]; } },
+};
+mountStats();
 
 // ------------------------------------------------------------
 //  LIFE — вкладка «Жизнь»: привычки (бывший src/js/41-v6-habits.js)

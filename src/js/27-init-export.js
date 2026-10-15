@@ -254,7 +254,7 @@ function exportDataJSON() {
     weeklyCat: uGet('lt_weekly_cat', {}),
     shopBoosts: uGet('lt_shop_boosts', {}),
     monthGoal: getMonthGoal(),
-    chartMode: chartMode
+    chartMode: STATS.getChartMode()
   };
   downloadFile(`life_tracker_backup_${todayStr()}.json`, JSON.stringify(dump, null, 2), 'application/json');
   showToast('💾 Резервная копия скачана', 'success');
