@@ -9,23 +9,10 @@ ber" id="editExpenses" placeholder="0" min="0" inputmode="numeric"></div>
   </div>
 </div>
 
-<!-- ============ MODAL: CATEGORY PICKER ============ -->
-<div class="modal-overlay" id="categoryPickerModal">
-  <div class="modal">
-    <h3>🎯 НАПРАВЛЕНИЕ ЗАДАНИЙ</h3>
-    <div class="cp-state" id="cpState"></div>
-    <div class="cp-steps">
-      <div class="cp-step"><b>1</b>Выбираешь направление</div>
-      <div class="cp-step"><b>2</b>Завтра 5 из 7 заданий — из него</div>
-      <div class="cp-step"><b>3</b>Ещё 2 — случайные, для разнообразия</div>
-    </div>
-    <div id="categoryPickerList" class="cp-grid"></div>
-    <div class="cp-note" id="cpNote"></div>
-    <div class="modal-buttons" style="margin-top:12px">
-      <button class="modal-btn secondary" onclick="closeCategoryPicker()">Закрыть</button>
-    </div>
-  </div>
-</div>
+<!-- ============ MODAL: CATEGORY PICKER — v9.20: src/svelte/rest/CategoryPicker.svelte (#categoryPickerModal) ============ -->
+<div id="cp-host" class="lt-host"></div>
+<!-- DIARY MODAL — v9.20: src/svelte/rest/DiaryModal.svelte (#diaryModal); раньше жила в 70-overlays-modals.html -->
+<div id="diary-host" class="lt-host"></div>
 
 <div class="sync-status ok mini" id="syncStatus">☁️ Облако</div>
 

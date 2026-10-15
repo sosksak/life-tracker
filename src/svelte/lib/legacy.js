@@ -46,6 +46,7 @@ export const legacy = {
   lq: {
     generateQuests: () => { try { return g().generateQuests() || []; } catch { return []; } },
     categories: () => g().LQ_CATEGORIES || {},
+    lifeQuests: () => g().LIFE_QUESTS || [],   // v9.20: пул заданий — счётчик в модалке направлений
     catTextColor: (k) => { try { return g().catTextColor(k); } catch { return 'var(--text)'; } },
     chosenCategory: () => { try { return g().getChosenCategory(); } catch { return null; } },
     chosenCategoryFor: (d) => { try { return g().getChosenCategoryFor(d); } catch { return null; } },

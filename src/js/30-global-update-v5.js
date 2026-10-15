@@ -122,20 +122,7 @@ function checkNewAchievements() {
   });
   _prevUnlocked = new Set(nowUnlocked);
 }
-function showAchUnlock(ach) {
-  haptic('success');
-  const ov = document.createElement('div');
-  ov.className = 'ach-unlock-overlay';
-  ov.innerHTML = `
-    <div class="ach-unlock-glow"></div>
-    <div class="ach-unlock-icon">${ach.icon}</div>
-    <div class="ach-unlock-title">🏆 ДОСТИЖЕНИЕ!</div>
-    <div class="ach-unlock-name">${ach.name}</div>
-  `;
-  ov.onclick = () => { ov.style.opacity='0'; setTimeout(()=>ov.remove(), 300); };
-  document.body.appendChild(ov);
-  setTimeout(() => { ov.style.opacity='0'; setTimeout(()=>ov.remove(), 300); }, 3000);
-}
+function showAchUnlock(ach) { if (window.REST) REST.showAchUnlock(ach); } // v9.20: Svelte (src/svelte/rest/AchUnlock.svelte)
 
 // --- Daily Summary Popup ---
 function showDailySummary(earned, workHours, rate) {
@@ -177,47 +164,11 @@ function renderStars(n, max = 5) {
   for (let i = 0; i < max; i++) s += '<span class="rs' + (i < n ? ' on' : '') + '"></span>';
   return s + '</span>';
 }
-let _diaryStar = 3;
-function setDiaryStar(n) {
-  _diaryStar = n;
-  const stars = document.getElementById('diaryStars');
-  if (stars) {
-    const spans = stars.querySelectorAll('span');
-    spans.forEach((s, i) => { s.classList.toggle('on', i < n); });
-  }
-}
-function openDiaryModal() {
-  _diaryStar = 3;
-  document.getElementById('diaryPlace').value = '';
-  document.getElementById('diaryDesc').value = '';
-  document.getElementById('diaryLesson').value = '';
-  setDiaryStar(3);
-  document.getElementById('diaryModal').classList.add('show');
-  document.body.classList.add('modal-open');
-}
-function closeDiaryModal() {
-  document.getElementById('diaryModal').classList.remove('show');
-  document.body.classList.remove('modal-open');
-}
-function saveDiaryEntry() {
-  const place = document.getElementById('diaryPlace').value.trim();
-  const desc = document.getElementById('diaryDesc').value.trim();
-  const lesson = document.getElementById('diaryLesson').value.trim();
-  if (!place && !desc) { showToast('❌ Напиши хотя бы место или описание', 'error'); return; }
-  const diary = getDiary();
-  diary.unshift({
-    id: Date.now(),
-    date: todayStr(),
-    place, desc, lesson,
-    rating: _diaryStar,
-    ts: Date.now()
-  });
-  saveDiary(diary);
-  closeDiaryModal();
-  renderDiary();
-  showToast('📓 Запись сохранена!', 'success');
-  haptic('success');
-}
+// v9.20: модалка дневника → Svelte (src/svelte/rest/DiaryModal.svelte). Обёртки — для старых вызовов.
+function setDiaryStar(n) { if (window.REST) REST.setDiaryStar(n); }
+function openDiaryModal() { if (window.REST) REST.openDiaryModal(); }
+function closeDiaryModal() { if (window.REST) REST.closeDiaryModal(); }
+function saveDiaryEntry() { if (window.REST) REST.saveDiaryEntry(); }
 // --- Fortune Wheel: see v7 block (window.openWheelModal / spinWheel) ---
 
 // --- Contextual phrases for timer ---

@@ -35,6 +35,11 @@ import Diary from './stats/Diary.svelte';
 import Achievements from './stats/Achievements.svelte';
 import History from './stats/History.svelte';
 import * as St from './stats/store.svelte.js';
+import MotivationTip from './rest/MotivationTip.svelte';
+import CategoryPicker from './rest/CategoryPicker.svelte';
+import DiaryModal from './rest/DiaryModal.svelte';
+import AchUnlock from './rest/AchUnlock.svelte';
+import * as Rs from './rest/store.svelte.js';
 import { legacy } from './lib/legacy.js';
 
 // ------------------------------------------------------------
@@ -533,3 +538,49 @@ window.MARKET = {
   fxAmount: Mk.fxSetAmount,
   _unmount() { if (marketApp) { unmount(marketApp); marketApp = null; } },
 };
+
+// ------------------------------------------------------------
+//  REST — остатки innerHTML-рендера (v9.20): «Мотивация дня» (#motivationTip, хост #tip-host —
+//  потом уносит в «Жизнь» V7.moveLifePanels(), прячет V93), модалка направлений (#categoryPickerModal,
+//  хост #cp-host), модалка дневника (#diaryModal, хост #diary-host — переехала из 70-overlays-modals.html,
+//  чтобы быть в DOM до бандла), попап «🏆 ДОСТИЖЕНИЕ!» (.ach-unlock-overlay — хост #ach-host (display:contents,
+//  data-lt-ui — V93 его не считает) добавляется в body при загрузке бандла; раньше оверлей был appendChild в body).
+//  Бывшие TIPS/renderMotivationTip/openCategoryPicker/closeCategoryPicker (22-life-quests.js) и
+//  showAchUnlock/setDiaryStar/openDiaryModal/closeDiaryModal/saveDiaryEntry (30-global-update-v5.js)
+//  → _archive/22-rest-legacy.js; легаси-обёртки с теми же именами остались и зовут REST.*.
+//  Кнопки направлений — inline onclick pickCategory/buyCategoryChoice (легаси, поздняя привязка).
+//  Монтируем при загрузке бандла: раньше это была статическая разметка (moveLifePanels, V93 при boot).
+// ------------------------------------------------------------
+let tipApp = null, cpApp = null, diaryApp = null, achApp = null;
+
+function mountRest() {
+  const th = document.getElementById('tip-host');
+  if (th && !tipApp) { th.innerHTML = ''; tipApp = mount(MotivationTip, { target: th }); }
+  const ch = document.getElementById('cp-host');
+  if (ch && !cpApp) { ch.innerHTML = ''; cpApp = mount(CategoryPicker, { target: ch }); }
+  const dh = document.getElementById('diary-host');
+  if (dh && !diaryApp) { dh.innerHTML = ''; diaryApp = mount(DiaryModal, { target: dh }); }
+  if (!achApp) {
+    let ah = document.getElementById('ach-host');
+    if (!ah) { ah = document.createElement('div'); ah.id = 'ach-host'; ah.className = 'lt-host'; ah.dataset.ltUi = '1'; document.body.appendChild(ah); }
+    achApp = mount(AchUnlock, { target: ah });
+  }
+}
+
+window.REST = {
+  mount: mountRest,
+  renderTip() { mountRest(); Rs.rest.tip = Rs.computeTip(); Rs.rest.tipV++; flushSync(); },
+  openCategoryPicker(f, m) { mountRest(); Rs.openCategoryPicker(f, m); flushSync(); },
+  closeCategoryPicker() { Rs.closeCategoryPicker(); flushSync(); },
+  setDiaryStar(n) { Rs.setDiaryStar(n); flushSync(); },
+  openDiaryModal() { mountRest(); Rs.openDiaryModal(); flushSync(); },
+  closeDiaryModal() { Rs.closeDiaryModal(); flushSync(); },
+  saveDiaryEntry() { Rs.saveDiaryEntry(); flushSync(); },
+  showAchUnlock(a) { mountRest(); Rs.showAchUnlock(a); flushSync(); },
+  TIPS: Rs.TIPS,
+  _unmount() {
+    for (const [k, a] of [['tip', tipApp], ['cp', cpApp], ['diary', diaryApp], ['ach', achApp]]) if (a) unmount(a);
+    tipApp = cpApp = diaryApp = achApp = null;
+  },
+};
+mountRest();

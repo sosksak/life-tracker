@@ -87,6 +87,7 @@ const LQ_CATEGORIES = {
 };
 
 window.LQ_CATEGORIES = LQ_CATEGORIES; // v9.17: нужен Svelte-слою (quests.svelte.js)
+window.LIFE_QUESTS = LIFE_QUESTS; // v9.20: счётчик «N заданий» в модалке направлений (rest/store.svelte.js)
 
 // Life XP levels
 const LQ_LEVELS = [
@@ -420,33 +421,8 @@ function showCategoryHelp() {
   else alert(html.replace(/<[^>]+>/g, ''));
 }
 
-function openCategoryPicker(isWeeklyFree = false, mode = '') {
-  const container = document.getElementById('categoryPickerList');
-  const paid = mode === 'paid';
-  const source = isWeeklyFree ? 'weekly' : 'bonus';
-  const tomorrow = getChosenCategoryFor(tomorrowStr());
-  const lifeXP = (typeof getLifeXP === 'function') ? (getLifeXP().cats || {}) : {};
-  container.innerHTML = Object.entries(LQ_CATEGORIES).map(([key, cat]) =>
-    `<button class="cat-pick-btn ${tomorrow === key ? 'is-selected' : ''}" onclick="${paid ? `buyCategoryChoice('${key}')` : `pickCategory('${key}', '${source}')`}" style="border-color:${cat.color}">
-      <div class="ico">${cat.icon}</div>
-      <div class="nm" style="color:${catTextColor(key)}">${cat.name}</div>
-      <div class="cnt">${LIFE_QUESTS.filter(q => q.cat === key).length} заданий</div>
-      <div class="xp" style="color:${catTextColor(key)}">${lifeXP[key] || 0} XP набрано</div>
-    </button>`
-  ).join('');
-  const st = document.getElementById('cpState');
-  if (st) {
-    if (isWeeklyFree) { st.className = 'cp-state free'; st.innerHTML = '🎁 <span>Бесплатный выбор недели — доступен</span>'; }
-    else if (paid) { st.className = 'cp-state paid'; st.innerHTML = '🪙 <span>Бесплатный выбор уже использован. Выбор сейчас — <b>150 XP</b> с баланса</span>'; }
-    else { st.className = 'cp-state bonus'; st.innerHTML = '🏅 <span>Выбор заработан задачей смены</span>'; }
-  }
-  const note = document.getElementById('cpNote');
-  if (note) note.textContent = tomorrow
-    ? `Сейчас на завтра выбрано: ${LQ_CATEGORIES[tomorrow].icon} ${LQ_CATEGORIES[tomorrow].name}. Нажми на другое, чтобы заменить.`
-    : 'Нажми на направление — оно применится к заданиям завтрашнего дня.';
-  document.getElementById('categoryPickerModal').classList.add('show');
-  document.body.classList.add('modal-open');
-}
+// v9.20: модалка направлений → Svelte (src/svelte/rest/CategoryPicker.svelte). Обёртки — для старых вызовов.
+function openCategoryPicker(isWeeklyFree = false, mode = '') { if (window.REST) REST.openCategoryPicker(isWeeklyFree, mode); }
 // Выбор за XP прямо из хаба (без похода в магазин)
 function buyCategoryChoice(key) {
   const PRICE = 150;
@@ -462,10 +438,7 @@ function buyCategoryChoice(key) {
   pickCategory(key, 'paid');
 }
 
-function closeCategoryPicker() {
-  document.getElementById('categoryPickerModal').classList.remove('show');
-  document.body.classList.remove('modal-open');
-}
+function closeCategoryPicker() { if (window.REST) REST.closeCategoryPicker(); }
 
 function pickCategory(cat, source = 'bonus') {
   const tomorrow = new Date();
@@ -572,30 +545,6 @@ function getResolvedLifeQuests() {
 // v9.17: список личных заданий и хаб направлений → Svelte (LifeQuests.svelte). Разметка 1:1, обработчики те же.
 function renderLifeQuests() { if (window.QUESTS) QUESTS.renderLife(); }
 
-// ====== MOTIVATION TIPS ======
-const TIPS = [
-  { text: 'Дисциплина — это делать то, что нужно, когда не хочется.', author: '📖 Принцип продуктивности' },
-  { text: 'Маленькие шаги каждый день дают большие результаты.', author: '📈 Закон прогресса' },
-  { text: 'Деньги любят тех, кто их уважает и считает.', author: '💰 Правило богатства' },
-  { text: 'Лучший момент начать — вчера. Второй лучший — сейчас.', author: '⏰ Мудрость' },
-  { text: 'Не сравнивай себя с другими. Сравнивай себя с собой вчерашним.', author: '🪞 Рост' },
-  { text: 'Каждая смена — это кирпич в фундаменте твоего будущего.', author: '🏗 Строитель жизни' },
-  { text: 'Усталость временна, результат — навсегда.', author: '💪 Философия успеха' },
-  { text: 'Пока другие откладывают — ты строишь своё будущее.', author: '🌙 Вечерняя продуктивность' },
-  { text: 'Тело — твой главный инструмент. Заботься о нём.', author: '❤️ Здоровье' },
-  { text: '100 смен — и ты уже другой человек.', author: '🔄 Трансформация' },
-  { text: 'Состояния создаются не везением, а ежедневной работой.', author: '📈 Закон накопления' },
-  { text: 'Перерыв — не слабость, а стратегия.', author: '♟ Тактика' },
-  { text: 'Твой rate сегодня — это твоя цена завтра.', author: '📊 Аналитика' },
-  { text: 'Обед с собой = +300₽ в день = +9000₽ в месяц!', author: '🧮 Математика экономии' },
-  { text: 'Главное — не останавливаться. Серия не должна прерваться.', author: '🔥 Принцип непрерывности' },
-];
-
-function renderMotivationTip() {
-  const today = new Date();
-  const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
-  const tip = TIPS[dayOfYear % TIPS.length];
-  document.getElementById('tipText').textContent = `«${tip.text}»`;
-  document.getElementById('tipAuthor').textContent = `— ${tip.author}`;
-}
+// ====== MOTIVATION TIPS — v9.20: TIPS и renderMotivationTip() → Svelte (src/svelte/rest/MotivationTip.svelte) ======
+function renderMotivationTip() { if (window.REST) REST.renderTip(); }
 
