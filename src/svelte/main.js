@@ -29,6 +29,11 @@ import Chart from './stats/Chart.svelte';
 import MonthGoal from './stats/MonthGoal.svelte';
 import Dow from './stats/Dow.svelte';
 import Records from './stats/Records.svelte';
+import WeekCompare from './stats/WeekCompare.svelte';
+import Heatmap from './stats/Heatmap.svelte';
+import Diary from './stats/Diary.svelte';
+import Achievements from './stats/Achievements.svelte';
+import History from './stats/History.svelte';
 import * as St from './stats/store.svelte.js';
 import { legacy } from './lib/legacy.js';
 
@@ -315,10 +320,18 @@ mountQuests();
 //  Монтируем при загрузке бандла: раньше это была статическая разметка, на неё
 //  рассчитывают V93/V994 при boot и V7.renderStatsExtras (insertBefore firstChild).
 //  Скрытую V93 карточку не пересчитываем (как раньше через _hid()).
+//  v9.19: + «📊 Неделя vs неделя» (#weekCompare), «📊 Карта активности» (#heatmapSection),
+//  «📓 Дневник общения» (#diarySection) — бывшие renderWeekCompare/renderHeatmap/renderDiary из
+//  30-global-update-v5.js (→ _archive/30-stats-legacy.js), и «🏅 ДОСТИЖЕНИЯ» (#achGrid) +
+//  «📋 История смен» (#shiftList) — хвост легаси render(). Первые три, как и раньше, считаются
+//  только когда вкладка «Стата» активна (STATS.renderHeavy из хука render в 31-efficiency-analytics.js);
+//  достижения и история — на каждый render(). Карта активности пересобирается только при смене
+//  набора смен (heatKey, бывший _heatmapLastKey; сбрасывает invalidateShiftCache()).
 // ------------------------------------------------------------
 const statsApps = {};
 const STATS_DEFS = [['level', 'stats-level-host', Level], ['chart', 'stats-chart-host', Chart], ['goal', 'stats-goal-host', MonthGoal],
-  ['dow', 'stats-dow-host', Dow], ['rec', 'stats-rec-host', Records]];
+  ['dow', 'stats-dow-host', Dow], ['rec', 'stats-rec-host', Records], ['wc', 'stats-wc-host', WeekCompare], ['heat', 'stats-heat-host', Heatmap],
+  ['diary', 'stats-diary-host', Diary], ['ach', 'stats-ach-host', Achievements], ['hist', 'stats-hist-host', History]];
 
 function mountStats() {
   for (const [k, host, Cmp] of STATS_DEFS) {
@@ -336,6 +349,21 @@ function renderStats() {
   St.stats.goalV++;
   if (!legacy.cardHidden('contentStats', 'chart-section:3')) St.stats.dowV++;
   if (!legacy.cardHidden('contentStats', 'chart-section:4')) St.stats.recV++;
+  St.stats.achV++;
+  St.stats.histV++;
+  flushSync();
+}
+
+// Тяжёлые блоки — только при активной «Стате» (вызывающий код решает, как раньше statsActive).
+function renderStatsHeavy() {
+  mountStats();
+  if (!legacy.cardHidden('contentStats', '#weekCompare')) St.stats.wcV++;
+  if (!legacy.cardHidden('contentStats', '#heatmapSection')) {
+    // как легаси: без смен — спрятать, сетку не трогать; иначе пересобрать только при новом ключе
+    if (!legacy.shifts().length) St.stats.heatShown = false;
+    else { St.stats.heatShown = true; const k = St.heatmapKey(); if (k !== St.stats.heatKey) { St.stats.heatKey = k; St.stats.heatHas = true; St.stats.heatV++; } }
+  }
+  if (!legacy.cardHidden('contentStats', '#diarySection')) St.stats.diaryV++;
   flushSync();
 }
 
@@ -347,6 +375,11 @@ window.STATS = {
   setChartMode(d) { mountStats(); St.setChartMode(d); flushSync(); },
   getChartMode: St.getChartMode,
   calcBestStreak: St.calcBestStreak,
+  renderHeavy: renderStatsHeavy,
+  renderWeekCompare() { mountStats(); St.stats.wcV++; flushSync(); },
+  renderHeatmap() { mountStats(); St.stats.heatKey = ''; renderStatsHeavy(); },
+  renderDiary() { mountStats(); St.stats.diaryV++; flushSync(); },
+  invalidateHeatmap() { St.stats.heatKey = ''; },
   _unmount() { for (const k in statsApps) { unmount(statsApps[k]); delete statsApps[k]; } },
 };
 mountStats();

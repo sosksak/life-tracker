@@ -64,7 +64,7 @@ async function editWalletBalance() {
   render();
   try { if (typeof renderStats === 'function') renderStats(); } catch (e) {}
 }
-function invalidateShiftCache() { _shiftCache.len = -1; _streakCache.key = ''; _heatmapLastKey = ''; }
+function invalidateShiftCache() { _shiftCache.len = -1; _streakCache.key = ''; try { STATS.invalidateHeatmap(); } catch (e) {} }
 
 // --- Debounced render to avoid rapid re-renders ---
 let _renderTimer = null;

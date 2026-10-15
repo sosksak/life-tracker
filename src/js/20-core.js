@@ -94,6 +94,8 @@ window.LT_STATE = {
   // v9.11: кошелёк «Работы» живёт в Svelte — ему нужны таблица уровней и формула очков
   LEVELS,
   calcGrindXP,
+  // v9.19: «Достижения» вкладки «Стата» живут в Svelte
+  ACHIEVEMENTS,
 };
 
 // ====== TAB SWITCHING ======

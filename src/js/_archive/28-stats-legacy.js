@@ -448,3 +448,52 @@ function renderChart() {
   `;
 }
 
+
+
+// ===== АРХИВ v9.19: хвост render() — Achievements (#achGrid) + History (#shiftList) =====
+// Теперь src/svelte/stats/Achievements.svelte, History.svelte + computeAchievements/computeHistory в store.svelte.js.
+
+  // Achievements
+  const achData = { shifts, totalEarned, streak };
+  document.getElementById('achGrid').innerHTML = ACHIEVEMENTS.map(a => {
+    const u = a.check(achData);
+    return `<div class="ach-item ${u?'unlocked':'locked'}"><div class="ach-icon">${a.icon}</div><div class="ach-name">${a.name}</div></div>`;
+  }).join('');
+
+  // History
+  const shiftList = document.getElementById('shiftList');
+  if (shifts.length === 0) {
+    shiftList.innerHTML = `<div class="empty-state"><div class="emoji">📊</div><p>Нет данных — добавьте первую смену</p></div>`;
+  } else {
+    shiftList.innerHTML = shifts.map(s => {
+      const cls = s.rate >= goal ? 'goal-hit' : (s.rate >= goal * 0.9 ? 'goal-close' : 'goal-miss');
+      const rateCls = s.rate >= goal ? 'good' : (s.rate >= goal * 0.9 ? 'ok' : 'bad');
+      const icon = s.rate >= goal ? '✅' : (s.rate >= goal * 0.9 ? '🔸' : '❌');
+      // FIX: Parse date without timezone issues
+      const dp = s.date.split('-');
+      const d = new Date(parseInt(dp[0]), parseInt(dp[1]) - 1, parseInt(dp[2]));
+      const dateStr = d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+      const noteHtml = s.displayNote ? `<div class="shift-note">${escapeHtml(s.displayNote)}</div>` : '';
+      // FIX: id кладём в кавычках — у локальных (ещё не синхронизированных) смен он строковый
+      // и без кавычек onclick падал с ошибкой.
+      const idArg = JSON.stringify(s.id);
+      const pendingBadge = s._pending ? `<span class="shift-pending" title="Ждёт загрузки в облако">📱</span>` : '';
+      // Перерывы: раньше считались и терялись, теперь видны в истории.
+      const breakHtml = (s.breakMs > 0)
+        ? `<div class="shift-breaks" title="${escapeHtml(s.breakSummary || '')}">☕ ${s.breakCount} · ${formatShortDuration(s.breakMs)} · на складе ${formatShortDuration(s.totalMs)}</div>`
+        : '';
+      const extraParts = [];
+      if (s.expenses > 0) extraParts.push(`💸 −${s.expenses.toLocaleString('ru-RU')} ₽ · чистыми ${s.net.toLocaleString('ru-RU')} ₽`);
+      if (s.units > 0) extraParts.push(`📦 ${s.units} · ${(s.hours > 0 ? Math.round(s.units / s.hours * 10) / 10 : 0)}/ч`);
+      const extraHtml = extraParts.length ? `<div class="shift-breaks">${extraParts.join(' · ')}</div>` : '';
+      return `<div class="shift-card ${cls} slide-up">
+        <div class="shift-actions dev-only">
+          <button class="shift-action-btn edit" onclick='openEditModal(${idArg})' title="Редактировать">✏️</button>
+          <button class="shift-action-btn delete" onclick='removeShift(${idArg})' title="Удалить">✕</button>
+        </div>
+        <div class="shift-left"><div class="shift-date">${dateStr} ${pendingBadge}</div><div class="shift-hours">${s.hours} ч</div>${breakHtml}${extraHtml}${noteHtml}</div>
+        <div class="shift-right"><div class="shift-earned">${s.earned.toLocaleString('ru-RU')} ₽</div><div class="shift-rate ${rateCls}">${icon} ${s.rate} ₽/час</div></div>
+      </div>`;
+    }).join('');
+  }
+

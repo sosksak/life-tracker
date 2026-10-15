@@ -27,6 +27,15 @@ export const stats = $state({
   chartMode: chartMode0,   // 7 | 14 | 30 (lt_chart_mode, читается при первом рендере — uKey зависит от профиля)
   chartModeLoaded: false,
   lastStreak: 0,   // легаси при серии 0 только прятал #streakBar, не трогая #streakCount
+  // v9.19: «Неделя vs неделя», «Карта активности», «Дневник общения», «Достижения», «История смен»
+  wcV: 0,
+  heatV: 0,
+  heatKey: '',     // бывший _heatmapLastKey: 90 ячеек не пересобираем, пока набор смен тот же
+  heatShown: false,
+  heatHas: false,  // сетка уже отрисована (ключ сбрасывает invalidateShiftCache, а DOM, как в легаси, остаётся)
+  diaryV: 0,
+  achV: 0,
+  histV: 0,
 });
 
 export function loadChartMode() {
@@ -233,4 +242,103 @@ export function computeRecords() {
     bestUnits: bestUnits ? { v: String(bestUnits.units), d: fmtD(bestUnits.date) } : null,
     totalExp: totalExp ? { v: `${fmt(totalExp)} ₽`, net: `чистыми ${fmt(legacy.shiftTotals().totalEarned - totalExp)} ₽` } : null,
   };
+}
+
+// ---------- 📊 ТЕКУЩАЯ НЕДЕЛЯ vs ПРЕДЫДУЩАЯ (бывший renderWeekCompare, 30-global-update-v5.js) ----------
+let _wcLast = null; // легаси при < 2 смен только прятал блок, не очищая сетку — отдаём прошлые строки
+export function wcLastRows() { return _wcLast; }
+export function computeWeekCompare() {
+  const shifts = legacy.shifts();
+  if (shifts.length < 2) return null;
+  const now = new Date();
+  const monday = new Date(now); monday.setDate(now.getDate() - ((now.getDay() + 6) % 7)); monday.setHours(0, 0, 0, 0);
+  const prevMonday = new Date(monday); prevMonday.setDate(monday.getDate() - 7);
+  function weekData(from, to) {
+    const ws = shifts.filter(s => { const d = pd(s.date); return d >= from && d < to; });
+    const hours = ws.reduce((s, x) => s + x.hours, 0), earned = ws.reduce((s, x) => s + x.earned, 0);
+    return { shifts: ws.length, earned, hours: Math.round(hours * 10) / 10, rate: hours > 0 ? Math.round(earned / hours) : 0 };
+  }
+  const curr = weekData(monday, new Date(monday.getTime() + 7 * 86400000));
+  const prev = weekData(prevMonday, monday);
+  const delta = (c, p, suffix = '') => {
+    const diff = c - p;
+    if (diff === 0) return { cls: 'same', txt: '—' };
+    return { cls: diff > 0 ? 'up' : 'down', txt: (diff > 0 ? '+' : '') + (diff % 1 !== 0 ? diff.toFixed(1) : diff) + suffix };
+  };
+  _wcLast = [
+    { lbl: 'Смен', val: String(curr.shifts), prev: String(prev.shifts), d: delta(curr.shifts, prev.shifts) },
+    { lbl: 'Заработок', val: fmt(curr.earned) + ' ₽', prev: fmt(prev.earned), d: delta(curr.earned, prev.earned) },
+    { lbl: 'Часов', val: String(curr.hours), prev: String(prev.hours), d: delta(curr.hours, prev.hours) },
+    { lbl: 'Rate', val: curr.rate + ' ₽/ч', prev: String(prev.rate), d: delta(curr.rate, prev.rate) },
+  ];
+  return _wcLast;
+}
+
+// ---------- 📊 КАРТА АКТИВНОСТИ (бывший renderHeatmap) ----------
+export function heatmapKey() { const s = legacy.shifts(); return s.length + ':' + (s[0]?.id || '') + ':' + (s[s.length - 1]?.id || ''); }
+export function computeHeatmap() {
+  const shifts = legacy.shifts();
+  const now = new Date(); now.setHours(0, 0, 0, 0);
+  const start = new Date(now); start.setDate(start.getDate() - 89);
+  while (start.getDay() !== 1) start.setDate(start.getDate() - 1);
+  const earnMap = {};
+  shifts.forEach(s => { earnMap[s.date] = (earnMap[s.date] || 0) + s.earned; });
+  const maxEarn = Math.max(...Object.values(earnMap), 1);
+  const cells = [];
+  const cur = new Date(start);
+  while (cur <= now) {
+    const key = legacy.dateStr(cur);
+    const earned = earnMap[key] || 0;
+    const intensity = earned > 0 ? 0.2 + (earned / maxEarn) * 0.8 : 0;
+    cells.push({ color: earned > 0 ? `rgba(56, 161, 105, ${intensity})` : '#F0F2F5', title: earned > 0 ? `${key}: ${fmt(earned)} ₽` : key });
+    cur.setDate(cur.getDate() + 1);
+  }
+  return { days: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'], cells };
+}
+
+// ---------- 📓 ДНЕВНИК ОБЩЕНИЯ (бывший renderDiary; getDiary/saveDiary/модалка остались в легаси) ----------
+export function computeDiary() {
+  const diary = legacy.get('social_diary', []) || [];
+  const total = diary.length;
+  const thisWeek = diary.filter(d => {
+    const now = new Date(); const mon = new Date(now); mon.setDate(now.getDate() - ((now.getDay() + 6) % 7)); mon.setHours(0, 0, 0, 0);
+    return d.ts >= mon.getTime();
+  }).length;
+  const avgRating = total > 0 ? (diary.reduce((s, d) => s + d.rating, 0) / total).toFixed(1) : '—';
+  const list = diary.slice(0, 10).map(d => ({
+    place: d.place || '—', date: fmtD(d.date), desc: d.desc || '', lesson: d.lesson || '',
+    stars: Math.max(0, Math.min(5, Math.round(d.rating || 0))),
+  }));
+  return { total: String(total), thisWeek: String(thisWeek), avgRating, list };
+}
+
+// ---------- 🏅 ДОСТИЖЕНИЯ + 📋 ИСТОРИЯ СМЕН (бывший хвост render(), 28-render-goal-chart.js) ----------
+export function computeAchievements() {
+  const shifts = legacy.shifts();
+  const list = legacy.achievements();
+  if (!list.length) return [];
+  const achData = { shifts, totalEarned: legacy.shiftTotals().totalEarned, streak: computeStreak() };
+  return list.map(a => ({ icon: a.icon, name: a.name, unlocked: !!a.check(achData) }));
+}
+export function computeHistory() {
+  const shifts = legacy.shifts();
+  const goal = legacy.streakGoal();
+  return shifts.map(s => {
+    const hit = s.rate >= goal, close = s.rate >= goal * 0.9;
+    const extraParts = [];
+    if (s.expenses > 0) extraParts.push(`💸 −${fmt(s.expenses)} ₽ · чистыми ${fmt(s.net)} ₽`);
+    if (s.units > 0) extraParts.push(`📦 ${s.units} · ${(s.hours > 0 ? Math.round(s.units / s.hours * 10) / 10 : 0)}/ч`);
+    return {
+      cls: hit ? 'goal-hit' : (close ? 'goal-close' : 'goal-miss'),
+      rateCls: hit ? 'good' : (close ? 'ok' : 'bad'),
+      icon: hit ? '✅' : (close ? '🔸' : '❌'),
+      date: fmtD(s.date), hours: s.hours, earned: fmt(s.earned), rate: s.rate,
+      note: s.displayNote || '',
+      // id в JSON: у локальных (ещё не синхронизированных) смен он строковый — в onclick нужны кавычки
+      edit: `openEditModal(${JSON.stringify(s.id)})`, del: `removeShift(${JSON.stringify(s.id)})`,
+      pending: !!s._pending,
+      brk: s.breakMs > 0 ? { title: s.breakSummary || '', txt: `☕ ${s.breakCount} · ${legacy.fmtShort(s.breakMs)} · на складе ${legacy.fmtShort(s.totalMs)}` } : null,
+      extra: extraParts.join(' · '),
+    };
+  });
 }

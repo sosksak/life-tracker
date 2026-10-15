@@ -25,37 +25,13 @@ AB: SHOP ============ -->
 <div id="stats-dow-host" class="lt-host"></div>
 <div id="stats-rec-host" class="lt-host"></div>
 
-<!-- WEEK COMPARISON -->
-<div class="week-compare" id="weekCompare" style="display:none">
-  <div class="week-compare-title">📊 Текущая неделя vs предыдущая</div>
-  <div class="chart-card">
-    <div class="week-compare-grid" id="weekCompareGrid"></div>
-  </div>
-</div>
+<!-- WEEK COMPARISON + HEATMAP + SOCIAL DIARY + ACHIEVEMENTS + HISTORY — v9.19: разметка переехала в
+     src/svelte/stats/WeekCompare.svelte, Heatmap.svelte, Diary.svelte, Achievements.svelte, History.svelte.
+     Svelte монтирует в эти хосты те же #weekCompare/#heatmapSection/#diarySection/.achievements/.history
+     (CSS, V93, V994, кнопки экспорта и строка версии #versionTag/#cloudSyncTag — внутри History.svelte). -->
+<div id="stats-wc-host" class="lt-host"></div>
+<div id="stats-heat-host" class="lt-host"></div>
+<div id="stats-diary-host" class="lt-host"></div>
+<div id="stats-ach-host" class="lt-host"></div>
+<div id="stats-hist-host" class="lt-host"></div>
 
-<!-- HEATMAP -->
-<div class="heatmap-section" id="heatmapSection" style="display:none">
-  <div class="heatmap-title">📊 Карта активности (90 дней)</div>
-  <div class="chart-card">
-    <div class="heatmap-grid" id="heatmapGrid"></div>
-  </div>
-</div>
-
-<!-- SOCIAL DIARY -->
-<div class="diary-section" id="diarySection">
-  <div class="diary-title">📓 Дневник общения</div>
-  <div class="diary-stats-grid" id="diaryStatsGrid"></div>
-  <div id="diaryList"></div>
-  <button class="diary-add-btn" onclick="openDiaryModal()">+ Новая запись</button>
-</div>
-
-<div class="achievements">
-  <h3>🏅 ДОСТИЖЕНИЯ</h3>
-  <div class="ach-grid" id="achGrid"></div>
-</div>
-
-<div class="history">
-  <h3>📋 История смен</h3>
-  <div id="shiftList"></div>
-  <div class="data-tools">
-    <button class="data-tool-btn" onclick="exportDataCSV()">📤 Э
