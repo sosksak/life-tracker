@@ -96,6 +96,8 @@ window.LT_STATE = {
   calcGrindXP,
   // v9.19: «Достижения» вкладки «Стата» живут в Svelte
   ACHIEVEMENTS,
+  // v9.21: магазин живёт в Svelte (src/svelte/shop/)
+  SHOP_ITEMS,
 };
 
 // ====== TAB SWITCHING ======

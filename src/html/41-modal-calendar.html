@@ -7,38 +7,6 @@ d="inputUnits" placeholder="0" min="0" inputmode="numeric"></div>
   </div>
 </div>
 
-<!-- ============ MODAL: CALENDAR ============ -->
-<div class="modal-overlay" id="calendarModal">
-  <div class="modal" style="max-width:480px;max-height:90vh;overflow-y:auto">
-  <div class="cal-header">
-    <button class="cal-nav-btn" onclick="calChangeMonth(-1)">◀</button>
-    <div>
-      <h3 style="text-align:center">📅 РАСПИСАНИЕ</h3>
-      <div class="cal-month-title" id="calMonthTitle"></div>
-    </div>
-    <button class="cal-nav-btn" onclick="calChangeMonth(1)">▶</button>
-  </div>
+<!-- ============ MODAL: CALENDAR — v9.21: src/svelte/calendar/Calendar.svelte (#calendarModal); хвост модалки раньше был размазан по 50-tab-more.html и 51-tab-shop.html ============ -->
+<div id="cal-host" class="lt-host"></div>
 
-  <div class="cal-weekdays">
-    <div class="cal-weekday">ПН</div>
-    <div class="cal-weekday">ВТ</div>
-    <div class="cal-weekday">СР</div>
-    <div class="cal-weekday">ЧТ</div>
-    <div class="cal-weekday">ПТ</div>
-    <div class="cal-weekday">СБ</div>
-    <div class="cal-weekday">ВС</div>
-  </div>
-
-  <div class="cal-grid" id="calGrid"></div>
-
-  <div class="cal-legend">
-    <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--green)"></div> Отработано</div>
-    <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--orange)"></div> Запланировано</div>
-    <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--purple)"></div> Выходной</div>
-    <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--gold)"></div> Сегодня</div>
-  </div>
-
-  <div id="calSelectedInfo" class="cal-selected-info" style="display:none"></div>
-
-  <div class="cal-actions">
-    <button class="cal-action-btn dayoff" onclick="calMarkSelected('dayoff')">🌴 Выходной</button>

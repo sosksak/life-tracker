@@ -112,7 +112,7 @@ renderActiveShift = function() {
     }
     updateLiveRate();
   } else {
-    document.getElementById('liveRateDisplay').style.display = 'none';
+    updateLiveRate(); // v9.21: без смены стор LIVE прячет #liveRateDisplay (раньше — style.display='none' напрямую)
   }
 };
 

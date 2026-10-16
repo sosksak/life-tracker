@@ -9,6 +9,7 @@
   // Поэтому эти узлы остаются «чужими»: Svelte задаёт только классы, видимость
   // и список перерывов — ровно то, что раньше делал renderActiveShift().
   import { work, shiftView } from './store.svelte.js';
+  import { live } from './live.svelte.js';
 
   const W = () => window;
   const s = $derived(shiftView());
@@ -35,10 +36,13 @@
     <div class="timer-sub" id="timerSub">Нажмите «Начать смену»</div>
   </div>
 
-  <!-- содержимое пишет легаси updateLiveRate() -->
-  <div class="live-rate-display" id="liveRateDisplay" style="display:none">
-    <div class="live-rate-amount earning" id="liveRateAmount">~0 ₽/час</div>
-    <div class="live-rate-label" id="liveRateLabel">текущая производительность</div>
+  <!-- v9.21: прогноз смены — стор live (бывший updateLiveRate, тикает раз в секунду вместе с таймером).
+       Узлы не пересобираются: Svelte меняет только текст/класс, и только когда значение изменилось,
+       поэтому мутаций во время смены не больше, чем при прежнем textContent. Эмодзи в подписи
+       под {#key} — иначе движок иконок подменит узел на <svg>, а обновлять его на месте нельзя. -->
+  <div class="live-rate-display" id="liveRateDisplay" style:display={live.show ? 'block' : 'none'}>
+    <div class="live-rate-amount {live.cls}" id="liveRateAmount">{live.amount}</div>
+    {#key live.label}<div class="live-rate-label" id="liveRateLabel">{live.label}{#if live.loss}<span class="loss">{live.loss}</span>{/if}</div>{/key}
   </div>
 
   <div class="shift-controls">

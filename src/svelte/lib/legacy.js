@@ -34,6 +34,10 @@ export const legacy = {
   levels: () => { try { return g().LT_STATE.LEVELS || []; } catch { return []; } },
   achievements: () => { try { return g().LT_STATE.ACHIEVEMENTS || []; } catch { return []; } },
   shopOwned: (id) => { try { return !!g().getShopOwned(id); } catch { return false; } },
+  // v9.21: магазин (20-core.js SHOP_ITEMS через LT_STATE, покупки — 23-quests-shop.js, тема — uGetRaw)
+  shopItems: () => { try { return g().LT_STATE.SHOP_ITEMS || []; } catch { return []; } },
+  shopPurchases: () => { try { return g().getShopPurchases() || {}; } catch { return {}; } },
+  getRaw: (k) => (typeof g().uGetRaw === 'function' ? g().uGetRaw(k) : null),
   fmtShort: (ms) => { try { return g().formatShortDuration(ms); } catch { return ''; } },
   // существительное единиц работы в род. мн.: заказов / рейсов / задач / сделок (50-v7.js)
   unitWord: () => { try { return g().V7.wtUnit()[2]; } catch { return 'заказов'; } },

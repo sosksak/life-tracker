@@ -40,6 +40,12 @@ import CategoryPicker from './rest/CategoryPicker.svelte';
 import DiaryModal from './rest/DiaryModal.svelte';
 import AchUnlock from './rest/AchUnlock.svelte';
 import * as Rs from './rest/store.svelte.js';
+import Shop from './shop/Shop.svelte';
+import * as Sh from './shop/store.svelte.js';
+import Calendar from './calendar/Calendar.svelte';
+import * as Ca from './calendar/store.svelte.js';
+import Summary from './work/Summary.svelte';
+import * as Lv from './work/live.svelte.js';
 import { legacy } from './lib/legacy.js';
 
 // ------------------------------------------------------------
@@ -388,6 +394,80 @@ window.STATS = {
   _unmount() { for (const k in statsApps) { unmount(statsApps[k]); delete statsApps[k]; } },
 };
 mountStats();
+
+// ------------------------------------------------------------
+//  SHOP — магазин XP (#contentShop → .shop-section, #shopXpBalance, #shopGrid).
+//  Бывший renderShop() из src/js/24-theme.js (→ _archive/24-shop-legacy.js); легаси-обёртка
+//  renderShop() осталась и зовёт SHOP.render() (её зовут switchTab('shop'), shopBuyItem,
+//  inline onclick кнопок темы). Данные (SHOP_ITEMS, покупки, Life XP, lt_active_theme) — в легаси.
+//  Хост #shop-host (display:contents) — .shop-section остаётся прямым ребёнком вкладки
+//  (V95 вставляет туда кнопку «‹ Меню Ещё» первым ребёнком — как раньше).
+//  Монтируем при загрузке бандла: разметка была статической.
+// ------------------------------------------------------------
+let shopApp = null;
+function mountShop() {
+  const h = document.getElementById('shop-host');
+  if (h && !shopApp) { h.innerHTML = ''; shopApp = mount(Shop, { target: h }); }
+}
+window.SHOP = {
+  render() { mountShop(); Sh.shop.v++; flushSync(); },
+  mount: mountShop,
+  _unmount() { if (shopApp) { unmount(shopApp); shopApp = null; } },
+};
+mountShop();
+
+// ------------------------------------------------------------
+//  CAL — модалка «📅 РАСПИСАНИЕ» (#calendarModal). Бывшие calInit/calChangeMonth/calSelectDay/
+//  renderCalendar из src/js/26-shift-modal-calendar.js (→ _archive/26-calendar-legacy.js); легаси-
+//  обёртки с теми же именами остались (их зовут inline onclick, openCalendarModal, init(), render()).
+//  Состояние месяца/выбранного дня — в сторе; план lt_calendar_plan и calMarkSelected — в легаси.
+//  Хост #cal-host (display:contents) в src/html/41-modal-calendar.html — модалка в DOM до бандла,
+//  как раньше (на неё рассчитывает локализатор v7: LOCALIZE_ROOTS → calendarModal).
+// ------------------------------------------------------------
+let calApp = null;
+function mountCal() {
+  const h = document.getElementById('cal-host');
+  if (h && !calApp) { h.innerHTML = ''; calApp = mount(Calendar, { target: h }); }
+}
+window.CAL = {
+  render() { mountCal(); Ca.cal.v++; flushSync(); },
+  init() { mountCal(); Ca.init(); flushSync(); },
+  changeMonth(d) { mountCal(); Ca.changeMonth(d); flushSync(); },
+  selectDay(s) { mountCal(); Ca.selectDay(s); flushSync(); },
+  selectedDate: Ca.selectedDate,
+  MONTH_NAMES_RU: Ca.MONTH_NAMES_RU,
+  mount: mountCal,
+  _unmount() { if (calApp) { unmount(calApp); calApp = null; } },
+};
+mountCal();
+
+// ------------------------------------------------------------
+//  LIVE — живые метрики смены: блок прогноза #liveRateDisplay внутри ActiveShift.svelte
+//  (бывший updateLiveRate из 30-global-update-v5.js, тикает раз в секунду из updateTimer)
+//  и оверлей «🏁 ИТОГИ СМЕНЫ» (#summaryOverlay, бывший showDailySummary + разметка из
+//  70-overlays-modals.html). Легаси-обёртки updateLiveRate()/showDailySummary() остались.
+//  Хост #summary-host (display:contents) в 63-modal-category-picker.html — до бандла.
+//  Без flushSync в updateLiveRate: раз в секунду достаточно обычного батча Svelte
+//  (микротаск) — так мутаций во время смены не больше, чем раньше.
+// ------------------------------------------------------------
+let summaryApp = null;
+function mountSummary() {
+  const h = document.getElementById('summary-host');
+  if (h && !summaryApp) { h.innerHTML = ''; summaryApp = mount(Summary, { target: h }); }
+}
+window.LIVE = {
+  updateLiveRate: Lv.updateLiveRate,
+  showSummary(earned, workHours, rate) {
+    mountSummary();
+    Lv.live.summary = Lv.computeSummary(earned, workHours, rate);
+    flushSync();
+    const ov = document.getElementById('summaryOverlay'); if (ov) ov.style.display = 'flex';
+    legacy.haptic('success');
+  },
+  mount: mountSummary,
+  _unmount() { if (summaryApp) { unmount(summaryApp); summaryApp = null; } },
+};
+mountSummary();
 
 // ------------------------------------------------------------
 //  LIFE — вкладка «Жизнь»: привычки (бывший src/js/41-v6-habits.js)
