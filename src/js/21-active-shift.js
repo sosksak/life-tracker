@@ -86,10 +86,7 @@ function endShift() {
   };
 
   // Show end-shift modal
-  document.getElementById('endShiftInfo').innerHTML =
-    `⏱ Чистая работа: <b>${workHours} ч</b><br>` +
-    `🕐 Всего на смене: ${formatShortDuration(totalMs)}<br>` +
-    (breakMs > 0 ? `☕ Перерывов: ${activeShift.breaks.length} (${formatShortDuration(breakMs)})` : '☕ Без перерывов');
+  V8S.setEndShiftInfo(pendingEndShift); // v9.22: #endShiftInfo — Svelte (src/svelte/v8/EndShiftInfo.svelte)
   document.getElementById('endShiftEarned').value = '';
   document.getElementById('endShiftUnits').value = pendingEndShift.units ? String(pendingEndShift.units) : '';
   document.getElementById('endShiftExpenses').value = '';

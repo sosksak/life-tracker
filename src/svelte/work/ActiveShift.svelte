@@ -3,13 +3,14 @@
   // логика переключений — из renderActiveShift() в 21-active-shift.js.
   //
   // DOM НЕ пересобирается (никаких {#key}): в эту панель дорисовывают свои узлы
-  //   • 60-v8.js   → #v8Assist после #liveRateDisplay
+  //   • v9.22: #v8Assist после #liveRateDisplay — теперь компонент <Assist/> (src/svelte/v8), якорь статичен
   //   • 31-eff.js  → #btnFocus внутрь .shift-controls
   //   • 21/30-*.js → текст #timerDisplay / #timerSub / #liveRateAmount каждую секунду
   // Поэтому эти узлы остаются «чужими»: Svelte задаёт только классы, видимость
   // и список перерывов — ровно то, что раньше делал renderActiveShift().
   import { work, shiftView } from './store.svelte.js';
   import { live } from './live.svelte.js';
+  import Assist from '../v8/Assist.svelte';
 
   const W = () => window;
   const s = $derived(shiftView());
@@ -44,6 +45,7 @@
     <div class="live-rate-amount {live.cls}" id="liveRateAmount">{live.amount}</div>
     {#key live.label}<div class="live-rate-label" id="liveRateLabel">{live.label}{#if live.loss}<span class="loss">{live.loss}</span>{/if}</div>{/key}
   </div>
+  <Assist />
 
   <div class="shift-controls">
     <button class="shift-ctrl-btn btn-start" id="btnStart" onclick={() => W().startShift()} style:display={s.active ? 'none' : null}>{L('▶ НАЧАТЬ СМЕНУ')}</button>

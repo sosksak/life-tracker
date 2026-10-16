@@ -46,6 +46,11 @@ import Calendar from './calendar/Calendar.svelte';
 import * as Ca from './calendar/store.svelte.js';
 import Summary from './work/Summary.svelte';
 import * as Lv from './work/live.svelte.js';
+import Goals from './v8/Goals.svelte';
+import HeadRate from './v8/HeadRate.svelte';
+import Reports from './v8/Reports.svelte';
+import EndShiftInfo from './v8/EndShiftInfo.svelte';
+import * as V8s from './v8/store.svelte.js';
 import { legacy } from './lib/legacy.js';
 
 // ------------------------------------------------------------
@@ -664,3 +669,82 @@ window.REST = {
   },
 };
 mountRest();
+
+
+// ------------------------------------------------------------
+//  V8S — рендер модуля V8 (v9.22): «🎯 ЦЕЛИ» (#v8Goals на Главной), ассистент смены (#v8Assist —
+//  компонент <Assist/> внутри ActiveShift.svelte после #liveRateDisplay) + чип темпа #v8HeadRate в шапке,
+//  «📑 Отчёт за месяц» (#v8Reports в «Стате»), инфо-блок модалки завершения #endShiftInfo.
+//  Бывшие goalsHtml/renderGoals/assistHtml/renderAssist/headRate/reportsHtml/renderReports из
+//  src/js/60-v8.js (→ _archive/60-v8-legacy.js); обёртки с теми же именами остались в V8 и зовут V8S.*.
+//  Данные/хуки/цели/налог/экспорт — по-прежнему в легаси V8 (стор читает через window.V8).
+//  Корни #v8Goals / #v8Reports создаёт main.js ровно как раньше легаси (тот же элемент, класс, место:
+//  после #v7DashExtra/.dash-greeting и после #v7StatsExtra) и монтирует компонент ВНУТРЬ них — без
+//  хоста-обёртки, чтобы v9Dash/v92-виджеты, которые вставляются «после #v8Goals», и V93 видели ту же
+//  структуру. Главная пересобирается под {#key} → #v8Goals выпадает из DOM; при следующем renderGoals()
+//  тот же узел (с живым компонентом) возвращается на место — ссылку держим в переменной.
+//  Чип: хост #v8hr-host в #headerIdent создаётся, когда есть смена, и удаляется, когда нет (как раньше
+//  chip.remove()); applyRoleToUI() пишет innerHTML шапки → хост пропадает, на следующем тике — заново.
+//  #esi-host — в src/html/61-modal-end-shift.html (модалка в DOM до бандла, LOCALIZE_ROOTS).
+//  Без flushSync в renderAssistTick (раз в 5 с из updateTimer) — обычный батч Svelte, как updateLiveRate.
+// ------------------------------------------------------------
+let goalsApp = null, goalsBox = null, headApp = null, repApp = null, esiApp = null, _lastRateShown = -1;
+
+function renderV8Goals() {
+  const root = document.getElementById('dashboardContent'); if (!root) return;
+  let box = goalsBox;
+  if (!box) { box = document.createElement('div'); box.id = 'v8Goals'; box.className = 'v8-goals'; goalsBox = box; }
+  if (!box.isConnected) { const after = document.getElementById('v7DashExtra') || root.querySelector('.dash-greeting'); if (after) after.insertAdjacentElement('afterend', box); else root.appendChild(box); }
+  if (!goalsApp) goalsApp = mount(Goals, { target: box });
+  V8s.v8.goals = V8s.computeGoals();
+  flushSync();
+}
+function renderV8Assist(sync) {
+  const a = V8s.computeAssist();
+  V8s.v8.assist = a;
+  V8s.v8.head = a ? a.head : null;
+  const ident = document.getElementById('headerIdent');
+  if (ident) {
+    let hh = document.getElementById('v8hr-host');
+    if (!a) { if (headApp) { unmount(headApp); headApp = null; } if (hh) hh.remove(); }
+    else {
+      if (!hh || !hh.isConnected) { if (headApp) { unmount(headApp); headApp = null; } hh = document.createElement('span'); hh.id = 'v8hr-host'; hh.className = 'lt-host'; hh.dataset.ltUi = '1'; ident.appendChild(hh); }
+      if (!headApp) headApp = mount(HeadRate, { target: hh });
+    }
+  }
+  if (sync) flushSync();
+  if (!a) { _lastRateShown = -1; return; }
+  // как раньше: при смене темпа (шаг 10 ₽/ч) — пульс числа
+  const r = Math.round(a.rateRaw / 10);
+  // (раньше класс v8-pop пропадал сам при следующем innerHTML; узел теперь живёт — снимаем после анимации .35s)
+  if (_lastRateShown !== -1 && r !== _lastRateShown) { flushSync(); try { const el = document.querySelector('#v8Assist .v8-assist-rate'); window.V8.pop(el); setTimeout(() => el && el.classList.remove('v8-pop'), 400); } catch (e) {} }
+  _lastRateShown = r;
+}
+function renderV8Reports() {
+  const root = document.getElementById('contentStats'); if (!root) return;
+  let box = document.getElementById('v8Reports');
+  if (!box) { box = document.createElement('div'); box.id = 'v8Reports'; box.className = 'v7-sec'; box.style.marginTop = 'var(--sp-3)'; const v7 = document.getElementById('v7StatsExtra'); if (v7) v7.insertAdjacentElement('afterend', box); else root.insertBefore(box, root.firstChild); }
+  if (!repApp) repApp = mount(Reports, { target: box });
+  V8s.v8.rep = V8s.computeReports();
+  flushSync();
+}
+function mountEsi() {
+  const h = document.getElementById('esi-host');
+  if (h && !esiApp) { h.innerHTML = ''; esiApp = mount(EndShiftInfo, { target: h }); }
+}
+
+window.V8S = {
+  renderGoals: renderV8Goals,
+  renderAssist: () => renderV8Assist(true),
+  renderAssistTick: () => renderV8Assist(false),
+  renderReports: renderV8Reports,
+  setRepMonth(k) { V8s.v8.repMonth = k; renderV8Reports(); },
+  curMonth: V8s.curMonth,
+  setEndShiftInfo(p) { mountEsi(); V8s.setEndShiftInfo(p); flushSync(); },
+  mount: mountEsi,
+  _unmount() {
+    for (const a of [goalsApp, headApp, repApp, esiApp]) if (a) unmount(a);
+    goalsApp = headApp = repApp = esiApp = null; goalsBox = null;
+  },
+};
+mountEsi();

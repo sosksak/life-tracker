@@ -140,34 +140,10 @@ const V8 = (() => {
     showToast('🎯 Цели сохранены', 'success');
     renderGoals(); renderAssist(); try { render(); } catch (e) {}
   }
-  function goalsHtml() {
-    const g = getGoals();
-    const today = agg([todayStr()]), week = agg(weekDates());
-    const est = liveEst();
-    const liveE = est ? est.earned : 0, liveH = est ? est.hours : 0;
-    if (!g.day && !g.week && !g.rate) {
-      // v9.9.3: пустое состояние — одна строка + крупная кнопка, а не абзац с «Изменить» в углу
-      return `<div class="v8-goals-empty">Цель дня, недели и ₽/ч — прогресс на Главной и подсказки ассистента во время смены.<button class="w92-btn g wide" style="margin-top:10px" onclick="V8.editGoals()">🎯 Задать цели</button></div>`;
-    }
-    const rows = [];
-    const row = (ico, lbl, val, pct, sub, ok) => `<div class="v8-goal ${ok ? 'ok' : ''}"><span class="i">${ico}</span><span class="l">${lbl}</span><span class="v">${val}</span><div class="bar"><i style="width:${Math.min(100, pct)}%"></i></div><span class="s">${sub}</span></div>`;
-    const rateNow = (today.hours + liveH) > 0 ? (today.earned + liveE) / (today.hours + liveH) : 0;
-    const need = (goal, have) => {
-      const left = goal - have; if (left <= 0) return 'цель закрыта ✓';
-      const r = rateNow || recentRate(); const h = r > 0 ? left / r : 0;
-      return `осталось ${fmt(left)} ₽${h > 0 ? ' ≈ ' + (h < 1 ? Math.round(h * 60) + ' мин' : h.toFixed(1) + ' ч') : ''}${est ? ' (с учётом текущей смены)' : ''}`;
-    };
-    if (g.day) { const have = today.earned + liveE; rows.push(row('📅', 'Сегодня', `${fmt(have)} <small>/ ${fmt(g.day)} ₽</small>`, have / g.day * 100, need(g.day, have), have >= g.day)); }
-    if (g.week) { const have = week.earned + liveE; const left = 7 - weekDates().length; rows.push(row('🗓', 'Неделя', `${fmt(have)} <small>/ ${fmt(g.week)} ₽</small>`, have / g.week * 100, have >= g.week ? 'цель закрыта ✓' : `осталось ${fmt(g.week - have)} ₽ · ${left ? 'ещё ' + left + ' ' + plural(left, 'день', 'дня', 'дней') + ' · ' + fmt((g.week - have) / left) + ' ₽/день' : 'последний день недели'}`, have >= g.week)); }
-    const tr = targetRate();
-    if (tr) { const have = rateNow; rows.push(row('⚡', '₽/ч сегодня', have ? `${fmt(have)} <small>/ ${fmt(tr)}</small>` : `— <small>/ ${fmt(tr)}</small>`, have / tr * 100, have ? (have >= tr ? `выше цели на ${fmt(have - tr)} ₽/ч` : `до цели ${fmt(tr - have)} ₽/ч`) : 'начните смену — покажу темп', have >= tr && have > 0)); }
-    return rows.join('');
-  }
+  // v9.22: goalsHtml/renderGoals → src/svelte/v8 (store.svelte.js computeGoals + Goals.svelte); здесь — обёртка
   function renderGoals() {
-    const root = document.getElementById('dashboardContent'); if (!root) return;
-    let box = document.getElementById('v8Goals');
-    if (!box) { box = document.createElement('div'); box.id = 'v8Goals'; box.className = 'v8-goals'; const after = document.getElementById('v7DashExtra') || root.querySelector('.dash-greeting'); if (after) after.insertAdjacentElement('afterend', box); else root.appendChild(box); }
-    box.innerHTML = `<div class="v8-goals-head"><span class="t">🎯 ЦЕЛИ</span><button class="acc-mini go" onclick="V8.editGoals()">Изменить</button></div>${goalsHtml()}`;
+    if (!document.getElementById('dashboardContent')) return;
+    V8S.renderGoals();
     checkGoalEvents();
   }
   // Единоразовые события: закрыта цель дня/недели → тост + haptic + уведомление
@@ -188,58 +164,11 @@ const V8 = (() => {
   }
 
   // ---------- АССИСТЕНТ СМЕНЫ ----------
-  let _lastRateShown = -1;
-  function assistHtml() {
-    const est = liveEst(); if (!est) return '';
-    const g = getGoals(), tr = targetRate();
-    const today = agg([todayStr()]);
-    const chips = [];
-    if (est.src === 'units') chips.push(`<span class="v8-assist-chip">по заказам · ${fmt(est.pu)} ₽/зак</span>`); else chips.push(`<span class="v8-assist-chip">по среднему за 5 смен</span>`);
-    if (tr) chips.push(`<span class="v8-assist-chip ${est.rate >= tr ? 'g' : 'o'}">${est.rate >= tr ? '↑ выше цели' : '↓ ниже цели'} ${fmt(tr)}</span>`);
-    const rows = [];
-    rows.push(`<div class="v8-assist-row"><span class="k">💰</span><span>Прогноз смены: <b>~${fmt(est.earned)} ₽</b> за ${est.hours.toFixed(1)} ч${est.units ? ' · ' + est.units + ' зак · ' + (est.units / Math.max(est.hours, 0.1)).toFixed(1) + '/ч' : ''}</span></div>`);
-    if (g.day) {
-      const left = g.day - today.earned - est.earned;
-      if (left <= 0) rows.push(`<div class="v8-assist-row"><span class="k">✅</span><span><b>Цель дня закрыта</b> — можно завершать, всё сверх — бонус</span></div>`);
-      else if (est.rate > 0) { const h = left / est.rate; rows.push(`<div class="v8-assist-row"><span class="k">🏁</span><span>До цели дня <b>${fmt(left)} ₽</b> — ещё ${h < 1 ? Math.round(h * 60) + ' мин' : h.toFixed(1) + ' ч'}, финиш около <b>${hm(Date.now() + h * 3600000)}</b></span></div>`); }
-    }
-    if (tr && est.rate < tr && est.src === 'units' && est.pu > 0) {
-      const needUph = tr / est.pu; rows.push(`<div class="v8-assist-row"><span class="k">📦</span><span>Для ${fmt(tr)} ₽/ч нужно <b>${needUph.toFixed(1)} зак/ч</b>, сейчас ${(est.units / Math.max(est.hours, 0.1)).toFixed(1)}</span></div>`);
-    } else if (tr && est.rate < tr && est.src === 'avg') {
-      rows.push(`<div class="v8-assist-row"><span class="k">📦</span><span>Отмечайте заказы «+1» — тогда ₽/ч будет считаться по факту, а не по среднему</span></div>`);
-    }
-    // Перерыв: больше 3 ч непрерывной работы
-    const lastBreakEnd = (activeShift.breaks || []).reduce((m, b) => Math.max(m, b.end || 0), activeShift.startTime);
-    const sinceBreak = (Date.now() - lastBreakEnd) / 3600000;
-    if (!est.onBreak && sinceBreak >= 3) rows.push(`<div class="v8-assist-row"><span class="k">☕</span><span>Без перерыва уже <b>${sinceBreak.toFixed(1)} ч</b> — 10 минут отдыха обычно поднимают темп</span></div>`);
-    if (est.onBreak) rows.push(`<div class="v8-assist-row"><span class="k">⏸</span><span>Перерыв: минута стоит <b>~${fmt(est.rate / 60)} ₽</b></span></div>`);
-    const avgLen = shifts.length ? shifts.slice(0, 10).reduce((a, s) => a + s.hours, 0) / Math.min(10, shifts.length) : 0;
-    if (avgLen && est.hours > avgLen * 1.3) rows.push(`<div class="v8-assist-row"><span class="k">⏱</span><span>Смена уже длиннее обычной (${avgLen.toFixed(1)} ч) на ${Math.round((est.hours / avgLen - 1) * 100)}% — следите за темпом</span></div>`);
-    return `<div class="v8-assist-top"><span class="v8-assist-rate">~${fmt(est.rate)}<small>₽/ч</small></span>${chips.join('')}</div><div class="v8-assist-rows">${rows.join('')}</div>`;
-  }
-  function renderAssist() {
-    const panel = document.getElementById('activeShiftPanel'); if (!panel) return;
-    let box = document.getElementById('v8Assist');
-    if (!activeShift) { if (box) box.remove(); headRate(null); return; }
-    if (!box) { box = document.createElement('div'); box.id = 'v8Assist'; box.className = 'v8-assist'; const anchor = document.getElementById('liveRateDisplay'); if (anchor) anchor.insertAdjacentElement('afterend', box); else panel.appendChild(box); }
-    box.innerHTML = assistHtml();
-    const est = liveEst(); headRate(est);
-    const r = Math.round(est.rate / 10);
-    if (_lastRateShown !== -1 && r !== _lastRateShown) pop(box.querySelector('.v8-assist-rate'));
-    _lastRateShown = r;
-  }
-  function headRate(est) {
-    const ident = document.getElementById('headerIdent'); if (!ident) return;
-    let chip = document.getElementById('v8HeadRate');
-    if (!est) { if (chip) chip.remove(); return; }
-    if (!chip) { chip = document.createElement('button'); chip.id = 'v8HeadRate'; chip.className = 'v8-head-rate'; chip.onclick = () => switchTab('live'); ident.appendChild(chip); }
-    chip.classList.toggle('brk', !!est.onBreak);
-    chip.innerHTML = `<i></i>~${fmt(est.rate)} ₽/ч · ${est.hours.toFixed(1)} ч`;
-  }
+  // v9.22: assistHtml/renderAssist/headRate → src/svelte/v8 (computeAssist + Assist.svelte в панели смены, HeadRate.svelte в шапке)
+  function renderAssist() { V8S.renderAssist(); }
 
   // ---------- ОТЧЁТЫ ----------
   const TAX = { none: { l: 'без налога', r: 0 }, npd4: { l: 'НПД 4% (физлица)', r: .04 }, npd6: { l: 'НПД 6% (юрлица)', r: .06 }, usn6: { l: 'УСН 6%', r: .06 }, ndfl13: { l: 'НДФЛ 13%', r: .13 } };
-  let _repMonth = null;
   function monthKeys() { const set = new Set(shifts.map(s => s.date.slice(0, 7))); set.add(todayStr().slice(0, 7)); return [...set].sort().reverse(); }
   function monthLabel(k) { const [y, m] = k.split('-'); return new Date(+y, +m - 1, 1).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }); }
   function monthAgg(k) {
@@ -250,39 +179,10 @@ const V8 = (() => {
   function prevKey(k) { const [y, m] = k.split('-').map(Number); const d = new Date(y, m - 2, 1); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); }
   function taxRegime() { return TAX[uGetRaw('v8_tax')] ? uGetRaw('v8_tax') : 'npd4'; }
   function setTax(v) { uSetRaw('v8_tax', v); try { markLocalChange(); schedulePushProgress(); } catch (e) {} renderReports(); }
-  function reportsHtml() {
-    const keys = monthKeys(); if (!_repMonth || !keys.includes(_repMonth)) _repMonth = keys[0];
-    const k = _repMonth, cur = monthAgg(k), prev = monthAgg(prevKey(k));
-    const tr = TAX[taxRegime()].r, tax = cur.earned * tr, after = cur.net - tax;
-    const delta = (a, b, inv) => { if (!b) return ''; const d = (a - b) / b * 100; const cls = Math.abs(d) < 3 ? 'flat' : ((d > 0) !== !!inv ? 'up' : 'down'); return `<div class="d ${cls}">${d > 0 ? '+' : ''}${Math.round(d)}% к пред.</div>`; };
-    const cell = (v, l, d) => `<div class="v8-rep-cell"><div class="v">${v}</div><div class="l">${l}</div>${d || ''}</div>`;
-    const sel = `<select onchange="V8.setRepMonth(this.value)">${keys.map(x => `<option value="${x}" ${x === k ? 'selected' : ''}>${monthLabel(x)}</option>`).join('')}</select>`;
-    const kpi = cur.n ? `<div class="v8-rep-kpi">
-      ${cell(fmt(cur.earned) + ' ₽', 'доход', delta(cur.earned, prev.earned))}
-      ${cell(fmt(cur.rate) + ' ₽/ч', 'средний темп', delta(cur.rate, prev.rate))}
-      ${cell(cur.hours.toFixed(1) + ' ч', 'часов', delta(cur.hours, prev.hours))}
-      ${cell(cur.n, plural(cur.n, 'смена', 'смены', 'смен') + ' · ' + cur.days + ' дн', delta(cur.n, prev.n))}
-      ${cell((cur.expenses ? '−' : '') + fmt(cur.expenses) + ' ₽', 'расходы', delta(cur.expenses, prev.expenses, true))}
-      ${cell(fmt(cur.net) + ' ₽', 'чистыми', delta(cur.net, prev.net))}
-    </div>` : '<div class="eff-empty">В этом месяце смен нет.</div>';
-    const taxHtml = cur.n ? `<div class="v8-tax"><div>Налог <select onchange="V8.setTax(this.value)">${Object.entries(TAX).map(([v, t]) => `<option value="${v}" ${v === taxRegime() ? 'selected' : ''}>${t.l}</option>`).join('')}</select><div style="margin-top:4px;color:var(--text-secondary)">${tr ? `к уплате <b style="font-size:12px">${fmt(tax)} ₽</b>` : 'налог не считается'}</div></div><div style="text-align:right"><div style="font-size:10.5px;color:var(--text-dim);font-weight:700">на руки после налога</div><b>${fmt(after)} ₽</b></div></div>` : '';
-    // 6 месяцев: доход / расходы / налог
-    const six = []; let kk = k; for (let i = 0; i < 6; i++) { six.unshift(kk); kk = prevKey(kk); }
-    const rows = six.map(x => ({ k: x, a: monthAgg(x) }));
-    const max = Math.max(1, ...rows.map(r => r.a.earned));
-    const bars = rows.map(r => { const e = r.a.earned, x = Math.min(e, r.a.expenses), t = e * tr; const H = 72; const he = Math.round((e - x - t) / max * H), hx = Math.round(x / max * H), ht = Math.round(t / max * H); const [, m] = r.k.split('-'); return `<div class="col ${r.k === k ? 'cur' : ''}" onclick="V8.setRepMonth('${r.k}')" title="${monthLabel(r.k)}: ${fmt(e)} ₽">${e ? `<small>${fmt(e / 1000)}к</small>` : ''}<div class="stack"><div class="t" style="height:${ht}px"></div><div class="x" style="height:${hx}px"></div><div class="e" style="height:${Math.max(e ? 2 : 0, he)}px"></div></div><b>${['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'][+m - 1]}</b></div>`; }).join('');
-    const legend = `<div class="v8-legend"><span><i style="background:var(--primary)"></i>чистыми</span><span><i style="background:var(--red)"></i>расходы</span>${tr ? '<span><i style="background:var(--orange)"></i>налог</span>' : ''}</div>`;
-    const btns = `<div class="v8-rep-ctl" style="margin:10px 0 0"><button class="v8-rep-btn p" onclick="V8.exportPdf()">🖨 PDF / печать</button><button class="v8-rep-btn" onclick="V8.exportCsv(false)">📄 CSV месяц</button><button class="v8-rep-btn" onclick="V8.exportCsv(true)">📚 CSV всё</button></div>`;
-    return `<div class="v8-rep-ctl">${sel}</div>${kpi}${taxHtml}<div class="v8-bars">${bars}</div>${legend}${btns}`;
-  }
-  function renderReports() {
-    const root = document.getElementById('contentStats'); if (!root) return;
-    let box = document.getElementById('v8Reports');
-    if (!box) { box = document.createElement('div'); box.id = 'v8Reports'; box.className = 'v7-sec'; box.style.marginTop = 'var(--sp-3)'; const v7 = document.getElementById('v7StatsExtra'); if (v7) v7.insertAdjacentElement('afterend', box); else root.insertBefore(box, root.firstChild); }
-    box.innerHTML = `<div class="v7-sec-head"><div class="v7-sec-title">📑 Отчёт за месяц</div><span style="font-size:11px;color:var(--text-dim)">сравнение с прошлым</span></div>` + reportsHtml();
-  }
-  function setRepMonth(k) { _repMonth = k; renderReports(); try { haptic('light'); } catch (e) {} }
-  function curMonth() { const keys = monthKeys(); if (!_repMonth || !keys.includes(_repMonth)) _repMonth = keys[0]; return _repMonth; }
+  // v9.22: reportsHtml/renderReports → src/svelte/v8 (computeReports + Reports.svelte); здесь — обёртки
+  function renderReports() { if (document.getElementById('contentStats')) V8S.renderReports(); }
+  function setRepMonth(k) { V8S.setRepMonth(k); try { haptic('light'); } catch (e) {} }
+  function curMonth() { return V8S.curMonth(); }
   function csvEscape(v) { const s = String(v == null ? '' : v); return /[";\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }
   function exportCsv(all) {
     const meta = getShiftMeta();
@@ -338,7 +238,7 @@ const V8 = (() => {
       if (typeof DASHBOARD !== 'undefined' && DASHBOARD.render && !DASHBOARD._v8) { const o = DASHBOARD.render; DASHBOARD.render = function () { const r = o.apply(this, arguments); try { renderGoals(); } catch (e) { console.warn('[v8] goals', e); } return r; }; DASHBOARD._v8 = 1; }
       // Таймер смены: ассистент тикает вместе с ним (раз в секунду — лёгкая математика)
       const oTimer = window.updateTimer;
-      if (typeof oTimer === 'function' && !oTimer._v8) { let i = 0; window.updateTimer = function () { const r = oTimer.apply(this, arguments); try { if (++i % 5 === 1) renderAssist(); } catch (e) {} return r; }; window.updateTimer._v8 = 1; }
+      if (typeof oTimer === 'function' && !oTimer._v8) { let i = 0; window.updateTimer = function () { const r = oTimer.apply(this, arguments); try { if (++i % 5 === 1) V8S.renderAssistTick(); } catch (e) {} return r; }; window.updateTimer._v8 = 1; }
       const oRAS = window.renderActiveShift;
       if (typeof oRAS === 'function' && !oRAS._v8) { window.renderActiveShift = function () { const r = oRAS.apply(this, arguments); try { renderAssist(); } catch (e) {} return r; }; window.renderActiveShift._v8 = 1; }
       const oBump = window.bumpUnits;
@@ -371,7 +271,9 @@ const V8 = (() => {
   // Тема применяется сразу, до входа — чтобы экран логина не слепил ночью
   try { applyThemeMode(false); } catch (e) {}
 
-  return { boot, setThemeMode, askNotify, editGoals, renderGoals, renderAssist, renderReports, setRepMonth, setTax, exportCsv, exportPdf, liveEst, getGoals };
+  return { boot, setThemeMode, askNotify, editGoals, renderGoals, renderAssist, renderReports, setRepMonth, setTax, exportCsv, exportPdf, liveEst, getGoals,
+    // v9.22: данные для Svelte-рендера (src/svelte/v8/store.svelte.js)
+    agg, weekDates, recentRate, targetRate, monthKeys, monthLabel, monthAgg, prevKey, taxRegime, TAX, pop };
 })();
 window.V8 = V8;
 
